@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             // Applying style theme on every UI component
             VimataTheme {
-                LoginScreen(                )
+                LoginScreen()
             }
         }
     }

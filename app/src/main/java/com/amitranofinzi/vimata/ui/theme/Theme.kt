@@ -40,11 +40,19 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun VimataTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+fun VimataTheme( content: @Composable () -> Unit ) {
+    MaterialTheme(
+        colorScheme = LightColorScheme,
+        typography = AppTypography,
+        shapes = AppShapes,
+        content = content
+    )
+}
+ /*
+     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+
 ) {
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
@@ -69,4 +77,4 @@ fun VimataTheme(
         typography = AppTypography,
         content = content
     )
-}
+}*/

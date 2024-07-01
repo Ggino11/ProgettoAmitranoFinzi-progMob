@@ -4,13 +4,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amitranofinzi.vimata.ui.components.SimpleButton
 import com.amitranofinzi.vimata.ui.components.SimpleTextField
+import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.LoginViewModel
 
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel = LoginViewModel()) {
+fun LoginScreen(/*loginViewModel: LoginViewModel = LoginViewModel()*/) {
     //val loginState by loginViewModel.loginState.observeAsState()
 
     var email = "jacopomail.com" //by remember { mutableStateOf("") }
@@ -29,7 +31,7 @@ fun LoginScreen(loginViewModel: LoginViewModel = LoginViewModel()) {
             label = "Password"
         )
         SimpleButton(
-            onClick = { loginViewModel.login(email, password) },
+            onClick = { /*loginViewModel.login(email, password)*/ },
             label = "Login"
         )
     }
@@ -46,4 +48,12 @@ fun LoginScreen(loginViewModel: LoginViewModel = LoginViewModel()) {
         else -> Unit
     }
     */
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewLoginScreen() {
+    VimataTheme {
+        LoginScreen()
+    }
 }
