@@ -6,7 +6,7 @@ import com.amitranofinzi.vimata.ui.theme.VimataTheme
 
 
 @Composable
-fun ChatScreen() {
+fun AthleteChatScreen() {
 }
 
 
@@ -14,6 +14,6 @@ fun ChatScreen() {
 @Composable
 fun PreviewChatScreen() {
     VimataTheme {
-        ChatScreen()
+        AthleteChatScreen()
     }
 }

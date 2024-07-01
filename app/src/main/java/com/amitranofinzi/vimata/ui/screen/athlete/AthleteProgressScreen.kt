@@ -6,13 +6,13 @@ import com.amitranofinzi.vimata.ui.theme.VimataTheme
 
 @Composable
 
-fun ProgressPageScreen() {
+fun AtheleteProgressScreen() {
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewProgressPageScreen() {
+fun PreviewAtheleteProgressScreen() {
     VimataTheme {
-        ProgressPageScreen()
+        AtheleteProgressScreen()
     }
 }

@@ -5,13 +5,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 
 @Composable
-fun ProfilePageScreen() {
+fun AthleteProfileScreen() {
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewPageScreen() {
+fun PreviewAthleteProfileScreen() {
     VimataTheme {
-        ProfilePageScreen()
+        AthleteProfileScreen()
     }
 }

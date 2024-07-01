@@ -7,7 +7,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 
 @Composable
-fun HomeAthleteScreen() {
+fun AthleteHomeScreen() {
     // Pagina con le mie schede e i miei allenatori
     Column {
         Text("Le mie schede")
@@ -19,8 +19,8 @@ fun HomeAthleteScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewHomeAthleteScreen() {
+fun PreviewAthleteHomeScreen() {
     VimataTheme {
-        HomeAthleteScreen()
+        AthleteHomeScreen()
     }
 }
