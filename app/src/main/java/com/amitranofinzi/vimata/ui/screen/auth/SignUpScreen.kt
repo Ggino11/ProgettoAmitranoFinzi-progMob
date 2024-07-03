@@ -1,7 +1,5 @@
+package com.amitranofinzi.vimata.ui.screen.auth
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,22 +34,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.amitranofinzi.vimata.ui.components.GradientBox
 import com.amitranofinzi.vimata.ui.components.SimpleButton
 import com.amitranofinzi.vimata.ui.theme.BgColor
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
-
-class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            SignUpScreen()
-        }
-    }
-}
+import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(/*loginViewModel: AuthViewModel = AuthViewModel(),*/ navController: NavController) {
     //still need to understnd if better using flows
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
@@ -237,8 +229,10 @@ fun SignUpScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun SignUpScreenPreview() {
+fun PreviewSignUpScreen() {
+    val NavController = rememberNavController()
+
     VimataTheme{
-        SignUpScreen()
+        SignUpScreen(navController = NavController)
     }
 }

@@ -9,11 +9,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.amitranofinzi.vimata.ui.navigation.AthleteBNavItem
 
 @Composable
-fun AthleteBNavBar(navController: NavHostController) {
+fun AthleteBNavBar(navController: NavController) {
     val navItems = listOf(AthleteBNavItem.Home, AthleteBNavItem.Progress, AthleteBNavItem.Chat, AthleteBNavItem.Profile)
     var selectedItem by rememberSaveable { mutableStateOf(0) }
 

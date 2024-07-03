@@ -1,6 +1,7 @@
 package com.amitranofinzi.vimata.ui.screen.auth
 
 
+import android.util.Log
 import android.view.ViewTreeObserver
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -48,17 +49,21 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.amitranofinzi.vimata.R
 import com.amitranofinzi.vimata.ui.components.GoogleSignIn
 import com.amitranofinzi.vimata.ui.components.GradientBox
 import com.amitranofinzi.vimata.ui.components.RegisterText
+import com.amitranofinzi.vimata.ui.navigation.AthleteBNavItem
 import com.amitranofinzi.vimata.ui.theme.BgColor
 import com.amitranofinzi.vimata.ui.theme.Primary
+import com.amitranofinzi.vimata.ui.theme.Secondary
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 @Composable
-fun LoginScreen( loginViewModel: AuthViewModel = AuthViewModel()) {
+fun LoginScreen( /*loginViewModel: AuthViewModel = AuthViewModel(),*/ navController: NavController) {
     val isImeVisible by rememberImeState()
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -132,18 +137,45 @@ fun LoginScreen( loginViewModel: AuthViewModel = AuthViewModel()) {
                     visualTransformation = PasswordVisualTransformation()
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-
-                RegisterText(onRegisterClick = {
+                /*
+                RegisterText( onRegisterClick = {
                     // Handle register navigation here
+
+                    Log.d("RegisterText", "ClickableText clicked: $")
+
+                    navController.navigate("signup") {
+
+                    }
                 })
-
-
+                */
                 Spacer(modifier = Modifier.height(20.dp))
+                Button(
+                    onClick = {
 
+                        navController.navigate("signup")
+
+                    }
+
+                    ,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 30.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Secondary,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(15.dp)
+                ) {
+                    Text(
+                        text = "Sign up",
+                        style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500))
+                    )
+                }
                 Spacer(modifier = Modifier.height(20.dp))
 
                 if (isImeVisible) {
                     Button(
+                        // L'
                         onClick = { /*TODO*/ },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -194,8 +226,17 @@ fun LoginScreen( loginViewModel: AuthViewModel = AuthViewModel()) {
 
                 } else {
                         Button(
-                            onClick = { /*TODO*
-                                handle login navigation */  },
+                            onClick = {
+
+                                navController.navigate("athlete_screen") {
+                                    popUpTo("athlete") {
+                                        inclusive = true
+                                    }
+                                }
+
+                            }
+
+                       ,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 30.dp),
@@ -291,7 +332,9 @@ fun rememberImeState(): State<Boolean> {
 @Preview(showBackground = true)
 @Composable
 fun PreviewLoginScreen(){
+    val NavController = rememberNavController()
+
     VimataTheme {
-        LoginScreen()
+        LoginScreen(navController = NavController)
     }
 }
