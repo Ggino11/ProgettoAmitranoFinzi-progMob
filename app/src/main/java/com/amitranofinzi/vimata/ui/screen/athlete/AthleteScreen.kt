@@ -12,15 +12,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.amitranofinzi.vimata.ui.components.AthleteBNavBar
 import com.amitranofinzi.vimata.ui.navigation.AthleteAppNav
-import com.amitranofinzi.vimata.ui.navigation.AthleteNavScreens
+import com.amitranofinzi.vimata.ui.theme.VimataTheme
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AthleteScreen(navController: NavHostController) {
         Scaffold(bottomBar = {
             BottomAppBar { AthleteBNavBar(navController = navController) }
-        }) { AthleteAppNav(navController = navController) }
+        }) { AthleteAppNav() }
     }
+
+/*
+@Preview(showBackground = true)
+@Composable
+fun PreviewAthleteProgressScreen() {
+    VimataTheme {
+        AthleteScreen( )
+    }
+}
+ss*/
