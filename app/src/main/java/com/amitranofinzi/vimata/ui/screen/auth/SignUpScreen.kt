@@ -52,6 +52,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun SignUpScreen() {
+    //still need to understnd if better using flows
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
@@ -59,6 +60,8 @@ fun SignUpScreen() {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisibility by remember { mutableStateOf(false) }
+
+    //change ui based on current page
 
     // Determine if the form is valid
     val isFormValid = name.isNotEmpty() && surname.isNotEmpty() && username.isNotEmpty() &&
@@ -84,6 +87,7 @@ fun SignUpScreen() {
                 )
                 }
 
+            //first registration page
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -96,7 +100,9 @@ fun SignUpScreen() {
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("First Name") },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
                     singleLine = true,
                             leadingIcon = {
                         Icon(
@@ -115,7 +121,9 @@ fun SignUpScreen() {
                     value = surname,
                     onValueChange = { surname = it },
                     label = { Text("Last Name") },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
                     singleLine = true,
                     leadingIcon = {
                         Icon(
@@ -134,7 +142,9 @@ fun SignUpScreen() {
                     value = username,
                     onValueChange = { username = it },
                     label = { Text("Username") },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
                     singleLine = true,
                     leadingIcon = {
                         Icon(
@@ -149,11 +159,15 @@ fun SignUpScreen() {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
+
+                //second registration page if( currentPage == 1) {}
                 OutlinedTextField(
                     value = email,
                     onValueChange = { email = it },
                     label = { Text("Email") },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                     keyboardActions = KeyboardActions(),
@@ -172,7 +186,9 @@ fun SignUpScreen() {
                     value = password,
                     onValueChange = { password = it },
                     label = { Text("Password") },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
@@ -191,7 +207,9 @@ fun SignUpScreen() {
                     value = password,
                     onValueChange = { password = it },
                     label = { Text("Confirm Password") },
-                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     keyboardActions = KeyboardActions(),
@@ -208,7 +226,8 @@ fun SignUpScreen() {
                  SimpleButton(
                      onClick = { /*handle_click navigation to hom and */ },
                      enabled = isFormValid,
-                     label = "Sign Up"
+                     //if current page == 1 submit else next
+                     label = "Next"
                 )
             }
         }

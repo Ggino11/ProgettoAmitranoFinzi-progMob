@@ -55,10 +55,10 @@ import com.amitranofinzi.vimata.ui.components.RegisterText
 import com.amitranofinzi.vimata.ui.theme.BgColor
 import com.amitranofinzi.vimata.ui.theme.Primary
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
-import com.amitranofinzi.vimata.viewmodel.LoginViewModel
+import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 @Composable
-fun LoginScreen(loginViewModel: LoginViewModel = LoginViewModel()) {
+fun LoginScreen( loginViewModel: AuthViewModel = AuthViewModel()) {
     val isImeVisible by rememberImeState()
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }

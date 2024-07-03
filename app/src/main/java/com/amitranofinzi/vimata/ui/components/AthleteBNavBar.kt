@@ -38,3 +38,6 @@ fun AthleteBNavBar(navController: NavHostController) {
         }
     }
 }
+//
+//@Preview
+//@Composable
