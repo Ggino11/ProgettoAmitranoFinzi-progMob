@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.amitranofinzi.vimata.data.model.Athlete
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteChatScreen
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteHomeScreen
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteProfileScreen
@@ -16,7 +17,9 @@ fun AthleteBottomNav(navController: NavHostController) {
         composable(AthleteBNavItem.Home.path) { AthleteHomeScreen() }
         composable(AthleteBNavItem.Progress.path) { AthleteProgressScreen() }
         composable(AthleteBNavItem.Chat.path) { AthleteChatScreen() }
-        composable(AthleteBNavItem.Profile.path) { AthleteProfileScreen() }
+        composable(AthleteBNavItem.Profile.path) {
+            val athlete = Athlete("","Jacopo", "Finzi","Kenzio","Jacopo@gmail","xxxxx",26)
+            AthleteProfileScreen(athlete, onEditProfileClick = {}) }
     }
 
 }

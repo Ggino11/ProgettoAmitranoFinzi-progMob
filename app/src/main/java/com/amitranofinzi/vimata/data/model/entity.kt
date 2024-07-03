@@ -9,17 +9,8 @@ package com.amitranofinzi.vimata.data.model
 //    val eta: Int
 //)
 
-//class Atleta(
-//    nome: String,
-//    cognome: String,
-//    username: String,
-//    email: String,
-//    password: String,
-//    eta: Int,
-//    val sport: String // Aggiunta di un attributo specifico per l'Atleta
-//) : User(nome, cognome, username, email, password, eta)
 //
-//class Allenatore(
+//class Trainer(
 //    nome: String,
 //    cognome: String,
 //    username: String,

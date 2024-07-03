@@ -1,5 +1,4 @@
 package com.amitranofinzi.vimata.ui.navigation
-import android.util.Log
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -14,15 +13,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.amitranofinzi.vimata.ui.screen.athlete.AthleteChatScreen
-import com.amitranofinzi.vimata.ui.screen.athlete.AthleteHomeScreen
-import com.amitranofinzi.vimata.ui.screen.athlete.AthleteProfileScreen
-import com.amitranofinzi.vimata.ui.screen.athlete.AthleteProgressScreen
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteScreen
 import com.amitranofinzi.vimata.ui.screen.auth.LoginScreen
 import com.amitranofinzi.vimata.ui.screen.auth.SignUpScreen
+import com.amitranofinzi.vimata.ui.screen.trainer.TrainerScreen
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
-import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 
 
@@ -39,6 +34,8 @@ fun AppNav() {
     NavHost(navController = navController, startDestination = "auth") {
         authGraph(navController)
         athleteGraph(navController)
+        trainerGraph(navController)
+
     }
 
 }
@@ -64,9 +61,24 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
             route = "athlete"
         ){
             composable("athlete_screen"){
+                //val viewModel = it.sharedViewModel<AthleteViewModel>(navController)
                 AthleteScreen()
             }
         }
+
+}
+
+fun NavGraphBuilder.trainerGraph(navController: NavHostController) {
+
+    navigation(
+        startDestination = "trainer_screen",
+        route = "trainer"
+    ){
+        composable("trainer_screen"){
+            //val viewModel = it.sharedViewModel<TrainerViewModel>(navController)
+            TrainerScreen()
+        }
+    }
 
 }
 
