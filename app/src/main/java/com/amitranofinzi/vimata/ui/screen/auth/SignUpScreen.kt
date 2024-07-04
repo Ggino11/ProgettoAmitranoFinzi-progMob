@@ -1,14 +1,18 @@
 package com.amitranofinzi.vimata.ui.screen.auth
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -48,10 +52,10 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
+    var userType by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var passwordVisibility by remember { mutableStateOf(false) }
 
     //change ui based on current page
     var currentPage by remember {
@@ -63,7 +67,7 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
             email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty() &&
             password == confirmPassword
 
-
+//
     GradientBox(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -82,7 +86,6 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
                 )
                 }
 
-            //first registration page
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -91,146 +94,205 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("First Name") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    singleLine = true,
-                            leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Person"
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions(),
-                    keyboardActions = KeyboardActions(),
-                    visualTransformation = PasswordVisualTransformation()
-                )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                //first registration page
+                if (currentPage == 0) {
+                    OutlinedTextField(
+                        value = name,
+                        onValueChange = { name = it },
+                        label = { Text("First Name") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Person"
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(),
+                        keyboardActions = KeyboardActions(),
 
-                OutlinedTextField(
-                    value = surname,
-                    onValueChange = { surname = it },
-                    label = { Text("Last Name") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Person"
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions(),
-                    keyboardActions = KeyboardActions(),
-                    visualTransformation = PasswordVisualTransformation()
-                )
+                    )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
-                OutlinedTextField(
-                    value = username,
-                    onValueChange = { username = it },
-                    label = { Text("Username") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    singleLine = true,
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Face,
-                            contentDescription = "Person"
-                        )
-                    },
-                    keyboardOptions = KeyboardOptions(),
-                    keyboardActions = KeyboardActions(),
-                    visualTransformation = PasswordVisualTransformation()
-                )
+                    OutlinedTextField(
+                        value = surname,
+                        onValueChange = { surname = it },
+                        label = { Text("Last Name") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Person"
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(),
+                        keyboardActions = KeyboardActions()
+                    )
 
-                Spacer(modifier = Modifier.height(8.dp))
+//                    Spacer(modifier = Modifier.height(8.dp))
+//
+//                    OutlinedTextField(
+//                        value = username,
+//                        onValueChange = { username = it },
+//                        label = { Text("Username") },
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(horizontal = 12.dp),
+//                        singleLine = true,
+//                        leadingIcon = {
+//                            Icon(
+//                                imageVector = Icons.Default.FitnessCenter,
+//                                contentDescription = "Person"
+//                            )
+//                        },
+//                        keyboardOptions = KeyboardOptions(),
+//                        keyboardActions = KeyboardActions()
+//                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = userType,
+                        onValueChange = { userType = it },
+                        label = { Text("User type") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Face,
+                                contentDescription = "Person"
+                            )
+                        },
+                        keyboardOptions = KeyboardOptions(),
+                        keyboardActions = KeyboardActions()
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
 
 
-                //second registration page if( currentPage == 1) {}
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = { email = it },
-                    label = { Text("Email") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    keyboardActions = KeyboardActions(),
-                            leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Email,
-                            contentDescription = "Person"
-                        )
-                    },
-                    visualTransformation = PasswordVisualTransformation()
-                )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                } else {
 
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Password") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    keyboardActions = KeyboardActions(),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = "Lock"
-                        )
-                    },
-                    visualTransformation = PasswordVisualTransformation()
-                )
+                    //second registration page if( currentPage == 1)
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { email = it },
+                        label = { Text("Email") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        keyboardActions = KeyboardActions(),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = "Person"
+                            )
+                        },
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    )
 
-                OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text("Confirm Password") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    singleLine = true,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    keyboardActions = KeyboardActions(),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.Lock,
-                            contentDescription = "Lock"
-                        )
-                    },
-                    visualTransformation = PasswordVisualTransformation()
-                )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        label = { Text("Password") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        keyboardActions = KeyboardActions(),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = "Lock"
+                            )
+                        },
+                        visualTransformation = PasswordVisualTransformation()
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    OutlinedTextField(
+                        value = confirmPassword,
+                        onValueChange = { confirmPassword = it },
+                        label = { Text("Confirm Password") },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp),
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        keyboardActions = KeyboardActions(),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = "Lock"
+                            )
+                        },
+                        visualTransformation = PasswordVisualTransformation()
+                    )
+                }
+
 
                 Spacer(modifier = Modifier.height(16.dp))
-                 SimpleButton(
-                     onClick = { /*handle_click navigation to hom and */
-                               //authViewModel.register()
-                         },
-                     enabled = isFormValid,
-                     //if current page == 1 submit else next
-                     label = "Register"
+
+                // Dots to indicate the page position
+                Row(
+                    modifier = Modifier.padding(16.dp),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .background(
+                                if (currentPage == 0) Color.Black else Color.White,
+                                RoundedCornerShape(50)
+                            )
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .background(
+                                if (currentPage == 1) Color.Black else Color.White,
+                                RoundedCornerShape(50)
+                            )
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                SimpleButton(
+                    onClick = {
+                        if (currentPage == 0) {
+                            currentPage = 1
+                        } else {
+                            authViewModel.register(email, password, userType, name, surname)
+                            navController.navigate("login")
+                        }
+                    },
+                    enabled = isFormValid,
+                    label = if (currentPage == 0) "Next" else "Submit"
                 )
             }
         }
-
     }
 }
+
 // Handle authentication state changes
 /*
 when (authState) {

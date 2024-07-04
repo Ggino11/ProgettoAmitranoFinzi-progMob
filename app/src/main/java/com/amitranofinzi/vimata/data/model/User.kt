@@ -6,7 +6,7 @@ data class User(
     val name: String,
     val surname: String,
     val email: String,
-    val password: String, // Hashed password (IMPORTANT: never store plain text passwords!)
+    val password: String, // Hashed password
     val userType: String, // You can define an enum for UserType (ATHLETE, TRAINER)
     //val age: Int,
     //val pictureUrl: String? = null, // nullable for optional profile picture
