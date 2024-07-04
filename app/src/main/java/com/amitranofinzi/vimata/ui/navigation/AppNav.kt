@@ -18,8 +18,7 @@ import com.amitranofinzi.vimata.ui.screen.auth.LoginScreen
 import com.amitranofinzi.vimata.ui.screen.auth.SignUpScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerScreen
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
-
-
+import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 
 @Composable
@@ -42,12 +41,12 @@ fun AppNav() {
 fun NavGraphBuilder.authGraph(navController: NavHostController) {
         navigation( startDestination = "login", route = "auth"){
             composable("login"){
-                //val viewModel = it.sharedViewModel<AuthViewModel>(navController)
+                val viewModel = it.sharedViewModel<AuthViewModel>(navController)
                 LoginScreen(/*loginViewModel = viewModel,*/ navController = navController);
             }
             composable("signup"){
-                //val viewModel = it.sharedViewModel<AuthViewModel>(navController)
-                SignUpScreen(/*loginViewModel = viewModel,*/ navController = navController);
+                val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
+                SignUpScreen(authViewModel = authViewModel, navController = navController);
             }
             composable("forgot_psw"){
                 //val viewModel = it.sharedViewModel<AuthViewModel>(navController)

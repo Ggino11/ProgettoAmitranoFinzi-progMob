@@ -1,25 +1,46 @@
 package com.amitranofinzi.vimata.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.repository.AuthRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
-class AuthViewModel : ViewModel() {
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val _loginState = MutableLiveData<LoginState>()
-    val loginState: LiveData<LoginState> = _loginState
+class AuthViewModel(private val authRepository: AuthRepository) : ViewModel() {
 
-    fun login(email: String, password: String) {
-        // Inserisci qui la logica di autenticazione
-        // Questo esempio imposta semplicemente lo stato su Success dopo un "login"
-        _loginState.value = LoginState.Success
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
+    val authState: StateFlow<AuthState> = _authState
+
+    fun register(email: String, password: String, userType: String, name: String, surname: String) {
+        viewModelScope.launch {
+            _authState.value = AuthState.Loading
+            val result = authRepository.register(email, password, userType, name, surname)
+            if (result.isSuccess) {
+                _authState.value = AuthState.Registered
+            } else {
+                _authState.value = AuthState.Error(result.exceptionOrNull()?.message ?: "Unknown Error")
+            }
+        }
     }
 
-    sealed class LoginState {
-        object Success : LoginState()
-        data class Error(val message: String) : LoginState()
+    fun login(email: String, password: String) {
+        viewModelScope.launch {
+            _authState.value = AuthState.Loading
+            val result = authRepository.login(email, password)
+            if (result.isSuccess) {
+                _authState.value = AuthState.Authenticated
+            } else {
+                _authState.value = AuthState.Error(result.exceptionOrNull()?.message ?: "Unknown Error")
+            }
+        }
+    }
+
+    sealed class AuthState {
+        object Idle : AuthState()
+        object Loading : AuthState()
+        object Authenticated : AuthState()
+        object Registered : AuthState()
+        data class Error(val message: String) : AuthState()
     }
 }

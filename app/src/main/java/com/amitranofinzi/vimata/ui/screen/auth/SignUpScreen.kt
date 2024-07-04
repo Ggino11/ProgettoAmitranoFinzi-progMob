@@ -43,7 +43,7 @@ import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 @Composable
-fun SignUpScreen(/*loginViewModel: AuthViewModel = AuthViewModel(),*/ navController: NavController) {
+fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
     //still need to understnd if better using flows
     var name by remember { mutableStateOf("") }
     var surname by remember { mutableStateOf("") }
@@ -54,6 +54,9 @@ fun SignUpScreen(/*loginViewModel: AuthViewModel = AuthViewModel(),*/ navControl
     var passwordVisibility by remember { mutableStateOf(false) }
 
     //change ui based on current page
+    var currentPage by remember {
+        mutableStateOf(0)
+    }
 
     // Determine if the form is valid
     val isFormValid = name.isNotEmpty() && surname.isNotEmpty() && username.isNotEmpty() &&
@@ -216,23 +219,44 @@ fun SignUpScreen(/*loginViewModel: AuthViewModel = AuthViewModel(),*/ navControl
 
                 Spacer(modifier = Modifier.height(16.dp))
                  SimpleButton(
-                     onClick = { /*handle_click navigation to hom and */ },
+                     onClick = { /*handle_click navigation to hom and */
+                               //authViewModel.register()
+                         },
                      enabled = isFormValid,
                      //if current page == 1 submit else next
-                     label = "Next"
+                     label = "Register"
                 )
             }
         }
 
     }
 }
-
+// Handle authentication state changes
+/*
+when (authState) {
+    is AuthViewModel.AuthState.Loading -> {
+        // Show loading indicator
+    }
+    is AuthViewModel.AuthState.Authenticated -> {
+        // Navigate to the next screen either login or home still deciding
+    }
+    is AuthViewModel.AuthState.Registered -> {
+        // Show registration success message
+    }
+    is AuthViewModel.AuthState.Error -> {
+        // Show error message
+        val errorMessage = (authState as AuthViewModel.AuthState.Error).message
+        // Display the error
+    }
+    else -> {}
+}
+}*/
 @Preview(showBackground = true)
 @Composable
 fun PreviewSignUpScreen() {
     val NavController = rememberNavController()
 
     VimataTheme{
-        SignUpScreen(navController = NavController)
+
     }
 }
