@@ -1,19 +1,25 @@
 package com.amitranofinzi.vimata.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amitranofinzi.vimata.data.repository.AuthRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
+class AuthViewModel() : ViewModel() {
 
-class AuthViewModel(private val authRepository: AuthRepository) : ViewModel(
-) {//
-//maybe live data
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
+    private val authRepository : AuthRepository = AuthRepository(firebaseAuth, firestore)
+
     private val _authState = MutableLiveData<AuthState>(AuthState.Idle)
     val authState: LiveData<AuthState> = _authState
 
     fun register(email: String, password: String, userType: String, name: String, surname: String) {
+        Log.d("view model", firebaseAuth.toString())
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             val result = authRepository.register(email, password, userType, name, surname)

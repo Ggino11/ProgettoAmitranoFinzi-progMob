@@ -1,7 +1,6 @@
 package com.amitranofinzi.vimata.ui.screen.auth
 
 
-import android.util.Log
 import android.view.ViewTreeObserver
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -54,8 +53,6 @@ import androidx.navigation.compose.rememberNavController
 import com.amitranofinzi.vimata.R
 import com.amitranofinzi.vimata.ui.components.GoogleSignIn
 import com.amitranofinzi.vimata.ui.components.GradientBox
-import com.amitranofinzi.vimata.ui.components.RegisterText
-import com.amitranofinzi.vimata.ui.navigation.AthleteBNavItem
 import com.amitranofinzi.vimata.ui.theme.BgColor
 import com.amitranofinzi.vimata.ui.theme.Primary
 import com.amitranofinzi.vimata.ui.theme.Secondary
@@ -63,9 +60,9 @@ import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 @Composable
-fun LoginScreen( /*loginViewModel: AuthViewModel = AuthViewModel(),*/ navController: NavController) {
+fun LoginScreen( authViewModel: AuthViewModel = AuthViewModel(), navController: NavController) {
     val isImeVisible by rememberImeState()
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
 
@@ -109,8 +106,8 @@ fun LoginScreen( /*loginViewModel: AuthViewModel = AuthViewModel(),*/ navControl
 
                 OutlinedTextField(
                     modifier = Modifier.padding(horizontal = 16.dp),
-                    value = username,
-                    onValueChange = { username = it },
+                    value = email,
+                    onValueChange = { email = it },
                     label = { Text("Username/Email") },
                     leadingIcon = {
                         Icon(

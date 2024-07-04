@@ -20,12 +20,12 @@ import com.amitranofinzi.vimata.ui.screen.trainer.TrainerScreen
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
-
 @Composable
 fun AppNav() {
 
     val navController = rememberNavController()
- //com
+
+    //com
     // NESTED GRAPH CONSTRUCTOR
     // Vengono in questa funzione tutti i grafi di navigazione principali
     // definiti ognuno tramite una funzione dedicata
@@ -39,31 +39,33 @@ fun AppNav() {
 
 }
 fun NavGraphBuilder.authGraph(navController: NavHostController) {
-        navigation( startDestination = "login", route = "auth"){
-            composable("login"){
-                val viewModel = it.sharedViewModel<AuthViewModel>(navController)
-                LoginScreen(/*loginViewModel = viewModel,*/ navController = navController);
-            }
-            composable("signup"){
-                val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
-                SignUpScreen(authViewModel = authViewModel, navController = navController);
-            }
-            composable("forgot_psw"){
-                //val viewModel = it.sharedViewModel<AuthViewModel>(navController)
-            }
+    navigation( startDestination = "login", route = "auth"){
+
+        composable("login"){
+
+            val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
+            LoginScreen(authViewModel = authViewModel, navController = navController);
         }
+        composable("signup"){
+            val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
+            SignUpScreen(authViewModel = authViewModel, navController = navController);
+        }
+        composable("forgot_psw"){
+            val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
+        }
+    }
 }
 fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
 
-        navigation(
-            startDestination = "athlete_screen",
-            route = "athlete"
-        ){
-            composable("athlete_screen"){
-                //val viewModel = it.sharedViewModel<AthleteViewModel>(navController)
-                AthleteScreen()
-            }
+    navigation(
+        startDestination = "athlete_screen",
+        route = "athlete"
+    ){
+        composable("athlete_screen"){
+            //val viewModel = it.sharedViewModel<AthleteViewModel>(navController)
+            AthleteScreen()
         }
+    }
 
 }
 
