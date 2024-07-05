@@ -1,10 +1,10 @@
 package com.amitranofinzi.vimata.viewmodel
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.model.FormField
+import com.amitranofinzi.vimata.data.model.FormState
 import com.amitranofinzi.vimata.data.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -20,11 +20,34 @@ class AuthViewModel() : ViewModel() {
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
 
-    fun register(email: String, password: String, userType: String, name: String, surname: String) {
+    private val _formState = MutableStateFlow(FormState())
+    val formState: StateFlow<FormState> get() = _formState
+
+
+    //function to updtates data stream for flow of formState
+    // takes in input the name of the field and the value
+    fun updateField(field: FormField, value: String) {
+        _formState.value = when(field) {
+            FormField.NAME -> _formState.value.copy(name = value)
+            FormField.SURNAME -> _formState.value.copy(surname = value)
+            FormField.USERNAME -> _formState.value.copy(username = value)
+            FormField.USER_TYPE -> _formState.value.copy(userType = value)
+            FormField.EMAIL -> _formState.value.copy(email = value)
+            FormField.PASSWORD -> _formState.value.copy(password = value)
+            FormField.CONFIRM_PASSWORD -> _formState.value.copy(confirmPassword = value)
+            FormField.EMAIL_ERROR_MESSAGE -> _formState.value.copy(emailErrorMessage = value)
+            FormField.PASSWORD_ERROR_MESSAGE -> _formState.value.copy(passwordErrorMessage = value)
+            else -> _formState.value
+        }
+
+    }
+
+
+    fun register(formState: FormState) {
         Log.d("view model", firebaseAuth.toString())
         viewModelScope.launch {
             _authState.value = AuthState.Loading
-            val result = authRepository.register(email, password, userType, name, surname)
+            val result = authRepository.register(formState.email, formState.password, formState.userType, formState.name, formState.surname)
             if (result.isSuccess) {
                 val userId = FirebaseAuth.getInstance().currentUser?.uid
                 if (userId != null) {

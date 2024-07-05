@@ -13,8 +13,16 @@ class AuthRepository(
     private val firestore: FirebaseFirestore
 ) {
 
-
-    // --------------------- AUTHENTICATION FUNCTIONS-------------------------//
+//    suspend fun checkEmail(email: String){
+//        firestore.collection("users")
+//            .whereEqualTo("email", email).get()
+//            .addOnSuccessListener { documents ->
+//                result(!documents.isEmpty)
+//            }
+//            .addOnFailureListener {
+//                onResult(false)
+//            }
+//    }
     suspend fun register(email: String, password: String, userType: String, name: String, surname: String): Result<Unit> {
         return try {
             val authResult = Firebase.auth.createUserWithEmailAndPassword(email, password).await()
