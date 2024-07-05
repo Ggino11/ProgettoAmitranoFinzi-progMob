@@ -13,6 +13,8 @@ class AuthRepository(
     private val firestore: FirebaseFirestore
 ) {
 
+
+    // --------------------- AUTHENTICATION FUNCTIONS-------------------------//
     suspend fun register(email: String, password: String, userType: String, name: String, surname: String): Result<Unit> {
         return try {
             val authResult = Firebase.auth.createUserWithEmailAndPassword(email, password).await()
@@ -43,9 +45,25 @@ class AuthRepository(
             Result.failure(e)
         }
     }
-
     /*
     suspend fun signout(){
     }
     */
+
+    // --------------------- GET FUNCTIONS-------------------------//
+    suspend fun getUserType(userId: String): Result<String> {
+        return try {
+            val document = firestore.collection("users").document(userId).get().await()
+            val userType = document.getString("userType")
+            if (userType != null) {
+                Result.success(userType)
+            } else {
+                Result.failure(Exception("UserType not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+
 }

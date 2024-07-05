@@ -2,6 +2,7 @@ package com.amitranofinzi.vimata.ui.screen.auth
 
 
 import android.view.ViewTreeObserver
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,7 +31,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -61,11 +66,13 @@ import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 @Composable
 fun LoginScreen( authViewModel: AuthViewModel = AuthViewModel(), navController: NavController) {
-    val isImeVisible by rememberImeState()
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
+    val context = LocalContext.current
+    val authState by authViewModel.authState.collectAsState()
 
+    val isLogginIn = authState is AuthViewModel.AuthState.Loading
 
     GradientBox(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -134,18 +141,8 @@ fun LoginScreen( authViewModel: AuthViewModel = AuthViewModel(), navController: 
                     visualTransformation = PasswordVisualTransformation()
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-                /*
-                RegisterText( onRegisterClick = {
-                    // Handle register navigation here
-
-                    Log.d("RegisterText", "ClickableText clicked: $")
-
-                    navController.navigate("signup") {
-
-                    }
-                })
-                */
                 Spacer(modifier = Modifier.height(20.dp))
+
                 Button(
                     onClick = {
 
@@ -170,161 +167,101 @@ fun LoginScreen( authViewModel: AuthViewModel = AuthViewModel(), navController: 
                 }
                 Spacer(modifier = Modifier.height(20.dp))
 
-                if (isImeVisible) {
+                // ------------------LOGIN BUTTON---------------------
+                // When clicked user credentials will be checked and:
+                // - during credentials check a loading animation is visualized
+                // - if credentials are valid user will be authenticated and will visualize:
+                //        - AthleteHomeScreen if userType is "athlete"
+                //        - TrainerHomeScreen if userType is "trainer"
+                // - if credentials are not valid a error message appears
+                if (isLogginIn) {
+                    CircularProgressIndicator()
+                } else {
                     Button(
-                        // L'
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            authViewModel.login(email, password)
+                        }
+
+                        ,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 20.dp)
-                            .padding(horizontal = 16.dp),
+                            .padding(horizontal = 30.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = Primary,
                             contentColor = Color.White
                         ),
-                        shape = RoundedCornerShape(10.dp)
+                        shape = RoundedCornerShape(15.dp)
                     ) {
                         Text(
-                            text = "Log in",
+                            text = "Login",
                             style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500))
                         )
                     }
+                }
 
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Divider(modifier = Modifier.weight(1f))
-                        Text(
-                            text = "or",
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            color = Color.Gray
-                        )
-                        Divider(modifier = Modifier.weight(1f))
-                    }
+            }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Divider(modifier = Modifier
+                    .weight(1f)
+                    .padding(vertical = 20.dp))
+                Text(
+                    text = "or",
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    color = Color.Gray
+                )
+                Divider(modifier = Modifier.weight(1f))
+            }
 
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                      GoogleSignIn(text = "Google", icon = painterResource(id = R.drawable.ic_google_logo) ) {
-                          
-                      }
+            Spacer(modifier = Modifier.height(10.dp))
 
-                        Spacer(modifier = Modifier.width(16.dp))
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
 
-                        GoogleSignIn(text = "Google",
-                            icon = painterResource(id = R.drawable.ic_google_logo),
-                            onClick = { /*handle auth */}
-                        )
-                    }
+            ) {
+                GoogleSignIn(text = "Google",
+                    icon = painterResource(id = R.drawable.ic_google_logo),
+                    onClick = { TODO() }
+                )
 
-                } else {
-                        Button(
-                            onClick = {
+                Spacer(modifier = Modifier.width(16.dp))
 
-                                navController.navigate("athlete_screen") {
-                                    popUpTo("athlete") {
-                                        inclusive = true
-                                    }
-                                }
-
-                            }
-
-                       ,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 30.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = Primary,
-                                contentColor = Color.White
-                            ),
-                            shape = RoundedCornerShape(15.dp)
-                        ) {
-                            Text(
-                                text = "Login",
-                                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500))
-                            )
-                        }
-                    }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Divider(modifier = Modifier
-                            .weight(1f)
-                            .padding(vertical = 20.dp))
-                        Text(
-                            text = "or",
-                            modifier = Modifier.padding(horizontal = 8.dp),
-                            color = Color.Gray
-                        )
-                        Divider(modifier = Modifier.weight(1f))
-                    }
-
-                    Spacer(modifier = Modifier.height(10.dp))
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
-
-                    ) {
-                        GoogleSignIn(text = "Google",
-                            icon = painterResource(id = R.drawable.ic_google_logo),
-                            onClick = { TODO() }
-                        )
-
-                        Spacer(modifier = Modifier.width(16.dp))
-
-                        GoogleSignIn(text = "Google",
-                            icon = painterResource(id = R.drawable.ic_google_logo),
-                            onClick = { TODO() }
-                        )
-                    }
-
+                GoogleSignIn(text = "Google",
+                    icon = painterResource(id = R.drawable.ic_google_logo),
+                    onClick = { TODO() }
+                )
             }
         }
     }
+
+    LaunchedEffect(authState) {
+        when (authState) {
+            is AuthViewModel.AuthState.Idle -> {            }
+
+            is AuthViewModel.AuthState.Loading -> {         }
+
+            is AuthViewModel.AuthState.Authenticated -> {
+                // Check user type and navigate to the correct subgraph
+                val userType = (authState as AuthViewModel.AuthState.Authenticated).userType
+                val destination = if (userType == "athlete") "athlete" else "trainer"
+                navController.navigate(destination) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
+            is AuthViewModel.AuthState.Error -> {
+                Toast.makeText(context, (authState as AuthViewModel.AuthState.Error).message, Toast.LENGTH_LONG).show()
+            }
+            else -> Unit
+        }
+    }
 }
 
-
-//collapse red part when keybor
-@Composable
-fun rememberImeState(): State<Boolean> {
-    val imeState = remember {
-        mutableStateOf(false)
-    }
-    val view = LocalView.current
-    DisposableEffect(view) {
-        val listener = ViewTreeObserver.OnGlobalLayoutListener {
-            val isKeyboardOpen = ViewCompat.getRootWindowInsets(view)
-                ?.isVisible(WindowInsetsCompat.Type.ime()) ?: true
-            imeState.value = isKeyboardOpen
-        }
-
-        view.viewTreeObserver.addOnGlobalLayoutListener(listener)
-        onDispose {
-            view.viewTreeObserver.removeOnGlobalLayoutListener(listener)
-        }
-    }
-    return imeState
-}
-
-    // Gestione dello stato del login
-    /*
-    when (loginState) {
-        is LoginViewModel.LoginState.Success -> {
-            // Naviga alla schermata successiva o mostra un messaggio di successo
-        }
-        is LoginViewModel.LoginState.Error -> {
-            // Mostra un messaggio di errore
-        }
-        else -> Unit
-    }
-    */
 
 @Preview(showBackground = true)
 @Composable

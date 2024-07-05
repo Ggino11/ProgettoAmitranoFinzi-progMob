@@ -304,9 +304,7 @@ when (authState) {
     is AuthViewModel.AuthState.Authenticated -> {
         // Navigate to the next screen either login or home still deciding
     }
-    is AuthViewModel.AuthState.Registered -> {
-        // Show registration success message
-    }
+
     is AuthViewModel.AuthState.Error -> {
         // Show error message
         val errorMessage = (authState as AuthViewModel.AuthState.Error).message
