@@ -63,9 +63,9 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
     }
 
     // Determine if the form is valid
-    val isFormValid = name.isNotEmpty() && surname.isNotEmpty() && username.isNotEmpty() &&
-            email.isNotEmpty() && password.isNotEmpty() && confirmPassword.isNotEmpty() &&
-            password == confirmPassword
+    val isValidFormPage1 = name.isNotEmpty() && surname.isNotEmpty() && username.isNotEmpty()
+    val isFormValid =  isValidFormPage1 &&  email.isNotEmpty() && password.isNotEmpty()
+                        && confirmPassword.isNotEmpty() && password == confirmPassword
 
 //
     GradientBox(modifier = Modifier.fillMaxSize()) {
@@ -214,7 +214,7 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
                             .fillMaxWidth()
                             .padding(horizontal = 12.dp),
                         singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                         keyboardActions = KeyboardActions(),
                         leadingIcon = {
                             Icon(
@@ -285,7 +285,9 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
                             navController.navigate("login")
                         }
                     },
-                    enabled = isFormValid,
+
+                    //enabled = if(currentPage == 0) isValidFormPage1 else isFormValid,
+                    enabled = true,
                     label = if (currentPage == 0) "Next" else "Submit"
                 )
             }

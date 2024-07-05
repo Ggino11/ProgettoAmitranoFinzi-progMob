@@ -1,8 +1,11 @@
 package com.amitranofinzi.vimata.data.repository
 
 import com.amitranofinzi.vimata.data.model.User
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+//import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class AuthRepository(
@@ -12,7 +15,7 @@ class AuthRepository(
 
     suspend fun register(email: String, password: String, userType: String, name: String, surname: String): Result<Unit> {
         return try {
-            val authResult = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+            val authResult = Firebase.auth.createUserWithEmailAndPassword(email, password).await()
             val user = authResult.user
             val userId = user?.uid ?: throw IllegalStateException("User ID is null")
 
@@ -40,4 +43,9 @@ class AuthRepository(
             Result.failure(e)
         }
     }
+
+    /*
+    suspend fun signout(){
+    }
+    */
 }

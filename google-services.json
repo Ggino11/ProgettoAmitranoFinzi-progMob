@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "488361844495",
+    "project_id": "vimata-c9993",
+    "storage_bucket": "vimata-c9993.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:488361844495:android:b9c5256857510f87aa287a",
+        "android_client_info": {
+          "package_name": "com.amitranofinzi.vimata"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_b3JO7OePRw7P-71we35P97GzdqWixmw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
