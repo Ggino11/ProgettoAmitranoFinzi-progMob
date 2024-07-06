@@ -20,10 +20,12 @@ package com.amitranofinzi.vimata.data.model
 //    val specializzazione: String // Aggiunta di un attributo specifico per l'Allenatore
 //) : User(nome, cognome, username, email, password, eta)
 
-data class Scheda(
-    val id: Int,
-    val nome: String,
-    val esercizi: List<Esercizio>
+data class Workout(
+    val id: String,
+    val name: String,
+    val status: String,
+    val trainerName: String,
+    val pdfUrl: String
 )
 
 data class Esercizio(

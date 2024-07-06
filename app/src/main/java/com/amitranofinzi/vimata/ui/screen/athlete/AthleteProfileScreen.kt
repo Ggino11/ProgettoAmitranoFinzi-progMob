@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,17 +29,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
 import com.amitranofinzi.vimata.data.model.Athlete
 import com.amitranofinzi.vimata.ui.theme.GrayColor
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import coil.compose.rememberImagePainter
+import com.amitranofinzi.vimata.ui.theme.Secondary
+import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AthleteProfileScreen(athlete: Athlete, onEditProfileClick: () -> Unit) {
+fun AthleteProfileScreen(athlete: Athlete, onEditProfileClick: () -> Unit, authViewModel: AuthViewModel = AuthViewModel(), navController: NavController, ) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -58,6 +69,32 @@ fun AthleteProfileScreen(athlete: Athlete, onEditProfileClick: () -> Unit) {
         ) {
             ProfileHeader(athlete)
             ProfileDetails(athlete)
+
+            Button(
+                onClick = {
+
+                    navController.navigate("login") {
+                        popUpTo(navController.graph.startDestinationId) {
+                            inclusive = true
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 30.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Secondary,
+                    contentColor = Color.White
+                ),
+                shape = RoundedCornerShape(15.dp)
+            ) {
+                Text(
+                    text = "Sign out",
+                    style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500))
+                )
+            }
+
+
         }
     }
 }
@@ -93,6 +130,7 @@ fun ProfileDetails(athlete: Athlete) {
             .padding(16.dp)
     ) {
         ProfileDetailRow(label = "Age", value = athlete.age.toString())
+
         // Aggiungi altre righe di dettagli come necessario
     }
 }
@@ -117,17 +155,19 @@ fun ProfileDetailRow(label: String, value: String) {
     }
 }
 
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun PreviewAthleteProfileScreen() {
     VimataTheme {
 
         val athlete = Athlete("","Jacopo", "Finzi","Kenzio","Jacopo@gmail","xxxxx",26)
+        val viewModel = AuthViewModel()
+        val NavController = rememberNavController()
 
-        AthleteProfileScreen(athlete, onEditProfileClick = {})
+        AthleteProfileScreen(athlete, onEditProfileClick = {},viewModel, NavController)
 
 
 
     }
-}
+}*/

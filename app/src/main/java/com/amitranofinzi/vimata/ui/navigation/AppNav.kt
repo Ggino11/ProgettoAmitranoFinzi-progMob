@@ -62,8 +62,8 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
         route = "athlete"
     ){
         composable("athlete_screen"){
-            //val viewModel = it.sharedViewModel<AthleteViewModel>(navController)
-            AthleteScreen()
+            val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
+            AthleteScreen(authViewModel,navController)
         }
     }
 

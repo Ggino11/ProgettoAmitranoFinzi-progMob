@@ -65,7 +65,7 @@ import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 @Composable
-fun LoginScreen( authViewModel: AuthViewModel = AuthViewModel(), navController: NavController) {
+fun LoginScreen( authViewModel: AuthViewModel = AuthViewModel(), navController: NavController ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -145,11 +145,8 @@ fun LoginScreen( authViewModel: AuthViewModel = AuthViewModel(), navController: 
 
                 Button(
                     onClick = {
-
                         navController.navigate("signup")
-
                     }
-
                     ,
                     modifier = Modifier
                         .fillMaxWidth()
