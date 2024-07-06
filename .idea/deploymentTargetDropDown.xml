@@ -5,6 +5,22 @@
       <entry key="OutlinedTextFieldWithValidation">
         <State />
       </entry>
+      <entry key="UserType">
+        <State>
+          <runningDeviceTargetSelectedWithDropDown>
+            <Target>
+              <type value="RUNNING_DEVICE_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="SERIAL_NUMBER" />
+                  <value value="R9CWB0128QD" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-07-06T10:02:21.405139500Z" />
+        </State>
+      </entry>
       <entry key="app">
         <State />
       </entry>

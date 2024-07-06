@@ -30,7 +30,7 @@ class AuthViewModel() : ViewModel() {
         _formState.value = when(field) {
             FormField.NAME -> _formState.value.copy(name = value)
             FormField.SURNAME -> _formState.value.copy(surname = value)
-            FormField.USERNAME -> _formState.value.copy(username = value)
+           // FormField.USERNAME -> _formState.value.copy(username = value)
             FormField.USER_TYPE -> _formState.value.copy(userType = value)
             FormField.EMAIL -> _formState.value.copy(email = value)
             FormField.PASSWORD -> _formState.value.copy(password = value)

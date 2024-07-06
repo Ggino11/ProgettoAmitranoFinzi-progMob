@@ -3,7 +3,7 @@ package com.amitranofinzi.vimata.data.model
 data class FormState (
     var name: String = "",
     var surname: String = "",
-    var username: String = "",
+    //var username: String = "",
     var userType: String = "",
     var email: String = "",
     var password: String = "",

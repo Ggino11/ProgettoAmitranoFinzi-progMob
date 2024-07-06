@@ -15,8 +15,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteScreen
 import com.amitranofinzi.vimata.ui.screen.auth.LoginScreen
-import com.amitranofinzi.vimata.ui.screen.auth.SignUpScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerScreen
+import com.amitranofinzi.vimata.ui.screens.SignUpScreen
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
