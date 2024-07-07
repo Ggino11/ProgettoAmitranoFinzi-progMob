@@ -59,7 +59,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3:1.1.0")
+    implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.compose.material:material-icons-extended-android:1.6.8")
 
     // Firebase
@@ -74,6 +74,8 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.0.0")
 
     implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("androidx.compose.material3:material3-android:1.2.1")
 
     // PDF viewer
     implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
