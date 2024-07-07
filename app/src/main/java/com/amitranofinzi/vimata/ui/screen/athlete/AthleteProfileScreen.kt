@@ -32,22 +32,26 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import coil.compose.rememberAsyncImagePainter
-import com.amitranofinzi.vimata.data.model.Athlete
+import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.ui.theme.GrayColor
-import com.amitranofinzi.vimata.ui.theme.VimataTheme
-import coil.compose.rememberImagePainter
 import com.amitranofinzi.vimata.ui.theme.Secondary
+import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AthleteProfileScreen(athlete: Athlete, onEditProfileClick: () -> Unit, authViewModel: AuthViewModel = AuthViewModel(), navController: NavController, ) {
+fun AthleteProfileScreen(onEditProfileClick: () -> Unit,
+                         athleteViewModel: AthleteViewModel = AthleteViewModel(),
+                         authViewModel: AuthViewModel = AuthViewModel(),
+                         navController: NavController ) {
+
+    // /*TODO add get function for retrieve athlete data
+    val athlete = User("","Jacopo", "Finzi","Kenzio","Jacopo@gmail","athlete","img.url")
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -72,7 +76,7 @@ fun AthleteProfileScreen(athlete: Athlete, onEditProfileClick: () -> Unit, authV
 
             Button(
                 onClick = {
-
+                    authViewModel.signOut()
                     navController.navigate("login") {
                         popUpTo(navController.graph.startDestinationId) {
                             inclusive = true
@@ -99,7 +103,7 @@ fun AthleteProfileScreen(athlete: Athlete, onEditProfileClick: () -> Unit, authV
     }
 }
 @Composable
-fun ProfileHeader(athlete: Athlete) {
+fun ProfileHeader(athlete: User) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -123,13 +127,13 @@ fun ProfileHeader(athlete: Athlete) {
 
 
 @Composable
-fun ProfileDetails(athlete: Athlete) {
+fun ProfileDetails(athlete: User) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
-        ProfileDetailRow(label = "Age", value = athlete.age.toString())
+        ProfileDetailRow(label = "Age", value = athlete.userType.toString())
 
         // Aggiungi altre righe di dettagli come necessario
     }

@@ -5,18 +5,20 @@ import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.amitranofinzi.vimata.ui.components.AthleteBNavBar
 import com.amitranofinzi.vimata.ui.components.TrainerBNavBar
-import com.amitranofinzi.vimata.ui.navigation.AthleteBottomNav
 import com.amitranofinzi.vimata.ui.navigation.TrainerBottomNav
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
+import com.amitranofinzi.vimata.viewmodel.AuthViewModel
+import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun TrainerScreen() {
+fun TrainerScreen(trainerViewModel: TrainerViewModel = TrainerViewModel(),
+                  authViewModel: AuthViewModel = AuthViewModel(),
+                  navController: NavController) {
     val bottomNavController = rememberNavController()
     Scaffold(
         bottomBar = {
@@ -24,10 +26,10 @@ fun TrainerScreen() {
                 TrainerBNavBar(bottomNavController)
             }
         })
-    { TrainerBottomNav(bottomNavController) }
+    { TrainerBottomNav(trainerViewModel, authViewModel, navController, bottomNavController) }
 }
 
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun PreviewTrainerScreen() {
@@ -35,3 +37,4 @@ fun PreviewTrainerScreen() {
         TrainerScreen()
     }
 }
+*/

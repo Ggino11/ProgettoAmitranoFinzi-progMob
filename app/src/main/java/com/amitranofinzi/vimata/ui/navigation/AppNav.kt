@@ -18,7 +18,9 @@ import com.amitranofinzi.vimata.ui.screen.auth.LoginScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerScreen
 import com.amitranofinzi.vimata.ui.screens.SignUpScreen
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
+import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
+import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
 @Composable
 fun AppNav() {
@@ -62,8 +64,10 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
         route = "athlete"
     ){
         composable("athlete_screen"){
+            /// ???? si può fare così?
+            val athleteViewModel = it.sharedViewModel<AthleteViewModel>(navController)
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
-            AthleteScreen(authViewModel,navController)
+            AthleteScreen(athleteViewModel,authViewModel,navController)
         }
     }
 
@@ -76,8 +80,9 @@ fun NavGraphBuilder.trainerGraph(navController: NavHostController) {
         route = "trainer"
     ){
         composable("trainer_screen"){
-            //val viewModel = it.sharedViewModel<TrainerViewModel>(navController)
-            TrainerScreen()
+            val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
+            val trainerViewModel = it.sharedViewModel<TrainerViewModel>(navController)
+            TrainerScreen(trainerViewModel,authViewModel, navController)
         }
     }
 

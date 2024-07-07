@@ -9,7 +9,7 @@ data class User(
     val password: String, // Hashed password
     val userType: String, // You can define an enum for UserType (ATHLETE, TRAINER)
     //val age: Int,
-    //val pictureUrl: String? = null, // nullable for optional profile picture
+    val profilePictureUrl: String? = null, // nullable for optional profile picture
     //val bio: String? = null // Optional user bio
 ) {
     // Converts User object to a Map, useful for Firebase Firestore

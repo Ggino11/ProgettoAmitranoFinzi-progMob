@@ -7,15 +7,14 @@ import com.amitranofinzi.vimata.data.model.FormField
 import com.amitranofinzi.vimata.data.model.FormState
 import com.amitranofinzi.vimata.data.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 class AuthViewModel() : ViewModel() {
 
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    private val authRepository : AuthRepository = AuthRepository(firebaseAuth, firestore)
+    private val authRepository : AuthRepository = AuthRepository()
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
@@ -23,6 +22,9 @@ class AuthViewModel() : ViewModel() {
     private val _formState = MutableStateFlow(FormState())
     val formState: StateFlow<FormState> get() = _formState
 
+    fun getCurrentUserID() : FirebaseUser? {
+        return authRepository.currentUser
+    }
 
     //function to updtates data stream for flow of formState
     // takes in input the name of the field and the value
@@ -44,7 +46,6 @@ class AuthViewModel() : ViewModel() {
 
 
     fun register(formState: FormState) {
-        Log.d("view model", firebaseAuth.toString())
         viewModelScope.launch {
             _authState.value = AuthState.Loading
             val result = authRepository.register(formState.email, formState.password, formState.userType, formState.name, formState.surname)
@@ -82,6 +83,11 @@ class AuthViewModel() : ViewModel() {
                 _authState.value = AuthState.Error(result.exceptionOrNull()?.message ?: "Unknown Error")
             }
         }
+    }
+
+    fun signOut() {
+        authRepository.signOut()
+        _authState.value = AuthState.Idle
     }
 
     sealed class AuthState {
