@@ -50,7 +50,7 @@ fun AthleteProfileScreen(onEditProfileClick: () -> Unit,
                          navController: NavController ) {
 
     // /*TODO add get function for retrieve athlete data
-    val athlete = User("","Jacopo", "Finzi","Kenzio","Jacopo@gmail","athlete","img.url")
+    val athlete = User("","Jacopo", "Finzi","Kenzio","Jacopo@gmail","athlete")
 
     Scaffold(
         topBar = {
@@ -111,7 +111,7 @@ fun ProfileHeader(athlete: User) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = rememberAsyncImagePainter(athlete.profilePictureUrl),
+            painter = rememberAsyncImagePainter("url"),
             contentDescription = "Profile Picture",
             modifier = Modifier
                 .size(128.dp)
