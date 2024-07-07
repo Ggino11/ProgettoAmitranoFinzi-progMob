@@ -20,12 +20,45 @@ class TrainerRepository() {
 
     // Given a list of athlete IDs fetch athlete data
     suspend fun getAthletes(athleteIds: List<String>): List<User> {
-        if (athleteIds.isEmpty()) return emptyList()
-        val snapshot = firestore.collection("users")
-            .whereIn("uid", athleteIds)
-            .get()
-            .await()
-        return snapshot.documents.map { it.toObject(User::class.java)!! }
+        Log.d("TrainerRepository", "getAthletes called with athleteIds: $athleteIds")
+
+        if (athleteIds.isEmpty()) {
+            Log.d("TrainerRepository", "Empty athleteIds list")
+            return emptyList()
+        }
+
+        try {
+            //Query firestore database in order to find all the users with uid equal to a value in AthleteIds
+            val snapshot = firestore.collection("users")
+                .whereIn("uid", athleteIds)
+                .get()
+                .await()
+
+            Log.d("TrainerRepository", "Fetched documents: ${snapshot.documents.map { it.id }}")
+
+            val athletes = snapshot.documents.mapNotNull { document ->
+                try {
+                    Log.d("TrainerRepository", "Document data: ${document.data}")
+                    val athlete = document.toObject(User::class.java)
+                    if (athlete != null) {
+                        Log.d("TrainerRepository", "User found: $athlete")
+                    } else {
+                        Log.d("TrainerRepository", "Document ${document.id} could not be converted to User")
+                    }
+                    athlete
+                } catch (e: Exception) {
+                    Log.e("TrainerRepository", "Error converting document to User: ${document.id}", e)
+                    null
+                }
+            }
+
+            Log.d("TrainerRepository", "Converted users: $athletes")
+            return athletes
+
+        } catch (e: Exception) {
+            Log.e("TrainerRepository", "Error fetching users", e)
+            return emptyList()
+        }
     }
 
 

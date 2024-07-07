@@ -19,7 +19,7 @@ fun AthleteBottomNav(athleteViewModel: AthleteViewModel = AthleteViewModel(),
                      bottomNavController: NavHostController) {
 
     NavHost(navController = bottomNavController, startDestination = AthleteBNavItem.Home.path) {
-        composable(AthleteBNavItem.Home.path) { AthleteHomeScreen() }
+        composable(AthleteBNavItem.Home.path) { AthleteHomeScreen(athleteViewModel,authViewModel,navController) }
         composable(AthleteBNavItem.Progress.path) { AthleteProgressScreen() }
         composable(AthleteBNavItem.Chat.path) { AthleteChatScreen() }
         composable(AthleteBNavItem.Profile.path) {
@@ -28,16 +28,5 @@ fun AthleteBottomNav(athleteViewModel: AthleteViewModel = AthleteViewModel(),
 
 }
 
-/*
-fun NavGraphBuilder.athleteBottomNavGraph(navController: NavController) {
 
-        navigation(
-            startDestination = AthleteBNavItem.Home.path,
-            route = "athlete"
-        ){
-
-        }
-
-}
-*/
 

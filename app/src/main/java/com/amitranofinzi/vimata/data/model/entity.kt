@@ -1,33 +1,23 @@
 package com.amitranofinzi.vimata.data.model
 
-//open class User(
-//    val nome: String,
-//    val cognome: String,
-//    val username: String,
-//    val email: String,
-//    val password: String,
-//    val eta: Int
-//)
-
-//
-//class Trainer(
-//    nome: String,
-//    cognome: String,
-//    username: String,
-//    email: String,
-//    password: String,
-//    eta: Int,
-//    val specializzazione: String // Aggiunta di un attributo specifico per l'Allenatore
-//) : User(nome, cognome, username, email, password, eta)
-
 data class Workout(
     val id: String,
-    val name: String,
+    val title: String,
     val status: String,
-    val trainerName: String,
+    val trainerID: String?,
+    val athleteID: String?,
     val pdfUrl: String
 )
+{    constructor() : this(
+    id = "",
+    title = "",
+    status = "",
+    trainerID = null,
+    athleteID = null,
+    pdfUrl = ""
+)
 
+}
 data class Esercizio(
     val id: Int,
     val nome: String,

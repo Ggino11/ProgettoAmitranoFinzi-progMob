@@ -25,9 +25,9 @@ fun WorkoutCard(modifier: Modifier = Modifier, workout: Workout, onClick: () -> 
             .clickable(onClick = onClick)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = workout.name, style = MaterialTheme.typography.bodyLarge)
+            Text(text = workout.title, style = MaterialTheme.typography.bodyLarge)
             Text(text = "Status: ${workout.status}", style = MaterialTheme.typography.bodyMedium)
-            Text(text = "Trainer: ${workout.trainerName}", style = MaterialTheme.typography.bodySmall)
+            Text(text = "Trainer: ${workout.trainerID}", style = MaterialTheme.typography.bodySmall)
         }
     }
 

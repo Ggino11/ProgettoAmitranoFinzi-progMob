@@ -21,10 +21,13 @@ class TrainerViewModel: ViewModel() {
     fun getAthletesForCoach(coachId: String) {
         viewModelScope.launch {
             try {
+                Log.d("TrainerViewModel", "Launching coroutine")
                 val athleteIds = trainerRepository.getAthleteIdsForCoach(coachId)
+                Log.d("TrainerViewModel", "Athlete IDs: $athleteIds")
                 val athleteDetails = trainerRepository.getAthletes(athleteIds)
+                Log.d("TrainerViewModel", "Athlete details fetched: $athleteDetails")
                 _athletes.value = athleteDetails
-                Log.d("vv", athleteIds.toString() )
+                Log.d("TrainerViewModel", "Athlete details assigned to LiveData")
 
             } catch (e: Exception) {
                 // Handle the error
