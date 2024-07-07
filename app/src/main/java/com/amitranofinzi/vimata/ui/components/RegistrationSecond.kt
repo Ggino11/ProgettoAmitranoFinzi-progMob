@@ -25,10 +25,12 @@ import com.amitranofinzi.vimata.ui.theme.Secondary
 @Composable
 fun UserCredentials(
     formState: FormState,
-    updateField: (FormField, String) -> Unit
+    updateField: (FormField, String) -> Unit,
+    emailAlreadyUsed: (email: String) -> Unit,
+    //validatePassword: (password: String) -> Unit
 ) {
     Column {
-        OutlinedTextField(
+        /*OutlinedTextField(
             value = formState.email,
             onValueChange = { updateField(FormField.EMAIL, it) },
             label = { Text("Email") },
@@ -48,32 +50,31 @@ fun UserCredentials(
                     contentDescription = "Email"
                 )
             },
+        )*/
+        UserInputField(
+            value = formState.email,
+            onValueChange = {
+                updateField(FormField.EMAIL, it)
+                emailAlreadyUsed(it)
+                            },
+            label = "Email",
+            error = formState.emailError,
+            errorMessage = if (formState.emailError) formState.emailErrorMessage else "",
+            leadingIcon = Icons.Default.Email
         )
-
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
+        UserInputField(
             value = formState.password,
-            onValueChange = { updateField(FormField.PASSWORD, it) },
-            label = { Text("Password") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            visualTransformation = PasswordVisualTransformation(),
-            colors = OutlinedTextFieldDefaults.colors(
-                cursorColor = Secondary,
-                focusedBorderColor = Secondary,
-                focusedLabelColor = Secondary,
-                focusedLeadingIconColor = Secondary
-            ),
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = "Lock"
-                )
+            onValueChange = {
+                updateField(FormField.PASSWORD, it)
+                emailAlreadyUsed(it)
             },
+            label = "Password",
+            error = formState.passwordError,
+            errorMessage = if (formState.passwordError) formState.passwordErrorMessage else "",
+            leadingIcon = Icons.Default.Lock,
+            visualTransformation = PasswordVisualTransformation()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -104,5 +105,6 @@ fun UserCredentials(
 
         Spacer(modifier = Modifier.height(8.dp))
     }
+
 }
 

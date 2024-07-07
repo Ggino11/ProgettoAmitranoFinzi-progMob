@@ -23,6 +23,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.amitranofinzi.vimata.ui.theme.Primary
+import com.amitranofinzi.vimata.ui.theme.Secondary
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -54,8 +56,11 @@ fun UserInputField(
             isError = error,
             visualTransformation = visualTransformation,
             colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = if (error) Color.Red else MaterialTheme.colorScheme.secondary,
-                unfocusedBorderColor = if (error) Color.Red else MaterialTheme.colorScheme.onSurface,
+                focusedBorderColor = if (error) Primary else MaterialTheme.colorScheme.secondary,
+                unfocusedBorderColor = if (error) Primary else MaterialTheme.colorScheme.onSurface,
+                focusedLabelColor = if (error) Primary else MaterialTheme.colorScheme.secondary,
+                focusedLeadingIconColor = if (error) Primary else MaterialTheme.colorScheme.secondary,
+                cursorColor = Secondary,
             )
         )
         if (error) {

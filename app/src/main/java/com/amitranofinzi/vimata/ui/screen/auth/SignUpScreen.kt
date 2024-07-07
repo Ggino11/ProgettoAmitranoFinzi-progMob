@@ -20,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -50,13 +51,11 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
     val formState by authViewModel.formState.collectAsState()
     val authState by authViewModel.authState.collectAsState()
     val context = LocalContext.current
-    val pagerState = rememberPagerState(pageCount = {
-        3
-    })
+    val pagerState = rememberPagerState(pageCount = { 3 })
     val coroutineScope = rememberCoroutineScope()
 
-    val isValidFormPage1 = formState.name.isNotEmpty() && formState.surname.isNotEmpty() && formState.userType.isNotEmpty()
-    val isFormValid = isValidFormPage1 && formState.email.isNotEmpty() && formState.password.isNotEmpty() &&
+
+    val isFormValid = formState.userType.isNotEmpty() && formState.name.isNotEmpty() && formState.surname.isNotEmpty() &&formState.email.isNotEmpty() && formState.password.isNotEmpty() &&
             formState.confirmPassword.isNotEmpty() && formState.password == formState.confirmPassword
 
     GradientBox(modifier = Modifier.fillMaxSize()) {
@@ -101,7 +100,9 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
                         )
                         2 -> UserCredentials(
                             formState = formState,
-                            updateField = authViewModel::updateField
+                            updateField = authViewModel::updateField,
+                            emailAlreadyUsed = authViewModel::emailAlreadyUsed
+                             //validatePassword = authViewModel::validatePassword
                         )
                     }
                 }
@@ -134,16 +135,32 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
                             }
                         } else {
                             authViewModel.register(formState)
-                            navController.navigate("Login")
                         }
                     },
-                    enabled = true,
+                    enabled = if (pagerState.currentPage == 2) isFormValid else true,
                     label = if (pagerState.currentPage < pagerState.pageCount - 1) "Next" else "Submit"
                 )
             }
         }
     }
+    LaunchedEffect(authState) {
+        when (authState) {
+
+            is AuthViewModel.AuthState.Authenticated -> {
+                // Check user type and navigate to the correct subgraph
+                val userType = (authState as AuthViewModel.AuthState.Authenticated).userType
+                val destination = if (userType == "athlete") "athlete" else "trainer"
+                navController.navigate(destination) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
+                }
+            }
+            else -> Unit
+        }
+    }
 }
+
 
 @Preview(showBackground = true)
 @Composable

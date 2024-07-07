@@ -8,8 +8,6 @@ data class FormState (
     var email: String = "",
     var password: String = "",
     var confirmPassword: String = "",
-    var nameError: Boolean = false,
-    var surnameError: Boolean = false,
     var emailError: Boolean = false,
     var passwordError: Boolean = false,
     var confirmPasswordError: Boolean = false,

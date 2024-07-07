@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+//import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class AuthRepository() {
@@ -14,16 +15,16 @@ class AuthRepository() {
 
     val currentUser: FirebaseUser? get() = firebaseAuth.currentUser
 
-//    suspend fun checkEmail(email: String){
-//        firestore.collection("users")
-//            .whereEqualTo("email", email).get()
-//            .addOnSuccessListener { documents ->
-//                result(!documents.isEmpty)
-//            }
-//            .addOnFailureListener {
-//                onResult(false)
-//            }
-//    }
+    //funciton to check if email already exists
+    suspend fun checkEmailExists(email: String): Boolean {
+        //check if email is already registered in firestore
+        val usersCollection = firestore.collection("users")
+            .whereEqualTo("email", email)
+            .get()
+            .await()
+        return !usersCollection.isEmpty //if is not empty return true
+
+  }
     suspend fun register(email: String, password: String, userType: String, name: String, surname: String): Result<Unit> {
         return try {
             val authResult = Firebase.auth.createUserWithEmailAndPassword(email, password).await()
@@ -58,6 +59,7 @@ class AuthRepository() {
         firebaseAuth.signOut()
     }
 
+
     // --------------------- GET FUNCTIONS-------------------------//
     suspend fun getUserType(userId: String): Result<String> {
         return try {
@@ -72,7 +74,5 @@ class AuthRepository() {
             Result.failure(e)
         }
     }
-
-
 
 }

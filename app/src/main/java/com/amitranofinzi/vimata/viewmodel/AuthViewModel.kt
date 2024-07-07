@@ -1,6 +1,5 @@
 package com.amitranofinzi.vimata.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amitranofinzi.vimata.data.model.FormField
@@ -8,7 +7,6 @@ import com.amitranofinzi.vimata.data.model.FormState
 import com.amitranofinzi.vimata.data.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -43,6 +41,32 @@ class AuthViewModel() : ViewModel() {
         }
 
     }
+
+    //check email exists
+    fun emailAlreadyUsed(email: String){
+        viewModelScope.launch {
+            // used to launch a coroutine. Inside this coroutine, the repository function authRepository.checkEmail(email) is called asynchronously
+            val emailExists = authRepository.checkEmailExists(email)
+            _formState.value = _formState.value.copy(
+                emailErrorMessage = if (emailExists) "Email already exists" else "",
+                emailError = emailExists)
+        }
+    }
+    /*validate password
+    *(?=.*[A-Z]): to ensure at least one uppercase letter exists.
+    *(?=.*[!@#\$%^&*()-_=+{};:,<.>]): to ensure at least one special character exists
+    *(.{6,}):  to ensure at least 6 chars --> firebase default
+    *  */
+//    fun validatePassword(password: String) {
+//        //regular expression
+//        val regex = Regex("^(?=.*[A-Z])(?=.*[!@#\$%^&*()-_=+{};:,<.>])(.{6,})")
+//        val isValid = regex.containsMatchIn(password)
+//        _formState.value = _formState.value.copy(
+//            passwordErrorMessage = if (isValid) "Password must contain at least one uppercase letter and one special character " else "",
+//            passwordError = isValid)
+//    }
+
+
 
 
     fun register(formState: FormState) {
@@ -90,6 +114,8 @@ class AuthViewModel() : ViewModel() {
         _authState.value = AuthState.Idle
     }
 
+
+    //validate signUpform
     sealed class AuthState {
         object Idle : AuthState()
         object Loading : AuthState()
