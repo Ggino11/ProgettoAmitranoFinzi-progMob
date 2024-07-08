@@ -20,8 +20,9 @@ class AuthViewModel() : ViewModel() {
     private val _formState = MutableStateFlow(FormState())
     val formState: StateFlow<FormState> get() = _formState
 
-    fun getCurrentUserID() : FirebaseUser? {
-        return authRepository.currentUser
+    fun getCurrentUserID() : String {
+        val currentUser = authRepository.currentUser
+        return currentUser?.uid ?: ""
     }
 
     //function to updtates data stream for flow of formState
@@ -52,6 +53,7 @@ class AuthViewModel() : ViewModel() {
                 emailError = emailExists)
         }
     }
+
     /*validate password
     *(?=.*[A-Z]): to ensure at least one uppercase letter exists.
     *(?=.*[!@#\$%^&*()-_=+{};:,<.>]): to ensure at least one special character exists

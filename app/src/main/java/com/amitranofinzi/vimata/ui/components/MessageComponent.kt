@@ -1,4 +1,5 @@
 package com.amitranofinzi.vimata.ui.components
+/*
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -22,7 +23,6 @@ import com.amitranofinzi.vimata.ui.theme.TextColor
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
 @Composable
 fun MessageBubble(
     message: Message,
@@ -73,7 +73,7 @@ fun PreviewMessageBubble() {
     val messageColorCurrentUser = Color(0xFFDCF8C6) // Example color for current user message
     val messageColorOtherUser = Color.White // Example color for other user message
     val textColor = Color.Black // Example text color
-
+    /*
     Column {
         // Message from current user
         MessageBubble(
@@ -100,3 +100,4 @@ fun PreviewMessageBubble() {
         )
     }
 }
+*/

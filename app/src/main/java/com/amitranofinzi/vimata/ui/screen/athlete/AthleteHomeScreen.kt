@@ -33,7 +33,7 @@ fun AthleteHomeScreen(athleteViewModel: AthleteViewModel = AthleteViewModel(),
 
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
-            text = "HOME",
+            text = "LE MIE SCHEDE",
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontWeight = FontWeight.Bold
             ),

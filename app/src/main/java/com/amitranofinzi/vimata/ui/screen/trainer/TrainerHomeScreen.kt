@@ -29,8 +29,7 @@ fun TrainerHomeScreen(trainerViewModel: TrainerViewModel = TrainerViewModel(),
 ) {
     val athletes: List<User> by trainerViewModel.athletes.observeAsState(emptyList())
 
-    val currentUser = authViewModel.getCurrentUserID()
-    val trainerID = currentUser?.uid ?: ""
+    val trainerID = authViewModel.getCurrentUserID()
 
     Log.d("trainer",trainerID)
     LaunchedEffect(trainerID) {

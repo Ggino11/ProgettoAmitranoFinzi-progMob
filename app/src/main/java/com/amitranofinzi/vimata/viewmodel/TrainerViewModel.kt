@@ -14,6 +14,7 @@ import kotlinx.coroutines.launch
 class TrainerViewModel: ViewModel() {
 
     private val trainerRepository : TrainerRepository = TrainerRepository()
+
     private val _athletes = MutableLiveData<List<User>>()
     val athletes: LiveData<List<User>> = _athletes
 
@@ -31,6 +32,7 @@ class TrainerViewModel: ViewModel() {
 
             } catch (e: Exception) {
                 // Handle the error
+                Log.d("trainerViewModel","error" )
                 _athletes.value = emptyList()
             }
         }

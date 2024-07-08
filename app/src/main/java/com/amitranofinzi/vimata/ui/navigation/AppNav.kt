@@ -9,17 +9,21 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteScreen
 import com.amitranofinzi.vimata.ui.screen.auth.LoginScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerScreen
+import com.amitranofinzi.vimata.ui.screen.viewer.TestSetViewerScreen
 import com.amitranofinzi.vimata.ui.screens.SignUpScreen
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
+import com.amitranofinzi.vimata.viewmodel.TestViewModel
 import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
 @Composable
@@ -44,7 +48,6 @@ fun NavGraphBuilder.authGraph(navController: NavHostController) {
     navigation( startDestination = "login", route = "auth"){
 
         composable("login"){
-
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
             LoginScreen(authViewModel = authViewModel, navController = navController);
         }
@@ -69,6 +72,15 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
             AthleteScreen(athleteViewModel,authViewModel,navController)
         }
+        composable("testSetDetails/{testSetId}",listOf( navArgument("testSetId") { type = NavType.StringType })
+        ){
+            backStackEntry ->
+            // Ottieni l'ID del test set dalla navigazione
+            val testSetId = backStackEntry.arguments?.getString("testSetId")
+            // Visualizza i dettagli del test set con l'ID specificato
+            TestSetViewerScreen(testSetId, navController)
+        }
+
     }
 
 }
