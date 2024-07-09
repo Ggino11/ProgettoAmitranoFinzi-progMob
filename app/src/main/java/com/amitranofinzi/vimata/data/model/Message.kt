@@ -1,8 +1,20 @@
 package com.amitranofinzi.vimata.data.model
 
-data class MMessage (
+import java.sql.Timestamp
+
+data class Message (
+    val chatId: String,
     val senderId: String = "",
-    val message: String = "",
-    val timeStamp:Long = 0
-)
+    var text: String = "",
+    val timeStamp: Timestamp,
+    val receiverId: String = ""
+) {
+    constructor() : this(
+        chatId = "",
+        senderId = "",
+        text = "",
+        timeStamp = Timestamp(System.currentTimeMillis()),
+        receiverId = ""
+    )}
+
 

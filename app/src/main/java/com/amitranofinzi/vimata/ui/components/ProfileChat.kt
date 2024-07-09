@@ -22,8 +22,10 @@ import androidx.compose.ui.unit.dp
 fun ProfileScreen(
     userName: String,
     userLastName: String,
-    onBackClicked: () -> Unit
+    onBackClicked: () -> Unit,
+    modifier: Modifier
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -61,6 +63,7 @@ fun ProfileScreenPreview() {
     ProfileScreen(
         userName = "John",
         userLastName = "Doe",
-        onBackClicked = {}
+        onBackClicked = {},
+        modifier = Modifier
     )
 }
