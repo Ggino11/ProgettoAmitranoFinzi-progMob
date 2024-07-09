@@ -52,20 +52,68 @@ class TestRepository {
     }
 
     suspend fun getTests(testSetId: String?): List<Test> {
-        if (testSetId != null) {
-            if (testSetId.isEmpty()) return emptyList()
+        Log.d("getTests", "Called with testSetId: $testSetId")
+
+        if (testSetId == null) {
+            Log.d("getTests", "testSetId is null")
+            return emptyList()
         }
-        val snapshot = testSetId?.let {
-            firestore.collection("testSets")
-                .document(it)
-                .collection("tests")
+
+        if (testSetId.isEmpty()) {
+            Log.d("getTests", "testSetId is empty")
+            return emptyList()
+        }
+
+        return try {
+            // Retrieve the testSet document
+            val testSetDocument = firestore.collection("testSets")
+                .document(testSetId)
                 .get()
                 .await()
+
+            if (!testSetDocument.exists()) {
+                Log.d("getTests", "TestSet document does not exist")
+                return emptyList()
+            }
+
+            val testSet = testSetDocument.toObject(TestSet::class.java)
+            if (testSet == null) {
+                Log.d("getTests", "Failed to convert document to TestSet")
+                return emptyList()
+            }
+
+            val testIds = testSet.testIDs
+            if (testIds.isEmpty()) {
+                Log.d("getTests", "TestSet has no testIDs")
+                return emptyList()
+            }
+
+            Log.d("getTests", "Fetching tests with IDs: $testIds")
+
+            // Retrieve the tests based on the test IDs
+            val snapshot = firestore.collection("tests")
+                .whereIn("id", testIds)
+                .get()
+                .await()
+
+            if (snapshot.isEmpty) {
+                Log.d("getTests", "No documents found in the snapshot")
+                return emptyList()
+            }
+
+            val tests = snapshot.documents.mapNotNull { document ->
+                val test = document.toObject(Test::class.java)
+                if (test == null) {
+                    Log.d("getTests", "Document ${document.id} could not be converted to Test")
+                }
+                test
+            }
+
+            Log.d("getTests", "Fetched ${tests.size} tests")
+            tests
+        } catch (e: Exception) {
+            Log.e("getTests", "Error fetching tests", e)
+            emptyList()
         }
-        if (snapshot != null) {
-            return snapshot.documents.map { it.toObject(Test::class.java)!! }
-        }
-        //TODO controlla bene questa funzione
-        return emptyList()
     }
 }

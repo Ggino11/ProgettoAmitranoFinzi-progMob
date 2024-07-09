@@ -1,5 +1,6 @@
 package com.amitranofinzi.vimata.ui.screen.viewer
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,22 +23,24 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.amitranofinzi.vimata.viewmodel.TestViewModel
+import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 
 @Composable
 fun TestSetViewerScreen(
+    athleteViewModel: AthleteViewModel = AthleteViewModel(),
     testSetId: String?,
     navController: NavController
     ) {
 
-    val testViewModel = TestViewModel()
-    val tests by testViewModel.tests.observeAsState(emptyList())
+    val tests by athleteViewModel.tests.observeAsState(emptyList())
 
     LaunchedEffect(testSetId) {
-        testViewModel.fetchTests(testSetId)
+        athleteViewModel.fetchTests(testSetId)
     }
-
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Log.d("TestSetViewer", tests.isEmpty().toString())
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         LazyColumn {
             items(tests) { test ->
                 Card(

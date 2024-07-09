@@ -1,5 +1,6 @@
 package com.amitranofinzi.vimata.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,7 +24,6 @@ import com.amitranofinzi.vimata.ui.screens.SignUpScreen
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
-import com.amitranofinzi.vimata.viewmodel.TestViewModel
 import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
 @Composable
@@ -67,19 +67,26 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
         route = "athlete"
     ){
         composable("athlete_screen"){
-            /// ???? si può fare così?
             val athleteViewModel = it.sharedViewModel<AthleteViewModel>(navController)
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
             AthleteScreen(athleteViewModel,authViewModel,navController)
         }
-        composable("testSetDetails/{testSetId}",listOf( navArgument("testSetId") { type = NavType.StringType })
+        composable("testSetDetails/{testSetId}",listOf( navArgument("testSetId") { type = NavType.StringType  })
         ){
-            backStackEntry ->
             // Ottieni l'ID del test set dalla navigazione
-            val testSetId = backStackEntry.arguments?.getString("testSetId")
+            val testSetId = it.arguments?.getString("testSetId")
+            Log.d("AppNav", testSetId.isNullOrEmpty().toString())
+            val athleteViewModel = it.sharedViewModel<AthleteViewModel>(navController)
             // Visualizza i dettagli del test set con l'ID specificato
-            TestSetViewerScreen(testSetId, navController)
+            TestSetViewerScreen(athleteViewModel,testSetId, navController)
         }
+        /*
+        composable("chatDetails/{chatId}", listOf( navArgument("chatId") ){ type = NavType.StringType}){
+            val chatId = it.arguments?.getString("chatId")
+            val athleteViewModel = it.sharedViewModel<AthleteViewModel>(navController)
+            singleChatScreen(athleteViewModel,chatId, navController)
+        }
+        */
 
     }
 
