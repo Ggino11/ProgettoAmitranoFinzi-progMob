@@ -17,8 +17,9 @@ class AthleteRepository(
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
 
-    suspend fun getAthletesWorkouts() : List<Workout> {
+    suspend fun getAthletesWorkouts(athleteID: String) : List<Workout> {
         val snapshot = firestore.collection("workouts")
+            .whereEqualTo("athleteID", athleteID)
             .get()
             .await()
         return snapshot.documents.mapNotNull { document->

@@ -29,13 +29,11 @@ class AthleteViewModel: ViewModel() {
     val tests: LiveData<List<Test>> get() = _tests
 
     private val athleteRepository : AthleteRepository = AthleteRepository()
-    init {
-        getWorkouts()
-    }
 
-    fun getWorkouts(){
+
+    fun fetchWorkouts(athleteID: String){
         viewModelScope.launch {
-            _workouts.value = athleteRepository.getAthletesWorkouts()
+            _workouts.value = athleteRepository.getAthletesWorkouts(athleteID)
         }
     }
 

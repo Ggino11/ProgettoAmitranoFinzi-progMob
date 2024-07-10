@@ -17,7 +17,7 @@ import com.amitranofinzi.vimata.ui.theme.Secondary
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 
 @Composable
-fun WorkoutCard(modifier: Modifier = Modifier, workout: Workout, onClick: () -> Unit) {
+fun WorkoutCard(modifier: Modifier = Modifier, workout: Workout, onClick: () -> Unit = {}) {
 
     Card(
         elevation = CardDefaults.cardElevation(

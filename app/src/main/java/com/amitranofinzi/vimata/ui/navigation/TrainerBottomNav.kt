@@ -22,7 +22,9 @@ fun TrainerBottomNav(trainerViewModel: TrainerViewModel = TrainerViewModel(),
 
     NavHost(navController = bottomNavController, startDestination = TrainerBNavItem.Home.path) {
 
-        composable(TrainerBNavItem.Home.path) { TrainerHomeScreen() }
+        composable(TrainerBNavItem.Home.path) {
+            TrainerHomeScreen(trainerViewModel, authViewModel, navController)
+        }
 
         composable(TrainerBNavItem.Workbook.path) {
             TrainerWorkbookScreen(trainerViewModel, authViewModel, navController)

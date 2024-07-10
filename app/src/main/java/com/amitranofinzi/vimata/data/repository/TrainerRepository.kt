@@ -2,6 +2,7 @@ package com.amitranofinzi.vimata.data.repository
 
 import android.util.Log
 import com.amitranofinzi.vimata.data.model.User
+import com.amitranofinzi.vimata.data.model.Workout
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -61,5 +62,22 @@ class TrainerRepository() {
         }
     }
 
+    suspend fun getAthleteWorkoutsByTrainer(athleteID: String, trainerID: String): List<Workout> {
+        return try {
+            val snapshot = firestore.collection("workouts")
+                .whereEqualTo("athleteID", athleteID)
+                .whereEqualTo("trainerID", trainerID)
+                .get()
+                .await()
+
+            snapshot.documents.mapNotNull { document ->
+                document.toObject(Workout::class.java)
+            }
+        } catch (e: Exception) {
+            // Log the error and return an empty list or handle the error as needed
+            Log.e("FirestoreQuery", "Error fetching workouts", e)
+            emptyList()
+        }
+    }
 
 }

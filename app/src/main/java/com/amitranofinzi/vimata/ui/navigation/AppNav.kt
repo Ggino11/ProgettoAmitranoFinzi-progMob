@@ -21,6 +21,7 @@ import com.amitranofinzi.vimata.ui.screen.auth.LoginScreen
 import com.amitranofinzi.vimata.ui.screen.chat.SingleChatScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerWorkbookScreen
+import com.amitranofinzi.vimata.ui.screen.viewer.AthleteHandlerViewerScreen
 import com.amitranofinzi.vimata.ui.screen.viewer.CollectionViewerScreen
 import com.amitranofinzi.vimata.ui.screen.viewer.TestSetViewerScreen
 import com.amitranofinzi.vimata.ui.screens.SignUpScreen
@@ -122,6 +123,18 @@ fun NavGraphBuilder.trainerGraph(navController: NavHostController) {
             val trainerViewModel = it.sharedViewModel<TrainerViewModel>(navController)
             // Visualizza i dettagli del test set con l'ID specificato
             CollectionViewerScreen(trainerViewModel,collectionID, navController)
+        }
+        composable("athleteHandler/{athleteID}",listOf( navArgument("athleteID") { type = NavType.StringType  })
+        ){
+            // Ottieni l'ID del test set dalla navigazione
+            val athleteID = it.arguments?.getString("athleteID")
+            Log.d("AppNav-TrainerGraph", athleteID.isNullOrEmpty().toString())
+
+            val trainerViewModel = it.sharedViewModel<TrainerViewModel>(navController)
+            val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
+
+            // Visualizza i dettagli del test set con l'ID specificato
+            AthleteHandlerViewerScreen(trainerViewModel,authViewModel,athleteID, navController)
         }
     }
 

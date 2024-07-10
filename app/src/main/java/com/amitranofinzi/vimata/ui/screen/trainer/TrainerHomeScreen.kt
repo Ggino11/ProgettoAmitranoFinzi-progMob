@@ -1,8 +1,10 @@
 package com.amitranofinzi.vimata.ui.screen.trainer
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.ui.components.AthleteCard
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
@@ -24,8 +27,10 @@ import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
 @Composable
-fun TrainerHomeScreen(trainerViewModel: TrainerViewModel = TrainerViewModel(),
-                      authViewModel: AuthViewModel = AuthViewModel()
+fun TrainerHomeScreen(
+    trainerViewModel: TrainerViewModel = TrainerViewModel(),
+    authViewModel: AuthViewModel = AuthViewModel(),
+    navController: NavController
 ) {
     val athletes: List<User> by trainerViewModel.athletes.observeAsState(emptyList())
 
@@ -49,13 +54,20 @@ fun TrainerHomeScreen(trainerViewModel: TrainerViewModel = TrainerViewModel(),
 
         LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
             items(athletes) { athlete ->
-                AthleteCard(athlete = athlete)
+                AthleteCard(athlete = athlete,
+                            modifier = Modifier.fillMaxWidth()
+                                                .padding(vertical = 8.dp)
+                                                .clickable {
+
+                                                    navController.navigate("athleteHandler/${athlete.uid}")
+                                                }
+                )
             }
         }
 
     }
 }
-
+/*
 @Preview(showBackground = true)
 @Composable
 fun PreviewHomeTrainerScreen() {
@@ -63,3 +75,4 @@ fun PreviewHomeTrainerScreen() {
         TrainerHomeScreen()
     }
 }
+*/

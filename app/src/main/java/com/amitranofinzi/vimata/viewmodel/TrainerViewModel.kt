@@ -11,12 +11,18 @@ import com.amitranofinzi.vimata.data.repository.WorkbookRepository
 import kotlinx.coroutines.launch
 import com.amitranofinzi.vimata.data.model.Exercise
 import com.amitranofinzi.vimata.data.model.Collection
+import com.amitranofinzi.vimata.data.model.Test
+import com.amitranofinzi.vimata.data.model.TestSet
+import com.amitranofinzi.vimata.data.model.Workout
+import com.amitranofinzi.vimata.data.repository.TestRepository
+
 
 
 class TrainerViewModel: ViewModel() {
 
     private val trainerRepository : TrainerRepository = TrainerRepository()
     private val workbookRepository : WorkbookRepository = WorkbookRepository()
+    private val testRepository : TestRepository = TestRepository()
 
     private val _athletes = MutableLiveData<List<User>>()
     val athletes: LiveData<List<User>> = _athletes
@@ -30,6 +36,15 @@ class TrainerViewModel: ViewModel() {
 
     private val _collection = MutableLiveData<Collection>()
     val collection: LiveData<Collection> = _collection
+
+    private val _testSets = MutableLiveData<List<TestSet>>()
+    val testSets: LiveData<List<TestSet>>  get() = _testSets
+
+    private val _tests = MutableLiveData<List<Test>>()
+    val tests: LiveData<List<Test>> get() = _tests
+
+    private val _workouts = MutableLiveData<List<Workout>>()
+    val workouts: LiveData<List<Workout>> = _workouts
 
     // Athletes functions
     fun getAthletesForCoach(coachId: String) {
@@ -50,6 +65,52 @@ class TrainerViewModel: ViewModel() {
             }
         }
     }
+
+    //WORKOUT functions
+    fun fetchWorkouts(athleteID: String, trainerID: String){
+        viewModelScope.launch {
+            _workouts.value = trainerRepository.getAthleteWorkoutsByTrainer(athleteID,trainerID)
+        }
+    }
+
+    //TEST functions
+    fun fetchTestSets(athleteID: String) {
+        Log.d("testViewModel","fetchTestSets" )
+
+        viewModelScope.launch {
+            try {
+                val fetchedTestSets = testRepository.getTestSetsForAthlete(athleteID)
+                Log.d("testViewModel", "Fetched ${fetchedTestSets.size} test sets")
+                fetchedTestSets.forEach {
+                    Log.d("testViewModel", "TestSet: ${it.title}")
+                }
+                _testSets.setValue(fetchedTestSets)
+                Log.d("testViewModel", "Test sets updated in LiveData")
+            } catch (e: Exception) {
+                // Handle the error
+                Log.d("testViewModel","error fetching testSets" )
+                _testSets.setValue(emptyList())
+            }
+        }
+    }
+
+    fun fetchTests(testSetId: String?) {
+        viewModelScope.launch {
+            try {
+                val fetchedTests = testRepository.getTests(testSetId)
+                Log.d("testViewModel", "Fetched ${fetchedTests.size} test sets")
+                fetchedTests.forEach {
+                    Log.d("testViewModel", "TestSet: ${it.exerciseName}")
+                }
+                _tests.setValue(fetchedTests)
+            } catch (e: Exception) {
+                // Handle the error
+                Log.d("testViewModel","error fetching tests" )
+
+            }
+        }
+    }
+
 
     //Collection functions
     fun fetchCollections(trainerID: String) {
