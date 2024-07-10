@@ -36,7 +36,6 @@ class ChatViewModel: ViewModel() {
     }
     // Function to fetch relationships based on user ID and type
     fun fetchChats(relationshipIDs: List<String>) {
-
         viewModelScope.launch(Dispatchers.IO) {
             val fetchedChats = chatRepository.getChats(relationshipIDs)
             _chats.postValue(fetchedChats)
