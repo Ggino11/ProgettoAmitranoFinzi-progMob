@@ -1,5 +1,6 @@
 package com.amitranofinzi.vimata.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -16,7 +17,8 @@ class ChatViewModel: ViewModel() {
 
     //Create live data for relationship
     private val _relationships = MutableLiveData<List<Relationship>>()
-    val relaionship: LiveData<List<Relationship>> get() =_relationships
+    val relationships: LiveData<List<Relationship>> get() =_relationships
+
     //Create live data for chats
     private val _chats = MutableLiveData<List<Chat>>()
     val chats: LiveData<List<Chat>> get() = _chats
@@ -24,21 +26,30 @@ class ChatViewModel: ViewModel() {
     private val _messages = MutableLiveData<List<Message>>()
     val messages: LiveData<List<Message>> get() = _messages
 
-
+    fun fetchRelationship(userID: String, userType: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("ChatViewModel", "fetching relationships with ${userID} and ${userType}")
+            val fetchedRelationships = chatRepository.getRelationships(userID, userType)
+            Log.d("ChatViewModel", fetchedRelationships.toString())
+            _relationships.postValue(fetchedRelationships)
+        }
+    }
     // Function to fetch relationships based on user ID and type
     fun fetchChats(relationshipIDs: List<String>) {
+
         viewModelScope.launch(Dispatchers.IO) {
             val fetchedChats = chatRepository.getChats(relationshipIDs)
             _chats.postValue(fetchedChats)
         }
+
     }
 
     // Function to fetch messages based on chat ID
     fun fetchMessages(chatId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             val fetchedMessages = chatRepository.getMessages(chatId)
-//            _messages.value = fetchMessages
-            _messages.postValue(fetchedMessages)
+            _messages.value = fetchedMessages
+//            _messages.postValue(fetchedMessages)
         }
     }
 

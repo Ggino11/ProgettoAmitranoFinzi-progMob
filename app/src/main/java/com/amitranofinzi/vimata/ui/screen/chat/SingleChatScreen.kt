@@ -2,34 +2,43 @@ package com.amitranofinzi.vimata.ui.screen.chat
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
+import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.navigation.NavController
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.ui.components.ChatBox
 import com.amitranofinzi.vimata.ui.components.MessageBubble
 import com.amitranofinzi.vimata.ui.components.ProfileScreen
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
+import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 import com.amitranofinzi.vimata.viewmodel.ChatViewModel
 
 
 @Composable
 fun SingleChatScreen(
-    user: User,
-    message: Message,
-    chatId: String,
-    chatViewModel: ChatViewModel
+    authViewModel: AuthViewModel = AuthViewModel(),
+    chatViewModel: ChatViewModel = ChatViewModel(),
+    chatId: String?,
+    navController: NavController
 ) {
     val messages: List<Message> by chatViewModel.messages.observeAsState(emptyList())
 //    val newMessage = remember { Message(senderId = user.uid, chatId = "chatId", text = "") }
 
+
+    /*
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (profileRef, messagesRef, chatBoxRef) = createRefs()
 
@@ -88,11 +97,26 @@ fun SingleChatScreen(
 
         }
     }
+
+     */
+
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
+
+
+        if (chatId != null) {
+            Text(text = chatId)
+        }
+    }
 }
+
+
 
 @Composable
 @Preview(showBackground = true)
 fun SingleChatScreenPreview() {
+    /*
     VimataTheme {
         val user = User("userId", "John", "Doe","doe","fnweoi","trainer") // Esempio di utente
         val message = Message("chatId", "userId", "text",
@@ -105,4 +129,5 @@ fun SingleChatScreenPreview() {
             chatViewModel = chatViewModel
         )
     }
+    */
 }

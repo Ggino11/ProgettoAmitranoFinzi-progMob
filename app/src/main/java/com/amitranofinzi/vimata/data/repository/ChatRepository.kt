@@ -20,21 +20,35 @@ class ChatRepository() {
      * Fetches relationships (chats) associated with a specific user ID.
      * takes user id and user type and fetches all relationship for that user
      */
-    suspend fun fetchRelationships(userId: String, userType: String): List<Relationship> {
+    suspend fun getRelationships(userId: String, userType: String): List<Relationship> {
         return try {
-            //get snapshot for athlete or trainer based on user type
-            val snapshot = if (userType == "athlete") {
+            Log.d("ChatRepository", "UserID: $userId")
+            Log.d("ChatRepository", "UserType: $userType")
+
+            // Scegli la collezione giusta in base al tipo di utente
+            val query = if (userType == "athlete") {
                 firestore.collection("relationships")
                     .whereEqualTo("athleteID", userId)
-                    .get()
-                    .await()
             } else {
                 firestore.collection("relationships")
                     .whereEqualTo("trainerID", userId)
-                    .get()
-                    .await()
             }
-            snapshot.documents.mapNotNull { it.toObject(Relationship::class.java) }
+
+            val snapshot = query.get().await()
+
+            if (snapshot.isEmpty) {
+                Log.d("ChatRepository", "No relationships found for user $userId of type $userType")
+                return emptyList()
+            }
+
+            val relationships = snapshot.documents.mapNotNull {
+                it.toObject(Relationship::class.java)?.apply {
+                    Log.d("ChatRepository", "Relationship found: $this")
+                }
+            }
+
+            Log.d("ChatRepository", "Total relationships found: ${relationships.size}")
+            relationships
         } catch (e: Exception) {
             Log.e("ChatRepository", "Error fetching relationships", e)
             emptyList()
@@ -43,6 +57,12 @@ class ChatRepository() {
 
     //get chats based on relationship id
     suspend fun getChats(relationshipIDs: List<String>): List<Chat> {
+        // Verifica che relationshipIDs non sia vuota
+        if (relationshipIDs.isEmpty()) {
+            Log.e("ChatRepository", "Error: Empty relationshipIDs list provided")
+            return emptyList()
+        }
+
         return try {
             val snapshot = firestore.collection("chats")
                 .whereIn("relationshipID", relationshipIDs)

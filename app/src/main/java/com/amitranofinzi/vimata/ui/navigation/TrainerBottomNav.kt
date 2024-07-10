@@ -5,16 +5,18 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.amitranofinzi.vimata.ui.screen.trainer.TrainerChatScreen
+import com.amitranofinzi.vimata.ui.screen.chat.ListChatScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerHomeScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerProfileScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerWorkbookScreen
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
+import com.amitranofinzi.vimata.viewmodel.ChatViewModel
 import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
 @Composable
 fun TrainerBottomNav(trainerViewModel: TrainerViewModel = TrainerViewModel(),
                      authViewModel: AuthViewModel = AuthViewModel(),
+                     chatViewModel: ChatViewModel = ChatViewModel(),
                      navController: NavController,
                      bottomNavController: NavHostController) {
 
@@ -25,7 +27,9 @@ fun TrainerBottomNav(trainerViewModel: TrainerViewModel = TrainerViewModel(),
         composable(TrainerBNavItem.Workbook.path) {
             TrainerWorkbookScreen(trainerViewModel, authViewModel, navController)
         }
-        composable(TrainerBNavItem.Chat.path) { TrainerChatScreen() }
+        composable(TrainerBNavItem.Chat.path) {
+            ListChatScreen(chatViewModel,authViewModel,navController)
+        }
 
         composable(TrainerBNavItem.Profile.path) {
             TrainerProfileScreen(onEditProfileClick = {}, trainerViewModel, authViewModel, navController)

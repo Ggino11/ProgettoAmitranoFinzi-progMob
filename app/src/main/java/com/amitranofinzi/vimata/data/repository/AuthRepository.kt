@@ -1,6 +1,8 @@
 package com.amitranofinzi.vimata.data.repository
 
+import android.util.Log
 import com.amitranofinzi.vimata.data.model.User
+import com.amitranofinzi.vimata.data.model.Workout
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -62,6 +64,20 @@ class AuthRepository() {
 
 
     // --------------------- GET FUNCTIONS-------------------------//
+    suspend fun getUser(userId: String): User? {
+        return try {
+            val snapshot = firestore.collection("users")
+                .document(userId)
+                .get()
+                .await()
+
+            snapshot.toObject(User::class.java)
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Error fetching user", e)
+            null
+        }
+    }
+
     suspend fun getUserType(userId: String): Result<String> {
         return try {
             val document = firestore.collection("users").document(userId).get().await()

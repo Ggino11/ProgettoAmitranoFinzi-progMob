@@ -1,9 +1,14 @@
 package com.amitranofinzi.vimata.viewmodel
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.FormField
 import com.amitranofinzi.vimata.data.model.FormState
+import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,11 +24,21 @@ class AuthViewModel() : ViewModel() {
     private val _formState = MutableStateFlow(FormState())
     val formState: StateFlow<FormState> get() = _formState
 
+    private val _user = MutableLiveData<User?>()
+    val user: LiveData<User?> get() = _user
+
     fun getCurrentUserID() : String {
         val currentUser = authRepository.currentUser
         return currentUser?.uid ?: ""
     }
 
+    fun fetchUser(userID : String) {
+        viewModelScope.launch {
+            val fetchedUser = authRepository.getUser(userID)
+            Log.d("AuthViewModel", fetchedUser.toString())
+            _user.value = fetchedUser
+        }
+    }
     //function to updtates data stream for flow of formState
     // takes in input the name of the field and the value
     fun updateField(field: FormField, value: String) {

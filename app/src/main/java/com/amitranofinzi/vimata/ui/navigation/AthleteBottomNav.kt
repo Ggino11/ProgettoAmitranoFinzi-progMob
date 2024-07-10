@@ -11,10 +11,12 @@ import com.amitranofinzi.vimata.ui.screen.athlete.AthleteProgressScreen
 import com.amitranofinzi.vimata.ui.screen.chat.ListChatScreen
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
+import com.amitranofinzi.vimata.viewmodel.ChatViewModel
 
 @Composable
 fun AthleteBottomNav(athleteViewModel: AthleteViewModel = AthleteViewModel(),
                      authViewModel: AuthViewModel = AuthViewModel(),
+                     chatViewModel: ChatViewModel = ChatViewModel(),
                      navController: NavController,
                      bottomNavController: NavHostController) {
     NavHost(navController = bottomNavController, startDestination = AthleteBNavItem.Home.path) {
@@ -22,7 +24,9 @@ fun AthleteBottomNav(athleteViewModel: AthleteViewModel = AthleteViewModel(),
         composable(AthleteBNavItem.Progress.path) {
             AthleteProgressScreen(athleteViewModel, authViewModel, navController)
         }
-        composable(AthleteBNavItem.Chat.path) { ListChatScreen() }
+        composable(AthleteBNavItem.Chat.path) {
+            ListChatScreen(chatViewModel,authViewModel,navController)
+        }
         composable(AthleteBNavItem.Profile.path) {
             AthleteProfileScreen(onEditProfileClick = {}, athleteViewModel,authViewModel, navController) }
     }

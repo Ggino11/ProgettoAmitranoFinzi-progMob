@@ -11,6 +11,7 @@ import com.amitranofinzi.vimata.ui.components.TrainerBNavBar
 import com.amitranofinzi.vimata.ui.navigation.TrainerBottomNav
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
+import com.amitranofinzi.vimata.viewmodel.ChatViewModel
 import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
 
@@ -18,6 +19,7 @@ import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 @Composable
 fun TrainerScreen(trainerViewModel: TrainerViewModel = TrainerViewModel(),
                   authViewModel: AuthViewModel = AuthViewModel(),
+                  chatViewModel: ChatViewModel = ChatViewModel(),
                   navController: NavController) {
     val bottomNavController = rememberNavController()
     Scaffold(
@@ -26,7 +28,7 @@ fun TrainerScreen(trainerViewModel: TrainerViewModel = TrainerViewModel(),
                 TrainerBNavBar(bottomNavController)
             }
         })
-    { TrainerBottomNav(trainerViewModel, authViewModel, navController, bottomNavController) }
+    { TrainerBottomNav(trainerViewModel, authViewModel, chatViewModel, navController, bottomNavController) }
 }
 
 /*

@@ -39,7 +39,6 @@ class AthleteViewModel: ViewModel() {
         }
     }
 
-
     //TEST functions
     fun fetchTestSets(athleteID: String) {
         Log.d("testViewModel","fetchTestSets" )
@@ -69,7 +68,7 @@ class AthleteViewModel: ViewModel() {
                 fetchedTests.forEach {
                     Log.d("testViewModel", "TestSet: ${it.exerciseName}")
                 }
-                _tests.value = fetchedTests
+                _tests.setValue(fetchedTests)
             } catch (e: Exception) {
                 // Handle the error
                 Log.d("testViewModel","error fetching tests" )

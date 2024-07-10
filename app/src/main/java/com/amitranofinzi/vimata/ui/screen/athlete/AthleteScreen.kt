@@ -10,12 +10,14 @@ import com.amitranofinzi.vimata.ui.components.AthleteBNavBar
 import com.amitranofinzi.vimata.ui.navigation.AthleteBottomNav
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
+import com.amitranofinzi.vimata.viewmodel.ChatViewModel
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun AthleteScreen(athleteViewModel: AthleteViewModel = AthleteViewModel(),
                   authViewModel: AuthViewModel = AuthViewModel(),
+                  chatViewModel: ChatViewModel = ChatViewModel(),
                   navController: NavController) {
 
         val bottomNavController = rememberNavController()
@@ -25,7 +27,7 @@ fun AthleteScreen(athleteViewModel: AthleteViewModel = AthleteViewModel(),
                     AthleteBNavBar(bottomNavController)
                 }
             })
-            { AthleteBottomNav(athleteViewModel, authViewModel, navController, bottomNavController) }
+            { AthleteBottomNav(athleteViewModel, authViewModel, chatViewModel, navController, bottomNavController) }
     }
 
 /*

@@ -18,6 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteScreen
 import com.amitranofinzi.vimata.ui.screen.auth.LoginScreen
+import com.amitranofinzi.vimata.ui.screen.chat.SingleChatScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerWorkbookScreen
 import com.amitranofinzi.vimata.ui.screen.viewer.CollectionViewerScreen
@@ -26,6 +27,7 @@ import com.amitranofinzi.vimata.ui.screens.SignUpScreen
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
+import com.amitranofinzi.vimata.viewmodel.ChatViewModel
 import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
 @Composable
@@ -71,7 +73,9 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
         composable("athlete_screen"){
             val athleteViewModel = it.sharedViewModel<AthleteViewModel>(navController)
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
-            AthleteScreen(athleteViewModel,authViewModel,navController)
+            val chatViewModel = it.sharedViewModel<ChatViewModel>(navController)
+
+            AthleteScreen(athleteViewModel, authViewModel, chatViewModel, navController)
         }
         composable("testSetDetails/{testSetId}",listOf( navArgument("testSetId") { type = NavType.StringType  })
         ){
@@ -82,13 +86,16 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
             // Visualizza i dettagli del test set con l'ID specificato
             TestSetViewerScreen(athleteViewModel,testSetId, navController)
         }
-        /*
-        composable("chatDetails/{chatId}", listOf( navArgument("chatId") ){ type = NavType.StringType}){
+
+        composable("chatDetails/{chatId}", listOf( navArgument("chatId") { type = NavType.StringType})
+        ){
             val chatId = it.arguments?.getString("chatId")
-            val athleteViewModel = it.sharedViewModel<AthleteViewModel>(navController)
-            singleChatScreen(athleteViewModel,chatId, navController)
+            val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
+            val chatViewModel = it.sharedViewModel<ChatViewModel>(navController)
+
+            SingleChatScreen(authViewModel,chatViewModel,chatId, navController)
         }
-        */
+
 
     }
 
@@ -103,7 +110,8 @@ fun NavGraphBuilder.trainerGraph(navController: NavHostController) {
         composable("trainer_screen"){
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
             val trainerViewModel = it.sharedViewModel<TrainerViewModel>(navController)
-            TrainerScreen(trainerViewModel,authViewModel, navController)
+            val chatViewModel = it.sharedViewModel<ChatViewModel>(navController)
+            TrainerScreen(trainerViewModel,authViewModel,chatViewModel, navController)
         }
         composable("collection/{collectionID}",listOf( navArgument("collectionID") { type = NavType.StringType  })
         ){
