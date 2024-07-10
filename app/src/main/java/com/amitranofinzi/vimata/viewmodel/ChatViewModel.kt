@@ -9,6 +9,7 @@ import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.data.model.Relationship
 import com.amitranofinzi.vimata.data.repository.ChatRepository
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -54,17 +55,36 @@ class ChatViewModel: ViewModel() {
 
     // Function to send a message to a specific chat
     fun sendMessage(chatId: String, message: Message) {
-        viewModelScope.launch(Dispatchers.IO) {
-            chatRepository.sendMessage(chatId, message)
+        Log.d("ChatViewModel", "Preparing to send message: ${message.text} to chatId: $chatId")
+        viewModelScope.launch {
+            try {
+                chatRepository.sendMessage(chatId, message)
+                Log.d("ChatViewModel", "Message sent successfully to chatId: $chatId")
+            } catch (e: Exception) {
+                Log.e("ChatViewModel", "Error sending message to chatId: $chatId", e)
+            }
         }
     }
+
 
     // Function to listen for real-time updates to messages in a specific chat
-    fun listenForMessages(chatId: String, onMessagesChanged: (List<Message>) -> Unit) {
-        chatRepository.listenForMessages(chatId) { messages ->
-            onMessagesChanged(messages)
-            _messages.postValue(messages) // Optionally update LiveData for observing changes
+//    fun listenForMessages(chatId: String, onMessagesChanged: (List<Message>) -> Unit) {
+//        chatRepository.listenForMessages(chatId) { messages ->
+//            onMessagesChanged(messages)
+//            _messages.postValue(messages) // Optionally update LiveData for observing changes
+//        }
+//    }
+    private var chatListener: ListenerRegistration? = null
+
+    fun listenForMessages(chatId: String) {
+        chatListener?.remove() // Rimuovi eventuali listener esistenti
+
+        chatListener = chatRepository.listenForMessages(chatId) { messages ->
+            _messages.value = messages
         }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        chatListener?.remove()}
 }

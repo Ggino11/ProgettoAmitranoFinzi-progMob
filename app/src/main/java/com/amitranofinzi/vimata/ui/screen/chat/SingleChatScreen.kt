@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -12,6 +13,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import com.amitranofinzi.vimata.data.model.Message
+import com.amitranofinzi.vimata.ui.components.ChatBox
 import com.amitranofinzi.vimata.ui.components.MessageBubble
 import com.amitranofinzi.vimata.ui.components.ProfileChatBar
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
@@ -27,17 +29,24 @@ fun SingleChatScreen(
 ) {
     val messages: List<Message> by chatViewModel.messages.observeAsState(emptyList())
     //val newMessage = remember { Message(senderId = user.uid, chatId = "chatId", text = "") }
-    val user by authViewModel.user.observeAsState()
+    val receiver by authViewModel.user.observeAsState()
+    val senderId = authViewModel.getCurrentUserID()
 
-    //FETCH MESSAGES
+    val receiverId = receiver!!.uid
+    //FETCH MESSAGES using flow
+    LaunchedEffect(chatId ) {
+        if (chatId != null) {
+            chatViewModel.listenForMessages(chatId)
+        }
+    }
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (profileRef, messagesRef, chatBoxRef) = createRefs()
 
         // Profile section
         ProfileChatBar(
-            userName = user?.name,
-            userLastName = user?.surname,
+            userName = receiver?.name,
+            userLastName = receiver?.surname,
             onBackClicked = { /*NAVIGATION*/ },
             modifier = Modifier.constrainAs(profileRef) {
                 top.linkTo(parent.top)
@@ -63,7 +72,7 @@ fun SingleChatScreen(
                 Column {
                     MessageBubble(
                         message = message,
-                        currentUserId = user?.uid
+                        currentUserId = senderId
 
                     )
                 }
@@ -80,12 +89,18 @@ fun SingleChatScreen(
                 width = Dimension.fillToConstraints
             })
         {
-//            ChatBox(
-//                message = message,
-//                onSend = { message ->
-//                    chatViewModel.sendMessage(message.chatId, message)
-//                }
-//            )
+            chatId?.let {
+                if (receiverId != null) {
+                    ChatBox(
+                        senderId = senderId,
+                        receiverId = receiverId,
+                        chatId = it,
+                        onSend = { chatId: String, message: Message ->
+                            chatViewModel.sendMessage(chatId, message )
+                        }
+                    )
+                }
+            }
 
         }
     }

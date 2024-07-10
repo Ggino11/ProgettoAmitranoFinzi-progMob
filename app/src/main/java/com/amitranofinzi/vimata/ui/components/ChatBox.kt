@@ -14,29 +14,36 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.ui.theme.BgColor
 import com.amitranofinzi.vimata.ui.theme.MessageColor
 import com.amitranofinzi.vimata.ui.theme.Secondary
-import com.amitranofinzi.vimata.ui.theme.VimataTheme
+import java.sql.Timestamp
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatBox(
 
-//    messageText: Message,
-    onSend: (Message) -> Unit,
-    message: Message
+    //messageText: Message,
+    onSend: (String, Message) -> Unit,
+    senderId: String,
+    receiverId: String,
+    chatId: String,
+
 
 ) {
+var textMessage by remember {
+    mutableStateOf("")
+}
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,13 +51,13 @@ fun ChatBox(
 
     ){
         TextField(
-            value = "",
-            onValueChange = {it},
+            value = textMessage,
+            onValueChange = {textMessage = it},
             modifier = Modifier
                 .weight(1f)
                 .padding(4.dp),
 
-            placeholder = { Text("Type a message") },
+            label = {Text("Message")},
             shape = RoundedCornerShape(48f),
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = MessageColor,
@@ -64,10 +71,15 @@ fun ChatBox(
         IconButton(
             modifier = Modifier.align(Alignment.CenterVertically),
                 onClick = {
-                    if (message.text.isNotBlank()) {
-                        onSend(message)
-                        message.text = "" // Reset message text after sending
-                    }
+                    val message =
+                        Message (
+                            chatId = chatId, senderId = senderId,
+                            timeStamp = Timestamp(System.currentTimeMillis()),
+                            receiverId = receiverId, text = textMessage)
+                    textMessage = ""
+
+                    onSend(chatId,message)
+
             }
         ) {
             Icon(
@@ -76,11 +88,11 @@ fun ChatBox(
         }
     }
 }
-@Composable
-@Preview(showBackground = true)
-fun PreviewChatBox() {
-    VimataTheme {
-        val messageTextState = remember { mutableStateOf("") }
-        ChatBox(message = Message(),onSend = {})
-     }
-}
+//@Composable
+//@Preview(showBackground = true)
+//fun PreviewChatBox() {
+//    VimataTheme {
+//        val messageTextState = remember { mutableStateOf("") }
+//        ChatBox(message = Message(),onSend = {})
+//     }
+//}

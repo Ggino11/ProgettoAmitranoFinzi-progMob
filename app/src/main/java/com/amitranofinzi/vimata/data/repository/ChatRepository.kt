@@ -7,6 +7,7 @@ import com.amitranofinzi.vimata.data.model.Relationship
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
 
@@ -93,51 +94,86 @@ class ChatRepository() {
 
     //sends message to a specific chat
     suspend fun sendMessage(chatId: String, message: Message) {
-        try { //add message to messages collection
-            firestore.collection("messages")
-                .add(message.copy(chatId = chatId))
-                .addOnSuccessListener {
-                    // Update last message in the chat document just if the message was successfully sent
-                    firestore.collection("chats").document(chatId)
-                        .update("lastMessage", message.text)
-                        .addOnSuccessListener {
-                            Log.d("ChatRepo", "Message sent successfully")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.e("ChatRepo", "Error updating lastMessage", e)
-                        }
-                }
-                .addOnFailureListener { e ->
-                    Log.e("ChatRepo", "Error sending message", e)
-                }
+        try {
+            // Log to debug message being sent
+            Log.d("SendChat", "Sending message: ${message.text} to chatId: ${chatId}")
+
+            // Add message to messages collection
+            val messageReference = firestore.collection("messages")
+                .add(message)
                 .await()
+
+            // Log to debug message document reference
+            Log.d("SendChat", "Message sent successfully with ID: ${messageReference.id}")
+
+            // Update last message in the chat document
+            firestore.collection("chats").document(chatId)
+                .update("lastMessage", message.text)
+                .await()
+
+            // Log to debug chat document update
+            Log.d("SendChat", "Chat document $chatId updated with last message: ${message.text}")
         } catch (e: Exception) {
-            Log.e("ChatRepo", "Error sending message")
+            // Log error
+            Log.e("SendChat", "Error sending message", e)
         }
     }
+
     /**
      * Listens for real-time updates to messages in a specific chat.
      *
      * @param chatId The ID of the chat for which real-time message updates are to be listened.
      * @param onMessagesChanged Callback function invoked when messages in the chat are updated.
      */
-    fun listenForMessages(chatId: String, onMessagesChanged: (List<Message>) -> Unit) {
-        firestore.collection("messages")
+//    fun listenForMessages(chatId: String, onMessagesChanged: (List<Message>) -> Unit) {
+//        firestore.collection("messages")
+//            .whereEqualTo("chatId", chatId)
+//            .orderBy("timeStamp", Query.Direction.ASCENDING)
+//            .addSnapshotListener { snapshot, error ->
+//                if (error != null) {
+//                    Log.e("ChatRepository", "Error listening for messages", error)
+//                    return@addSnapshotListener
+//                }
+//                if (snapshot != null) {
+//                    val messages = snapshot.documents.mapNotNull { it.toObject(Message::class.java) }
+//                    onMessagesChanged(messages)
+//                }
+//            }
+//    }
+    fun listenForMessages(chatId: String, onMessagesChanged: (List<Message>) -> Unit): ListenerRegistration {
+        Log.d("Listener", "Setting up listener for chatId: $chatId")
+
+        return firestore.collection("messages")
             .whereEqualTo("chatId", chatId)
-            .orderBy("timeStamp", Query.Direction.ASCENDING)
+            .orderBy("timestamp") // Assuming the field name is "timestamp" in your Message class
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
-                    Log.e("ChatRepository", "Error listening for messages", error)
+                    Log.e("Listener", "Listen failed for chatId: $chatId", error)
+                    onMessagesChanged(emptyList())
                     return@addSnapshotListener
                 }
 
                 if (snapshot != null) {
-                    val messages = snapshot.documents.mapNotNull { it.toObject(Message::class.java) }
-                    onMessagesChanged(messages)
+                    if (snapshot.isEmpty) {
+                        Log.d("Listener", "No messages found for chatId: $chatId")
+                        onMessagesChanged(emptyList())
+                    } else {
+                        val messages = snapshot.documents.mapNotNull {
+                            it.toObject(Message::class.java)
+                        }
+                        Log.d("Listener", "Received ${messages.size} messages for chatId: $chatId")
+                        onMessagesChanged(messages)
+                    }
+                } else {
+                    Log.d("Listener", "Snapshot is null for chatId: $chatId")
+                    onMessagesChanged(emptyList())
                 }
             }
     }
+
 }
+
+
 
 
 

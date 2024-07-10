@@ -69,42 +69,6 @@ fun ListChatScreen(
 
     Log.d("ListChatScreen", chats.toString())
 
-
-    /*
-    ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-        val (topBarRef, listRef) = createRefs()
-
-        //top bar section
-        ChatTopBar(
-            modifier = Modifier.constrainAs(topBarRef) {
-                top.linkTo(parent.top)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                bottom.linkTo(listRef.top)
-                width = Dimension.fillToConstraints
-
-            }
-        )
-        //list chat section
-        LazyColumn(
-            modifier = Modifier.constrainAs(listRef) {
-                top.linkTo(topBarRef.bottom)
-                height = Dimension.fillToConstraints
-
-
-
-            }
-        ) {
-            items(chats) { chat ->
-                Log.d("Chat1", "sono dentro" )
-                Column {
-                    ChatPreview( chat = chat, openChat = { navController.navigate("chatDetails/${chat.chatId}")}, user = user)
-                    HorizontalDivider()
-                }
-            }
-        }
-    }*/
-
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = { /* Show AddCollectionDialog */ }) {
