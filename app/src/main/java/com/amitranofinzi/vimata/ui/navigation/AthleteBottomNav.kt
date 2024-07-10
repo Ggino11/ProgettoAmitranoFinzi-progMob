@@ -5,10 +5,10 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.amitranofinzi.vimata.ui.screen.athlete.AthleteChatScreen
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteHomeScreen
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteProfileScreen
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteProgressScreen
+import com.amitranofinzi.vimata.ui.screen.chat.ListChatScreen
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
@@ -22,7 +22,7 @@ fun AthleteBottomNav(athleteViewModel: AthleteViewModel = AthleteViewModel(),
         composable(AthleteBNavItem.Progress.path) {
             AthleteProgressScreen(athleteViewModel, authViewModel, navController)
         }
-        composable(AthleteBNavItem.Chat.path) { AthleteChatScreen() }
+        composable(AthleteBNavItem.Chat.path) { ListChatScreen() }
         composable(AthleteBNavItem.Profile.path) {
             AthleteProfileScreen(onEditProfileClick = {}, athleteViewModel,authViewModel, navController) }
     }

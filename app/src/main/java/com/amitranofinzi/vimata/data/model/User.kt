@@ -22,9 +22,3 @@ data class User(
         userType = ""
     )
 }
-
-// Define user type enum
-enum class UserType {
-    ATHLETE,
-    TRAINER
-}

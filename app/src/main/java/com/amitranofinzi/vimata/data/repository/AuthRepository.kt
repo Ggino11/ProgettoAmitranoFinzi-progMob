@@ -55,6 +55,7 @@ class AuthRepository() {
             Result.failure(e)
         }
     }
+
     fun signOut() {
         firebaseAuth.signOut()
     }
