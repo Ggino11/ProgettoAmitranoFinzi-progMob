@@ -7,6 +7,7 @@ object NavRoutes {
     const val CHAT = "Chat"
     const val PROGRESS = "Progress"
     const val PROFILE = "Profile"
+    const val WORKBOOK = "Workbook"
     const val LOGIN = "login"
     const val SIGNUP = "signup"
 }

@@ -1,6 +1,7 @@
 package com.amitranofinzi.vimata.ui.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
@@ -11,10 +12,10 @@ sealed class TrainerBNavItem {
         Item(path = TrainerBNavNode.HOME.toString(), title = NavRoutes.HOME, icon = Icons.Default.Home)
 
     object Workbook :
-        Item(path = TrainerBNavNode.CHAT.toString(), title = NavRoutes.CHAT, icon = Icons.Default.Email)
+        Item(path = TrainerBNavNode.WORKBOOK.toString(), title = NavRoutes.WORKBOOK, icon = Icons.Default.Book)
 
     object Chat :
-        Item(path = TrainerBNavNode.WORKBOOK.toString(), title = NavRoutes.PROGRESS, icon = Icons.Default.Star)
+        Item(path = TrainerBNavNode.CHAT.toString(), title = NavRoutes.CHAT, icon = Icons.Default.Email)
 
     object Profile :
         Item(

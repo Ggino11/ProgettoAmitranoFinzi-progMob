@@ -6,7 +6,6 @@ import com.amitranofinzi.vimata.data.model.FormField
 import com.amitranofinzi.vimata.data.model.FormState
 import com.amitranofinzi.vimata.data.repository.AuthRepository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

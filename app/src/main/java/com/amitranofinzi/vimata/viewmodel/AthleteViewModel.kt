@@ -9,11 +9,7 @@ import com.amitranofinzi.vimata.data.model.Test
 import com.amitranofinzi.vimata.data.model.TestSet
 import com.amitranofinzi.vimata.data.model.Workout
 import com.amitranofinzi.vimata.data.repository.AthleteRepository
-import com.amitranofinzi.vimata.data.repository.AuthRepository
 import com.amitranofinzi.vimata.data.repository.TestRepository
-import com.amitranofinzi.vimata.data.repository.TrainerRepository
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 
 class AthleteViewModel: ViewModel() {

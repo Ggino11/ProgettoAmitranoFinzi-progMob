@@ -80,6 +80,7 @@ dependencies {
 
     // PDF viewer
     implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

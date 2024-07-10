@@ -19,11 +19,15 @@ fun TrainerBottomNav(trainerViewModel: TrainerViewModel = TrainerViewModel(),
                      bottomNavController: NavHostController) {
 
     NavHost(navController = bottomNavController, startDestination = TrainerBNavItem.Home.path) {
-        composable(TrainerBNavItem.Home.path) { TrainerHomeScreen() }
-        composable(TrainerBNavItem.Workbook.path) { TrainerWorkbookScreen() }
-        composable(TrainerBNavItem.Chat.path) { TrainerChatScreen() }
-        composable(TrainerBNavItem.Profile.path) {
 
+        composable(TrainerBNavItem.Home.path) { TrainerHomeScreen() }
+
+        composable(TrainerBNavItem.Workbook.path) {
+            TrainerWorkbookScreen(trainerViewModel, authViewModel, navController)
+        }
+        composable(TrainerBNavItem.Chat.path) { TrainerChatScreen() }
+
+        composable(TrainerBNavItem.Profile.path) {
             TrainerProfileScreen(onEditProfileClick = {}, trainerViewModel, authViewModel, navController)
         }
     }

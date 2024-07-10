@@ -67,7 +67,8 @@ fun AthleteProgressScreen(
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(text = testSet.title, style = MaterialTheme.typography.bodyMedium)
                     }
-                }            }
+                }
+            }
         }
 
     }
