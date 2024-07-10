@@ -7,7 +7,7 @@ data class User(
     val password: String, // Hashed password
     val surname: String,
     val uid: String?, // User ID assigned by Firebase Auth
-    val userType: String, // You can define an enum for UserType (ATHLETE, TRAINER)
+    val userType: String, //maybe define an enum for UserType (ATHLETE, TRAINER)
     //val age: Int,
     //val profilePictureUrl: String? = null, // nullable for optional profile picture
     //val bio: String? = null // Optional user bio

@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(
-    userName: String,
-    userLastName: String,
+fun ProfileChatBar(
+    userName: String?,
+    userLastName: String?,
     onBackClicked: () -> Unit,
     modifier: Modifier
 ) {
@@ -60,7 +60,7 @@ fun ProfileScreen(
 @Preview(showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen(
+    ProfileChatBar(
         userName = "John",
         userLastName = "Doe",
         onBackClicked = {},

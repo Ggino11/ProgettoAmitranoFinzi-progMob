@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun ProfileAvatar(
-    userName: String,
-    userLastName: String
+    userName: String?,
+    userLastName: String?
 ) {
     Box(
         modifier = Modifier
@@ -27,7 +27,7 @@ fun ProfileAvatar(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "${userName.take(1)}${userLastName.take(1)}",
+            text = "${userName?.take(1)}${userLastName?.take(1)}",
 
             color = Color.White
         )

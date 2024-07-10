@@ -22,12 +22,10 @@ class TrainerRepository() {
     // Given a list of athlete IDs fetch athlete data
     suspend fun getAthletes(athleteIds: List<String>): List<User> {
         Log.d("TrainerRepository", "getAthletes called with athleteIds: $athleteIds")
-
         if (athleteIds.isEmpty()) {
             Log.d("TrainerRepository", "Empty athleteIds list")
             return emptyList()
         }
-
         try {
             //Query firestore database in order to find all the users with uid equal to a value in AthleteIds
             val snapshot = firestore.collection("users")

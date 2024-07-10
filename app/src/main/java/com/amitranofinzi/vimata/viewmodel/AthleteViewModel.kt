@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amitranofinzi.vimata.data.model.Test
 import com.amitranofinzi.vimata.data.model.TestSet
+import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.model.Workout
 import com.amitranofinzi.vimata.data.repository.AthleteRepository
 import com.amitranofinzi.vimata.data.repository.TestRepository
@@ -14,8 +15,14 @@ import kotlinx.coroutines.launch
 
 class AthleteViewModel: ViewModel() {
 
+    private val athleteRepository : AthleteRepository = AthleteRepository()
+
     private val _workouts = MutableLiveData<List<Workout>>()
     val workouts: LiveData<List<Workout>> = _workouts
+
+    // trainers live dat
+    private val _trainers = MutableLiveData<List<User>> ()
+    val trainers: LiveData<List<User>> = _trainers
 
 
     // TEST live data
@@ -28,12 +35,32 @@ class AthleteViewModel: ViewModel() {
     private val _tests = MutableLiveData<List<Test>>()
     val tests: LiveData<List<Test>> get() = _tests
 
-    private val athleteRepository : AthleteRepository = AthleteRepository()
+
 
 
     fun fetchWorkouts(athleteID: String){
         viewModelScope.launch {
             _workouts.value = athleteRepository.getAthletesWorkouts(athleteID)
+        }
+    }
+
+    //gets coaches for athlete
+    fun getTrainersForAthletes(atheleteId: String) {
+        viewModelScope.launch {
+            try {
+                Log.d("AthleteViewModel", "Launching coroutine")
+                val trainerIds = athleteRepository.getTrainerIdsForAthlete(atheleteId)
+//                Log.d("TrainerViewModel", "Athlete IDs: $athleteIds")
+                val trainerDetails = athleteRepository.getTrainers(trainerIds)
+                Log.d("AthleteViewModel", "Athlete details fetched: $trainerDetails")
+                _trainers.value = trainerDetails
+                Log.d("AthleteViewModel", "Athlete details assigned to LiveData")
+                Log.d("AthleteViewModel", _trainers.toString())
+            } catch (e: Exception) {
+                // Handle the error
+                Log.d("AthleteViewModel","error" )
+                _trainers.value = emptyList()
+            }
         }
     }
 
@@ -74,6 +101,19 @@ class AthleteViewModel: ViewModel() {
             }
         }
     }
+
+    //add CHat and trainer
+    fun addTrainerAndChat(email: String, currentUserId: String) {
+        viewModelScope.launch {
+            try {
+                athleteRepository.startNewChat(email, currentUserId)
+            } catch (e: Exception) {
+                Log.e("addTrainer", "Failed")
+            }
+        }
+    }
+
+
 
 
 

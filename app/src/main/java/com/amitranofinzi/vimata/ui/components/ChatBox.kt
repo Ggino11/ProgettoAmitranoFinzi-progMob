@@ -34,7 +34,7 @@ fun ChatBox(
 
 //    messageText: Message,
     onSend: (Message) -> Unit,
-   message: Message
+    message: Message
 
 ) {
     Row(

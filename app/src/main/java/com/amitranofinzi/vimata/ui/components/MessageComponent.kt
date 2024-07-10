@@ -26,7 +26,7 @@ import java.util.Locale
 @Composable
 fun MessageBubble(
     message: Message,
-    currentUserId: String
+    currentUserId: String?
 
 ) {
     //currentUser will be equal to uid
