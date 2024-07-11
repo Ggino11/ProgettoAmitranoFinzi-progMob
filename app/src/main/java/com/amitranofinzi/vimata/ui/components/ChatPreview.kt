@@ -1,14 +1,19 @@
 package com.amitranofinzi.vimata.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,9 +25,8 @@ import androidx.compose.ui.unit.dp
 import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.ui.theme.BgColor
-import com.amitranofinzi.vimata.ui.theme.MessageColor
+import com.amitranofinzi.vimata.ui.theme.TextColor
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
-import com.amitranofinzi.vimata.viewmodel.ChatViewModel
 
 // Esempio di dati mock per le chat
 val mockChats = listOf(
@@ -32,65 +36,78 @@ val mockChats = listOf(
     Chat("chat3", "fwij33848 ", "How are you?"),
 )
 
+
 @Composable
 fun ChatPreview(
     chat: Chat,
     openChat: () -> Unit,
     user: User,
-    ) {
+) {
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(2.dp)
-                    .background(MessageColor)
-                    .clickable{openChat()}
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(16.dp)
+        ) {
+            // Profile Avatar
+            ProfileAvatar(
+                userName = user.name,
+                userLastName = user.surname,
+            )
+
+            Spacer(modifier = Modifier.width(12.dp))
+
+            // Last message
+            Column(
+                modifier = Modifier.weight(1f)
             ) {
-                // Profilo Avatar
-                ProfileAvatar(
-                    userName = user.name, // Prendiamo solo il primo partecipante per semplicità
-                    userLastName = user.surname
+
+                Text(
+                    text = "${user.name} ${user.surname}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextColor
                 )
-
-                Spacer(modifier = Modifier.width(6.dp))
-
-                // Ultimo messaggio
+                Spacer(modifier = Modifier.height(4.dp))
                 Surface(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(10.dp),
-                    shape = RoundedCornerShape(48f),
-                    color = BgColor
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(8.dp),
+                    color = BgColor.copy(alpha = 0.1f)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .padding(8.dp)
-                    ) {
-                        Text(
-                            text = chat.lastMessage,
-                            color = Color.Black
-                        )
-                    }
+                    Text(
+                        text = chat.lastMessage,
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = TextColor,
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
-
+            IconButton(
+                onClick = { },
+                modifier = Modifier.size(36.dp),
+                content = {
+                    Icon(
+                        imageVector = Icons.Outlined.Delete,
+                        contentDescription = "Delete",
+                        tint = Color.Red
+                    )
+                }
+            )
+        }
 
 }
 
-@Composable
 @Preview(showBackground = true)
-fun ListChatPreview() {
+@Composable
+fun ChatPreviewPreview() {
     VimataTheme {
-    val viewModel = ChatViewModel()
-        val user = User("icoai","w3eojf","ewuioh","nueiw","vnwuieo,","trainer")
 
-    ChatPreview(
-        chat = mockChats[0],
-        openChat = {},
-
-        user = user
-    )
-
-    }
+        val user = User(
+            email = "john.doe@example.com",
+            name = "John",
+            password = "hashed_password",
+            surname = "Doe",
+            uid = "user_id_123",
+            userType = "TRAINER"
+        )
+    ChatPreview(chat = mockChats[0], openChat = {}, user = user)
+}
 }

@@ -9,3 +9,5 @@ val TextColor = Color(0xFF333533)
 val GrayColor = Color(0xFF7B6F72)
 val WhiteColor = Color(0xFFEDE7D9)
 val BgColor = Color(0xFFF7F8F8)
+
+
