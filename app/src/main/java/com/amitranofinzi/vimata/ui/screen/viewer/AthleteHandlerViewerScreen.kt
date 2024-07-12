@@ -88,7 +88,7 @@ fun AthleteHandlerViewerScreen(
             item {
                 IconButton(
                     onClick = {
-                              /* Navigate to add new TestSet screen */
+                                navController.navigate("testSetEditor/${athleteID}")
                               },
                     modifier = Modifier.align(Alignment.End)
                 ) {

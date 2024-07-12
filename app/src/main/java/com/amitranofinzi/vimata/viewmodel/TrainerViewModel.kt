@@ -5,16 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.model.Collection
+import com.amitranofinzi.vimata.data.model.Exercise
+import com.amitranofinzi.vimata.data.model.Test
+import com.amitranofinzi.vimata.data.model.TestSet
 import com.amitranofinzi.vimata.data.model.User
+import com.amitranofinzi.vimata.data.model.Workout
+import com.amitranofinzi.vimata.data.repository.TestRepository
 import com.amitranofinzi.vimata.data.repository.TrainerRepository
 import com.amitranofinzi.vimata.data.repository.WorkbookRepository
 import kotlinx.coroutines.launch
-import com.amitranofinzi.vimata.data.model.Exercise
-import com.amitranofinzi.vimata.data.model.Collection
-import com.amitranofinzi.vimata.data.model.Test
-import com.amitranofinzi.vimata.data.model.TestSet
-import com.amitranofinzi.vimata.data.model.Workout
-import com.amitranofinzi.vimata.data.repository.TestRepository
 
 
 
@@ -45,6 +45,9 @@ class TrainerViewModel: ViewModel() {
 
     private val _workouts = MutableLiveData<List<Workout>>()
     val workouts: LiveData<List<Workout>> = _workouts
+
+    private val _selectedExercises = MutableLiveData<List<Exercise>>()
+    val selectedExercises: LiveData<List<Exercise>> = _selectedExercises
 
     // Athletes functions
     fun getAthletesForCoach(coachId: String) {
@@ -93,6 +96,39 @@ class TrainerViewModel: ViewModel() {
             }
         }
     }
+
+    fun createTestSetAndTests(testSetTitle: String, trainerID: String, athleteID: String, selectedExercises: List<Exercise>) {
+        viewModelScope.launch {
+            try {
+
+                val newTestSet = TestSet(
+                    title = testSetTitle,
+                    trainerID = trainerID,
+                    athleteID = athleteID
+                )
+                Log.d("TrainerViewModel", "new TestSet request ${newTestSet.toString()}")
+
+                val testSetId = testRepository.createTestSet(newTestSet)
+
+                val tests = selectedExercises.map { exercise ->
+                    Test(
+                        testSetID = testSetId,
+                        exerciseName = exercise.name,
+                    )
+                }
+
+                tests.forEach { test ->
+                    testRepository.createTest(test)
+                }
+
+                Log.d("TrainerViewModel", "TestSet and Tests created successfully")
+            } catch (e: Exception) {
+                Log.e("TrainerViewModel", "Error creating TestSet and Tests", e)
+                // Gestione dell'errore, se necessario
+            }
+        }
+    }
+
 
     fun fetchTests(testSetId: String?) {
         viewModelScope.launch {
@@ -154,12 +190,44 @@ class TrainerViewModel: ViewModel() {
         }
     }
 
-    fun addExerciseToCollection(collectionId: String, exercise: Exercise, trainerID: String) {
+    fun addExerciseToCollection(exercise: Exercise) {
         viewModelScope.launch {
-            workbookRepository.addExerciseToCollection(collectionId, exercise.copy())
-            fetchCollections(trainerID) // Refresh the list
+            workbookRepository.uploadExercise( exercise.copy())
         }
     }
+
+    //Exercise functions
+    fun fetchExercisesByTrainerId(trainerID: String) {
+        viewModelScope.launch {
+            try {
+                Log.d("TrainerViewModel", "Fetching exercises for trainerID: $trainerID")
+                val fetchedExercises = workbookRepository.getExercisesByTrainerId(trainerID)
+                Log.d("TrainerViewModel", "Fetched ${fetchedExercises.size} exercises")
+                _exercises.value = fetchedExercises
+            } catch (e: Exception) {
+                Log.e("TrainerViewModel", "Error fetching exercises", e)
+                _exercises.value = emptyList()
+            }
+        }
+    }
+    fun addSelectedExercise(exercise: Exercise) {
+        val currentList = _selectedExercises.value ?: emptyList()
+        if (!currentList.contains(exercise)) {
+            _selectedExercises.value = currentList + exercise
+        }
+    }
+
+    fun removeSelectedExercise(exercise: Exercise) {
+        val currentList = _selectedExercises.value ?: emptyList()
+        _selectedExercises.value = currentList - exercise
+    }
+
+    fun setSelectedExercises(exercises: List<Exercise>) {
+        _selectedExercises.value = exercises
+    }
+
+
+
 }
 
 

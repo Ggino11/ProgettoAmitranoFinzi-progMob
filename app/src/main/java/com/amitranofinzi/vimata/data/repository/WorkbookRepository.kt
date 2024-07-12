@@ -1,9 +1,8 @@
 package com.amitranofinzi.vimata.data.repository
 
 import android.util.Log
-import com.amitranofinzi.vimata.data.model.Exercise
 import com.amitranofinzi.vimata.data.model.Collection
-import com.google.firebase.firestore.FieldValue
+import com.amitranofinzi.vimata.data.model.Exercise
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -37,9 +36,42 @@ class WorkbookRepository {
             .await()
        return document.toObject(Collection::class.java)!!
     }
-    suspend fun addExerciseToCollection(collectionId: String, exercise: Exercise) {
-        val collectionRef = firestore.collection("collections").document(collectionId)
-        collectionRef.update("exercises", FieldValue.arrayUnion(exercise)).await()
+    suspend fun uploadExercise(exercise: Exercise) {
+        val firestore = FirebaseFirestore.getInstance()
+
+        try {
+            val result = firestore.collection("workbook")
+                .add(exercise)
+                .await()
+
+            // Assegnamento dell'ID generato da Firebase all'oggetto Exercise
+            val exerciseWithId = exercise.copy(id = result.id)
+
+            firestore.collection("workbook")
+                .document(result.id)
+                .set(exerciseWithId)
+
+            Log.d("WorkbookRepository", "Exercise uploaded successfully with ID: ${result.id}")
+        } catch (e: Exception) {
+            Log.e("WorkbookRepository", "Error uploading exercise", e)
+        }
+    }
+
+    suspend fun getExercisesByTrainerId(trainerID: String): List<Exercise> {
+        return try {
+            Log.d("WorkbookRepository", "Fetching exercises for trainerID: $trainerID")
+            val snapshot = firestore.collection("workbook")
+                .whereEqualTo("trainerID", trainerID)
+                .get()
+                .await()
+
+            val exercises = snapshot.documents.mapNotNull { it.toObject(Exercise::class.java) }
+            Log.d("WorkbookRepository", "Fetched ${exercises.size} exercises")
+            exercises
+        } catch (e: Exception) {
+            Log.e("WorkbookRepository", "Error fetching exercises", e)
+            emptyList()
+        }
     }
 
 

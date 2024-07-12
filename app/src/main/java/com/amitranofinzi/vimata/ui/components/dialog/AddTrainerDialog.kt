@@ -1,4 +1,4 @@
-package com.amitranofinzi.vimata.ui.components
+package com.amitranofinzi.vimata.ui.components.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

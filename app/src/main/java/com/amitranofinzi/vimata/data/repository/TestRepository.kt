@@ -1,12 +1,8 @@
 package com.amitranofinzi.vimata.data.repository
 
 import android.util.Log
-import com.amitranofinzi.vimata.data.extensions.TestStatus
-import com.amitranofinzi.vimata.data.extensions.toTestStatus
 import com.amitranofinzi.vimata.data.model.Test
 import com.amitranofinzi.vimata.data.model.TestSet
-import com.amitranofinzi.vimata.data.model.Workout
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -99,6 +95,77 @@ class TestRepository {
         } catch (e: Exception) {
             Log.e("getTests", "Error fetching tests", e)
             emptyList()
+        }
+    }
+
+    suspend fun updateTestResult(test: Test) {
+        try {
+            Log.d("TestRepository", "Updating test result with testId: ${test.id}, new result: ${test.result}")
+            firestore.collection("tests").document(test.id)
+                .update("result", test.result)
+                .await()
+            Log.d("TestRepository", "Update successful")
+        } catch (e: Exception) {
+            Log.e("TestRepository", "Error updating test result: ${e.message}", e)
+            // Gestisci l'errore qui, ad esempio:
+            throw e  // Lancia l'eccezione per gestirla nel chiamante, se necessario
+        }
+    }
+
+    suspend fun updateTestStatus(test: Test) {
+        try {
+            Log.d("TestRepository", "Updating test status with testId: ${test.id}, new result: ${test.result}")
+            firestore.collection("tests").document(test.id)
+                .update("status", test.status)
+                .await()
+            Log.d("TestRepository", "Update status successful")
+        } catch (e: Exception) {
+            Log.e("TestRepository", "Error updating test status: ${e.message}", e)
+            // Gestisci l'errore qui, ad esempio:
+            throw e  // Lancia l'eccezione per gestirla nel chiamante, se necessario
+        }
+    }
+
+    suspend fun createTestSet(testSet: TestSet): String {
+        val firestore = FirebaseFirestore.getInstance()
+        try {
+            // Aggiungi il testSet al Firestore
+            val result = firestore.collection("testSets")
+                .add(testSet)
+                .await()
+
+            val testSetId = result.id
+            Log.d("TestRepository", "TestSet added successfully with ID: $testSetId")
+
+            // Aggiorna il testSet nel Firestore per assicurarsi che l'ID sia assegnato correttamente
+            val updatedTestSet = testSet.copy(id = testSetId)
+            firestore.collection("testSets")
+                .document(testSetId)
+                .set(updatedTestSet)
+                .await()
+            Log.d("TestRepository", "TestSet updated with ID: $testSetId")
+            Log.d("TestRepository", "TestSet: ${updatedTestSet.toString()}")
+
+
+            return testSetId // Ritorna l'ID del nuovo TestSet creato
+        } catch (e: Exception) {
+            Log.e("WorkbookRepository", "Error creating TestSet", e)
+            return ""
+        }
+    }
+
+    suspend fun createTest(test: Test) {
+        try {
+            val result = firestore.collection("tests")
+                .add(test)
+                .await()
+
+            val testId = result.id
+            val updatedTest = test.copy(id = testId)
+
+            Log.d("TestRepository", "Test created successfully with ID: $testId")
+        } catch (e: Exception) {
+            Log.e("TestRepository", "Error creating Test", e)
         }
     }
 }

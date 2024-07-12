@@ -101,6 +101,29 @@ class AthleteViewModel: ViewModel() {
             }
         }
     }
+    fun updateTestResult(test: Test) {
+        viewModelScope.launch {
+            try {
+                Log.d("testViewModel","updating test result with test id: ${test.id}" )
+                testRepository.updateTestResult(test)
+            } catch (e: Exception) {
+                // Handle the error
+                Log.d("testViewModel","error updating test result" )
+            }
+        }
+    }
+
+    fun updateTestStatus(test: Test) {
+        viewModelScope.launch {
+            try {
+                Log.d("testViewModel","updating test status with test id: ${test.id}" )
+                testRepository.updateTestStatus(test)
+            } catch (e: Exception) {
+                // Handle the error
+                Log.d("testViewModel","error updating test status" )
+            }
+        }
+    }
 
     //add CHat and trainer
     fun addTrainerAndChat(email: String, currentUserId: String) {
@@ -112,7 +135,6 @@ class AthleteViewModel: ViewModel() {
             }
         }
     }
-
 
 
 

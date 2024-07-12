@@ -1,5 +1,6 @@
 package com.amitranofinzi.vimata.ui.components.cards
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,20 +21,27 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import com.amitranofinzi.vimata.data.extensions.TestStatus
 import com.amitranofinzi.vimata.data.model.Test
+import com.amitranofinzi.vimata.ui.components.dialog.InputResultDialog
 import com.amitranofinzi.vimata.ui.theme.VerifiedColor
 import java.util.Locale
 
 @Composable
 fun TestCard(
+    userType: String,
     test: Test,
     onVideoClick: () -> Unit,
-    onResultClick: () -> Unit,
+    onResultEntered: (Double) -> Unit,
+    onPlayVideoClick: () -> Unit,
     onConfirmClick: () -> Unit
 ) {
     val testStatus = test.status
@@ -42,6 +50,8 @@ fun TestCard(
         TestStatus.DONE -> MaterialTheme.colorScheme.secondary
         TestStatus.VERIFIED -> VerifiedColor
     }
+    var showDialog by remember { mutableStateOf(false) }
+
 
     Card(
         modifier = Modifier
@@ -85,11 +95,13 @@ fun TestCard(
                             Icon(Icons.Default.Videocam, contentDescription = "Record Video")
                         }
                         // if video is recorded you can play it
-                        IconButton(onClick = { /* Play video */ },  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
+                        IconButton(onClick = onPlayVideoClick,  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
                             Icon(Icons.Default.PlayArrow, contentDescription = "Play Video")
                         }
                         // Write the result number
-                        IconButton(onClick = onResultClick,  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
+                        IconButton(
+                            onClick = {showDialog = true},
+                            modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
                             Icon(Icons.Default.Edit, contentDescription = "Input Result")
                         }
 
@@ -104,17 +116,22 @@ fun TestCard(
                         IconButton(onClick = onVideoClick,  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
                             Icon(Icons.Default.Videocam, contentDescription = "Record Video")
                         }
-                        IconButton(onClick = { /* Play video */ },  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
+                        IconButton(onClick = onPlayVideoClick,  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
                             Icon(Icons.Default.PlayArrow, contentDescription = "Play Video")
                         }
-                        IconButton(onClick = onResultClick,  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
+                        IconButton(onClick = {showDialog = true},  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
                             Icon(Icons.Default.Edit, contentDescription = "Input Result")
+                        }
+                        if(userType == "trainer"){
+                            IconButton(onClick = onConfirmClick,  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
+                                Icon(Icons.Default.Check, contentDescription = "Confirm Result")
+                            }
                         }
 
                     }
 
                     TestStatus.VERIFIED -> {
-                        IconButton(onClick = { /* Play video */ },  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
+                        IconButton(onClick = onPlayVideoClick,  modifier= Modifier.border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)) {
                             Icon(Icons.Default.PlayArrow, contentDescription = "Play Video")
                         }
 
@@ -127,5 +144,13 @@ fun TestCard(
             )
         }
     }
+    if (showDialog) {
+        InputResultDialog(
+            onResultEntered = { result ->
+                Log.d("TestCard", "Input result for ${test.exerciseName} is ${result.toString()}")
+                onResultEntered(result)
+                showDialog = false
+            },
+            onDismissRequest = {showDialog = false})
+    }
 }
-
