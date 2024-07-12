@@ -12,23 +12,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.amitranofinzi.vimata.ui.theme.Secondary
 
 @Composable
 fun ProfileAvatar(
     userName: String?,
-    userLastName: String?
+    userLastName: String?,
+
 ) {
     Box(
         modifier = Modifier
-            .size(40.dp)
+            .size(60.dp)
             .clip(CircleShape)
-            .background(Color.Gray)
+            .background(Secondary)
             .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = "${userName?.take(1)}${userLastName?.take(1)}",
-
             color = Color.White
         )
     }

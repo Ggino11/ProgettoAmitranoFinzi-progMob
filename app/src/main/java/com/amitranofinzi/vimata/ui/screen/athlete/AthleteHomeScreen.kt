@@ -29,11 +29,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.amitranofinzi.vimata.ui.components.AddTrainerDialog
-import com.amitranofinzi.vimata.ui.components.cards.AthleteCard
-import com.amitranofinzi.vimata.ui.components.cards.WorkoutCard
+import com.amitranofinzi.vimata.ui.components.AthleteCard
+import com.amitranofinzi.vimata.ui.components.WorkoutCard
+import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 
@@ -42,16 +44,6 @@ fun AthleteHomeScreen(athleteViewModel: AthleteViewModel = AthleteViewModel(),
                       authViewModel: AuthViewModel = AuthViewModel(),
                       navController: NavController
 ) {
-//    val dummyWorkouts = listOf(
-//        Workout(id = "1", title = "Workout 1", status = "Completed", trainerID = "Trainer A", athleteID = "Athlete X", pdfUrl = "http://example.com/workout1.pdf"),
-//        Workout(id = "2", title = "Workout 2", status = "In Progress", trainerID = "Trainer B", athleteID = "Athlete Y", pdfUrl = "http://example.com/workout2.pdf"),
-//        Workout(id = "3", title = "Workout 3", status = "Not Started", trainerID = "Trainer C", athleteID = "Athlete Z", pdfUrl = "http://example.com/workout3.pdf"),
-//        Workout(id = "4", title = "Workout 4", status = "Completed", trainerID = "Trainer D", athleteID = "Athlete W", pdfUrl = "http://example.com/workout4.pdf"),
-//        Workout(id = "5", title = "Workout 5", status = "In Progress", trainerID = "Trainer E", athleteID = "Athlete V", pdfUrl = "http://example.com/workout5.pdf"),
-//        Workout(id = "1", title = "Workout 1", status = "Completed", trainerID = "Trainer A", athleteID = "Athlete X", pdfUrl = "http://example.com/workout1.pdf"),
-//        Workout(id = "2", title = "Workout 2", status = "In Progress", trainerID = "Trainer B", athleteID = "Athlete Y", pdfUrl = "http://example.com/workout2.pdf"),
-//        Workout(id = "3", title = "Workout 3", status = "Not Started", trainerID = "Trainer C", athleteID = "Athlete Z", pdfUrl = "http://example.com/workout3.pdf")
-//    )
 
 //    val workouts = dummyWorkouts
     var showDialog by remember { mutableStateOf(false) }
@@ -139,13 +131,15 @@ fun AthleteHomeScreen(athleteViewModel: AthleteViewModel = AthleteViewModel(),
 
 
 
-/*
+
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewAthleteHomeScreen() {
     VimataTheme {
-        AthleteHomeScreen()
-    }
+        val alathleteViewModel: AthleteViewModel = AthleteViewModel()
+        val authViewModel: AuthViewModel = AuthViewModel()
+
+//        AthleteHomeScreen(alathleteViewModel,authViewModel,navController)
+   }
 }
-*/

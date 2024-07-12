@@ -39,7 +39,7 @@ fun ProfileChatBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
             ProfileAvatar(userName = userName, userLastName = userLastName)
-            Spacer(modifier = Modifier.width(8.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Text(
                 text = "$userName $userLastName",
                 modifier = Modifier.weight(1f)

@@ -28,7 +28,6 @@ fun SingleChatScreen(
     navController: NavController
 ) {
     val messages: List<Message> by chatViewModel.messages.observeAsState(emptyList())
-    //val newMessage = remember { Message(senderId = user.uid, chatId = "chatId", text = "") }
     val receiver by authViewModel.user.observeAsState()
     val senderId = authViewModel.getCurrentUserID()
 
@@ -36,6 +35,7 @@ fun SingleChatScreen(
     //FETCH MESSAGES using flow
     LaunchedEffect(chatId ) {
         if (chatId != null) {
+            chatViewModel.fetchMessages(chatId)
             chatViewModel.listenForMessages(chatId)
         }
     }
@@ -47,7 +47,7 @@ fun SingleChatScreen(
         ProfileChatBar(
             userName = receiver?.name,
             userLastName = receiver?.surname,
-            onBackClicked = { /*NAVIGATION*/ },
+            onBackClicked = { navController.popBackStack() },
             modifier = Modifier.constrainAs(profileRef) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
