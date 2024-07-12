@@ -32,8 +32,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.amitranofinzi.vimata.ui.components.AddTrainerDialog
-import com.amitranofinzi.vimata.ui.components.AthleteCard
-import com.amitranofinzi.vimata.ui.components.WorkoutCard
+import com.amitranofinzi.vimata.ui.components.cards.AthleteCard
+import com.amitranofinzi.vimata.ui.components.cards.WorkoutCard
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 

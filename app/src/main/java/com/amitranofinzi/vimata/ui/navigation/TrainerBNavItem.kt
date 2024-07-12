@@ -5,7 +5,6 @@ import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Star
 
 sealed class TrainerBNavItem {
     object Home :

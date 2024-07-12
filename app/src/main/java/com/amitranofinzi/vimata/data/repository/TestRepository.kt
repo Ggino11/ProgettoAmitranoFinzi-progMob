@@ -1,6 +1,8 @@
 package com.amitranofinzi.vimata.data.repository
 
 import android.util.Log
+import com.amitranofinzi.vimata.data.extensions.TestStatus
+import com.amitranofinzi.vimata.data.extensions.toTestStatus
 import com.amitranofinzi.vimata.data.model.Test
 import com.amitranofinzi.vimata.data.model.TestSet
 import com.amitranofinzi.vimata.data.model.Workout
@@ -66,33 +68,12 @@ class TestRepository {
 
         return try {
             // Retrieve the testSet document
-            val testSetDocument = firestore.collection("testSets")
-                .document(testSetId)
-                .get()
-                .await()
 
-            if (!testSetDocument.exists()) {
-                Log.d("getTests", "TestSet document does not exist")
-                return emptyList()
-            }
-
-            val testSet = testSetDocument.toObject(TestSet::class.java)
-            if (testSet == null) {
-                Log.d("getTests", "Failed to convert document to TestSet")
-                return emptyList()
-            }
-
-            val testIds = testSet.testIDs
-            if (testIds.isEmpty()) {
-                Log.d("getTests", "TestSet has no testIDs")
-                return emptyList()
-            }
-
-            Log.d("getTests", "Fetching tests with IDs: $testIds")
+            Log.d("getTests", "Fetching tests with testSetId: $testSetId")
 
             // Retrieve the tests based on the test IDs
             val snapshot = firestore.collection("tests")
-                .whereIn("id", testIds)
+                .whereEqualTo("testSetID", testSetId)
                 .get()
                 .await()
 
@@ -106,7 +87,11 @@ class TestRepository {
                 if (test == null) {
                     Log.d("getTests", "Document ${document.id} could not be converted to Test")
                 }
+                else{
+                    //document.getString("status")?.toTestStatus()?.let { test.copy(status = it) }
+                }
                 test
+
             }
 
             Log.d("getTests", "Fetched ${tests.size} tests")

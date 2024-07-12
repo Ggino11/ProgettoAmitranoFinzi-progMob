@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -28,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.amitranofinzi.vimata.ui.components.WorkoutCard
+import com.amitranofinzi.vimata.ui.components.cards.WorkoutCard
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
@@ -88,7 +87,9 @@ fun AthleteHandlerViewerScreen(
         LazyColumn(modifier = Modifier.fillMaxWidth()) {
             item {
                 IconButton(
-                    onClick = { /* Navigate to add new TestSet screen */ },
+                    onClick = {
+                              /* Navigate to add new TestSet screen */
+                              },
                     modifier = Modifier.align(Alignment.End)
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = "Add Test Set")

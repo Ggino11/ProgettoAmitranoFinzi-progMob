@@ -39,6 +39,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -63,11 +64,27 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.2.1")
     implementation("androidx.compose.material:material-icons-extended-android:1.6.8")
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+
+
+    // CameraX core library using the camera2 implementation
+    val camerax_version = "1.4.0-beta02"
+    implementation("androidx.camera:camera-core:${camerax_version}")
+    implementation("androidx.camera:camera-camera2:${camerax_version}")
+    implementation("androidx.camera:camera-lifecycle:${camerax_version}")
+    implementation("androidx.camera:camera-video:${camerax_version}")
+    implementation("androidx.camera:camera-view:${camerax_version}")
+
+    implementation("com.google.guava:guava:30.1-jre")
+
+
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
     implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-database:21.0.0")
-    implementation("com.google.firebase:firebase-firestore-ktx:25.0.0")
+    implementation("com.google.firebase:firebase-database")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage")
+
 
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
     implementation("androidx.annotation:annotation:1.3.0")

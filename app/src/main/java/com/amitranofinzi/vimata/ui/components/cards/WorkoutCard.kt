@@ -1,4 +1,4 @@
-package com.amitranofinzi.vimata.ui.components
+package com.amitranofinzi.vimata.ui.components.cards
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

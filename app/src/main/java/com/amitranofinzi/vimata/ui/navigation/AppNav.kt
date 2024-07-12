@@ -20,7 +20,6 @@ import com.amitranofinzi.vimata.ui.screen.athlete.AthleteScreen
 import com.amitranofinzi.vimata.ui.screen.auth.LoginScreen
 import com.amitranofinzi.vimata.ui.screen.chat.SingleChatScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerScreen
-import com.amitranofinzi.vimata.ui.screen.trainer.TrainerWorkbookScreen
 import com.amitranofinzi.vimata.ui.screen.viewer.AthleteHandlerViewerScreen
 import com.amitranofinzi.vimata.ui.screen.viewer.CollectionViewerScreen
 import com.amitranofinzi.vimata.ui.screen.viewer.TestSetViewerScreen
@@ -28,8 +27,10 @@ import com.amitranofinzi.vimata.ui.screens.SignUpScreen
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
+import com.amitranofinzi.vimata.viewmodel.CameraViewModel
 import com.amitranofinzi.vimata.viewmodel.ChatViewModel
 import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
+import com.example.yourapp.CameraScreen
 
 @Composable
 fun AppNav() {
@@ -84,8 +85,9 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
             val testSetId = it.arguments?.getString("testSetId")
             Log.d("AppNav", testSetId.isNullOrEmpty().toString())
             val athleteViewModel = it.sharedViewModel<AthleteViewModel>(navController)
+            val cameraViewModel = it.sharedViewModel<CameraViewModel>(navController)
             // Visualizza i dettagli del test set con l'ID specificato
-            TestSetViewerScreen(athleteViewModel,testSetId, navController)
+            TestSetViewerScreen(athleteViewModel,cameraViewModel,testSetId, navController)
         }
 
         composable("chatDetails/{chatId}", listOf( navArgument("chatId") { type = NavType.StringType})
@@ -95,6 +97,15 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
             val chatViewModel = it.sharedViewModel<ChatViewModel>(navController)
 
             SingleChatScreen(authViewModel,chatViewModel,chatId, navController)
+        }
+        composable("cameraScreen/{testID}", listOf( navArgument("testID") { type = NavType.StringType})){
+            Log.d("AppNav","dentro cameraScreen route")
+            val testID = it.arguments?.getString("testID")
+
+            val cameraViewModel = it.sharedViewModel<CameraViewModel>(navController)
+            if (testID != null) {
+                CameraScreen(cameraViewModel, testID, navController)
+            }
         }
 
 
@@ -135,6 +146,15 @@ fun NavGraphBuilder.trainerGraph(navController: NavHostController) {
 
             // Visualizza i dettagli del test set con l'ID specificato
             AthleteHandlerViewerScreen(trainerViewModel,authViewModel,athleteID, navController)
+        }
+        composable("cameraScreen/{testID}", listOf( navArgument("testID") { type = NavType.StringType})){
+            Log.d("AppNav","dentro cameraScreen route")
+            val testID = it.arguments?.getString("testID")
+
+            val cameraViewModel = it.sharedViewModel<CameraViewModel>(navController)
+            if (testID != null) {
+                CameraScreen(cameraViewModel, testID, navController)
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-package com.amitranofinzi.vimata.ui.components
+package com.amitranofinzi.vimata.ui.components.cards
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

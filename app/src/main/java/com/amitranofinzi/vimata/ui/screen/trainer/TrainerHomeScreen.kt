@@ -17,12 +17,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.amitranofinzi.vimata.data.model.User
-import com.amitranofinzi.vimata.ui.components.AthleteCard
-import com.amitranofinzi.vimata.ui.theme.VimataTheme
+import com.amitranofinzi.vimata.ui.components.cards.AthleteCard
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
