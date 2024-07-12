@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.data.model.Relationship
+import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.repository.ChatRepository
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.Dispatchers
@@ -18,6 +19,7 @@ import kotlinx.coroutines.launch
 class ChatViewModel: ViewModel() {
     private val chatRepository: ChatRepository = ChatRepository()
 
+
     //Create live data for relationship
     private val _relationships = MutableLiveData<List<Relationship>>()
     val relationships: LiveData<List<Relationship>> get() =_relationships
@@ -25,6 +27,9 @@ class ChatViewModel: ViewModel() {
     //Create live data for chats
     private val _chats = MutableLiveData<List<Chat>>()
     val chats: LiveData<List<Chat>> get() = _chats
+
+    private val _receivers = MutableLiveData<List<User>?>()
+    val receivers: LiveData<List<User>?> = _receivers
 
     //Create live data for messages
     private val _messages = MutableStateFlow<List<Message>>(emptyList())
@@ -44,6 +49,16 @@ class ChatViewModel: ViewModel() {
         }
 
     }
+
+    fun fetchReceivers(userID: String, userType: String){
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("ChatViewModel", "fetching receivers with ${userID} and ${userType}")
+            val fetchedReceivers = chatRepository.getReceivers(userID, userType)
+            Log.d("ChatViewModel", fetchedReceivers.toString())
+            _receivers.postValue(fetchedReceivers)
+        }
+    }
+
     fun fetchRelationships(userID: String, userType: String){
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("ChatViewModel", "fetching relationships with ${userID} and ${userType}")
@@ -52,6 +67,7 @@ class ChatViewModel: ViewModel() {
             _relationships.postValue(fetchedRelationships)
         }
     }
+
     // Function to fetch relationships based on user ID and type
     fun fetchChats(relationshipIDs: List<String>) {
         Log.d("RelationshipId", relationshipIDs.isEmpty().toString())

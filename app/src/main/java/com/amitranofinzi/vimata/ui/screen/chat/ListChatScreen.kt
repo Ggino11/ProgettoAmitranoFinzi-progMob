@@ -34,35 +34,40 @@ fun ListChatScreen(
     authViewModel: AuthViewModel = AuthViewModel(),
     navController: NavController
 ){
-    //receiver is actually current user
-    val receiver by authViewModel.userGet.observeAsState()
     val relationships by chatViewModel.relationships.observeAsState(emptyList())
     val chats by chatViewModel.chats.observeAsState(emptyList())
-    val receiverId by chatViewModel.receiverId.observeAsState()
+    // receivers is the list of all users related to current user
+    val receivers by chatViewModel.receivers.observeAsState(emptyList())
+
+
+    // Current user data
     val userID = authViewModel.getCurrentUserID()
+    val user by authViewModel.user.observeAsState()
 
-
-    Log.d("ListChatScreen", receiver.toString())
+    // Fetch current user, stored in user
     LaunchedEffect(userID) {
-        authViewModel.getUser(userID)
+        authViewModel.fetchUser(userID)
     }
 
-    Log.d("ListChatScreen", receiver.toString())
-    val userType = receiver?.userType
+    // Fetch all relationships in which current user is present
+    // We use userType to know on which attribute query (athleteID or trainerID)
+    val userType = user?.userType
     LaunchedEffect(userID, userType) {
         if (userType != null) {
             chatViewModel.fetchRelationships(userID, userType)
+            chatViewModel.fetchReceivers(userID, userType)
         }
     }
 
-    Log.d("ListChatScreen", relationships.toString())
+    Log.d("ListChatScreen", "receivers: ${receivers.toString()}")
+
 
     val relationshipIds: List<String> = relationships.map { it.id }
-    Log.d("ListChatRelation", relationshipIds.toString())
     LaunchedEffect(relationshipIds) {
         chatViewModel.fetchChats(relationshipIds)
     }
-    Log.d("ListChatScreen", chats.toString())
+
+    Log.d("ListChatScreen", "receivers: ${chats.toString()}")
 
     Scaffold(
         floatingActionButton = {
@@ -83,21 +88,19 @@ fun ListChatScreen(
             )
 
             LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
-                items(chats) { chat ->
-                    Log.d("TrainerWorkbookScreen", chat.chatId)
+                items(chats.zip(receivers!!)) { (chat, receiver) ->
                     ChatPreview(
                         chat = chat,
                         openChat = {
-                            Log.d("NavigationTOSingleChat", chat.chatId)
                             navController.navigate("chatDetails/${chat.chatId}")
                         },
-                        user = receiver!!
+                        user = receiver
                     )
                 }
             }
-        }}}
-
-
+        }
+    }
+}
 
 
 /*

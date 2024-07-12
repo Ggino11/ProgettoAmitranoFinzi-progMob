@@ -26,20 +26,9 @@ class AuthViewModel() : ViewModel() {
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> get() = _user
 
-    private val _userGet = MutableLiveData<User?>()
-    val userGet: LiveData<User?> get() = _userGet
-
     fun getCurrentUserID() : String {
         val currentUser = authRepository.currentUser
         return currentUser?.uid ?: ""
-    }
-
-    fun getUser(userID : String) {
-        viewModelScope.launch {
-            val fetchedUser = authRepository.getUser(userID)
-            Log.d("AuthViewModel", fetchedUser.toString())
-            _userGet.value = fetchedUser
-        }
     }
 
     fun fetchUser(userID : String) {

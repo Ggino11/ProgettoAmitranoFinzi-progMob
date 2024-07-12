@@ -4,6 +4,7 @@ import android.util.Log
 import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.data.model.Relationship
+import com.amitranofinzi.vimata.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
@@ -255,6 +256,52 @@ class ChatRepository() {
                 }
             }
     }
+
+    suspend fun getReceivers(userID: String, userType: String): List<User>? {
+            return try {
+                Log.d("ChatRepository", "UserID: $userID")
+                Log.d("ChatRepository", "UserType: $userType")
+
+                val query = if (userType == "athlete") {
+                    firestore.collection("relationships")
+                        .whereEqualTo("athleteID", userID)
+                } else {
+                    firestore.collection("relationships")
+                        .whereEqualTo("trainerID", userID)
+                }
+
+                val snapshot = query.get().await()
+
+                if (snapshot.isEmpty) {
+                    Log.d("ChatRepository", "No relationships found for user $userID of type $userType")
+                    return emptyList()
+                }
+
+                val userIds = snapshot.documents.mapNotNull { document ->
+                    val relationship = document.toObject(Relationship::class.java)
+                    relationship?.let {
+                        if (userType == "athlete") it.trainerID else it.athleteID
+                    }
+                }
+
+                val users = userIds.mapNotNull { userId ->
+                    val userSnapshot = firestore.collection("users")
+                        .document(userId)
+                        .get()
+                        .await()
+                    userSnapshot.toObject(User::class.java)?.apply {
+                        Log.d("ChatRepository", "User found: $this")
+                    }
+                }
+
+                Log.d("ChatRepository", "Total users found: ${users.size}")
+                users
+            } catch (e: Exception) {
+                Log.e("ChatRepository", "Error fetching users", e)
+                emptyList()
+            }
+        }
+    }
 //    fun listenForMessages(chatId: String): Flow<List<Message>> = callbackFlow {
 //        Log.d("Listener", "Setting up listener for chatId: $chatId")
 //
@@ -282,7 +329,7 @@ class ChatRepository() {
 //        awaitClose { registration.remove() }
 //    }
 
-}
+
 
 
 
