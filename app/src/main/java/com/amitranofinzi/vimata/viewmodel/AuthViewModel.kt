@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.FormField
 import com.amitranofinzi.vimata.data.model.FormState
 import com.amitranofinzi.vimata.data.model.User
@@ -27,9 +26,20 @@ class AuthViewModel() : ViewModel() {
     private val _user = MutableLiveData<User?>()
     val user: LiveData<User?> get() = _user
 
+    private val _userGet = MutableLiveData<User?>()
+    val userGet: LiveData<User?> get() = _userGet
+
     fun getCurrentUserID() : String {
         val currentUser = authRepository.currentUser
         return currentUser?.uid ?: ""
+    }
+
+    fun getUser(userID : String) {
+        viewModelScope.launch {
+            val fetchedUser = authRepository.getUser(userID)
+            Log.d("AuthViewModel", fetchedUser.toString())
+            _userGet.value = fetchedUser
+        }
     }
 
     fun fetchUser(userID : String) {

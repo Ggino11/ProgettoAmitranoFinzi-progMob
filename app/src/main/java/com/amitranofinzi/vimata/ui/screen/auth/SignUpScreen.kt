@@ -55,6 +55,7 @@ fun SignUpScreen(authViewModel: AuthViewModel, navController: NavController) {
     val coroutineScope = rememberCoroutineScope()
 
 
+
     val isFormValid = formState.userType.isNotEmpty() && formState.name.isNotEmpty() && formState.surname.isNotEmpty() &&formState.email.isNotEmpty() && formState.password.isNotEmpty() &&
             formState.confirmPassword.isNotEmpty() && formState.password == formState.confirmPassword
 

@@ -100,7 +100,11 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
             val chatId = it.arguments?.getString("chatId")
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
             val chatViewModel = it.sharedViewModel<ChatViewModel>(navController)
-
+            if (chatId != null) {
+                Log.d("NavigationTOSingleChat",chatId)
+            } else {
+                Log.d("NavigationTOSingleChat","NUll")
+            }
             SingleChatScreen(authViewModel,chatViewModel,chatId, navController)
         }
         composable("cameraScreen/{testID}", listOf( navArgument("testID") { type = NavType.StringType})){

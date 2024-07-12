@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,9 +32,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.amitranofinzi.vimata.ui.components.cards.AthleteCard
+import androidx.navigation.compose.rememberNavController
+import com.amitranofinzi.vimata.ui.components.AddTrainerDialog
+import com.amitranofinzi.vimata.ui.components.TrainerCard
 import com.amitranofinzi.vimata.ui.components.cards.WorkoutCard
-import com.amitranofinzi.vimata.ui.components.dialog.AddTrainerDialog
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
@@ -59,7 +61,10 @@ fun AthleteHomeScreen(athleteViewModel: AthleteViewModel = AthleteViewModel(),
 
     Column(modifier = Modifier.fillMaxSize()) {
         // Column for trainers
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -74,7 +79,7 @@ fun AthleteHomeScreen(athleteViewModel: AthleteViewModel = AthleteViewModel(),
                     modifier = Modifier
                         .padding(16.dp)
                 )
-
+                Spacer(modifier = Modifier.weight(1f))
                 IconButton(onClick = { showDialog = true }) {
                     Icon(Icons.Filled.PersonAdd, contentDescription = "Add Trainer")
                 }
@@ -86,13 +91,15 @@ fun AthleteHomeScreen(athleteViewModel: AthleteViewModel = AthleteViewModel(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(trainers) { trainer ->
-                    AthleteCard(athlete = trainer, modifier = Modifier) /*{TODO: creare component for trainer card }*/
+                    TrainerCard(trainer = trainer,)
                 }
             }
         }
 
         // Column for workouts
-        Column(modifier = Modifier.fillMaxSize().weight(1f)) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .weight(1f)) {
             Text(
                 text = "LE MIE SCHEDE",
                 style = MaterialTheme.typography.bodyLarge.copy(
@@ -138,7 +145,10 @@ fun PreviewAthleteHomeScreen() {
     VimataTheme {
         val alathleteViewModel: AthleteViewModel = AthleteViewModel()
         val authViewModel: AuthViewModel = AuthViewModel()
+        val navController = rememberNavController()
+        AthleteHomeScreen(alathleteViewModel,authViewModel,navController)
+        }
 
-//        AthleteHomeScreen(alathleteViewModel,authViewModel,navController)
+
    }
-}
+

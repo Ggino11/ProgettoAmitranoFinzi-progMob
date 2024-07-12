@@ -11,6 +11,8 @@ import com.amitranofinzi.vimata.data.model.Relationship
 import com.amitranofinzi.vimata.data.repository.ChatRepository
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ChatViewModel: ViewModel() {
@@ -23,11 +25,26 @@ class ChatViewModel: ViewModel() {
     //Create live data for chats
     private val _chats = MutableLiveData<List<Chat>>()
     val chats: LiveData<List<Chat>> get() = _chats
-    //Create live data for messages
-    private val _messages = MutableLiveData<List<Message>>()
-    val messages: LiveData<List<Message>> get() = _messages
 
-    fun fetchRelationship(userID: String, userType: String){
+    //Create live data for messages
+    private val _messages = MutableStateFlow<List<Message>>(emptyList())
+    val messages: StateFlow<List<Message>> = _messages
+
+    //receiverID live data
+    private val _receiverId = MutableLiveData<String>()
+    val receiverId: LiveData<String> get() = _receiverId
+
+    //fetch single relationship
+    fun fetchReceiverId(chatId: String, userType: String) {
+        viewModelScope.launch {
+            Log.d("ChatViewModel fetch receiver", "sender is ${userType}")
+            val fetchedReceiverId = chatRepository.getReceiverId(chatId, userType)
+            Log.d("ChatViewModel fetch receiver", "receiver is ${receiverId}")
+            _receiverId.setValue(fetchedReceiverId!!)//nullable
+        }
+
+    }
+    fun fetchRelationships(userID: String, userType: String){
         viewModelScope.launch(Dispatchers.IO) {
             Log.d("ChatViewModel", "fetching relationships with ${userID} and ${userType}")
             val fetchedRelationships = chatRepository.getRelationships(userID, userType)
@@ -37,7 +54,8 @@ class ChatViewModel: ViewModel() {
     }
     // Function to fetch relationships based on user ID and type
     fun fetchChats(relationshipIDs: List<String>) {
-        viewModelScope.launch(Dispatchers.IO) {
+        Log.d("RelationshipId", relationshipIDs.isEmpty().toString())
+        viewModelScope.launch {
             val fetchedChats = chatRepository.getChats(relationshipIDs)
             _chats.postValue(fetchedChats)
         }
@@ -46,11 +64,13 @@ class ChatViewModel: ViewModel() {
 
     // Function to fetch messages based on chat ID
     fun fetchMessages(chatId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val fetchedMessages = chatRepository.getMessages(chatId)
+            Log.d("MexList", fetchedMessages.toString())
             _messages.value = fetchedMessages
-//            _messages.postValue(fetchedMessages)
+
         }
+
     }
 
     // Function to send a message to a specific chat
@@ -77,11 +97,12 @@ class ChatViewModel: ViewModel() {
     private var chatListener: ListenerRegistration? = null
 
     fun listenForMessages(chatId: String) {
-        chatListener?.remove() // Rimuovi eventuali listener esistenti
-
+        chatListener?.remove() //removes existing listener
+        Log.d("MexList", chatId)
         chatListener = chatRepository.listenForMessages(chatId) { messages ->
             _messages.value = messages
         }
+        Log.d("MexList", chatId)
     }
 
     override fun onCleared() {

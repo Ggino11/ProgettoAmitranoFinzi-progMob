@@ -1,14 +1,13 @@
 package com.amitranofinzi.vimata.data.repository
 
+//import com.google.firebase.firestore.FirebaseFirestore
 import android.util.Log
 import com.amitranofinzi.vimata.data.model.User
-import com.amitranofinzi.vimata.data.model.Workout
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
-//import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
 class AuthRepository() {
