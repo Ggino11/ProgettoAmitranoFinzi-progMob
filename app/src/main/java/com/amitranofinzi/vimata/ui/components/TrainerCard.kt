@@ -57,7 +57,6 @@ fun TrainerCard(
             Column(
                 modifier = Modifier
                     .padding(start = 16.dp)
-                    .weight(1f)
             ) {
                 Text(
                     text = "${trainer.name} ${trainer.surname}",

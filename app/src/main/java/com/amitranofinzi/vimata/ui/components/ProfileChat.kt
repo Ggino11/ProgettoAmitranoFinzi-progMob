@@ -51,7 +51,7 @@ fun ProfileChatBar(
                 Icon(Icons.Default.Close, contentDescription = "Back")
             }
         }
-        HorizontalDivider(modifier = Modifier.padding(top = 5.dp))
+        HorizontalDivider(modifier = Modifier.padding(top =10.dp))
     }
 }
 

@@ -20,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.ui.theme.MessageColor
 import com.amitranofinzi.vimata.ui.theme.TextColor
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.Locale
 @Composable
@@ -64,9 +63,10 @@ fun MessageBubble(
         )
     }
 }
-fun formatTimestamp(timestamp: Timestamp): String {
+fun formatTimestamp(timestamp: com.google.firebase.Timestamp): String {
+    val date = timestamp.toDate() //convert firebase format into date for formatting correctlly
     val simpleDataFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-    return simpleDataFormat.format(timestamp)
+    return simpleDataFormat.format(date)
 }
 //
 //@Preview(showBackground = true)

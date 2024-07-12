@@ -1,11 +1,13 @@
 package com.amitranofinzi.vimata.ui.screen.chat
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -27,19 +29,36 @@ fun SingleChatScreen(
     chatId: String?,
     navController: NavController
 ) {
-    val messages: List<Message> by chatViewModel.messages.observeAsState(emptyList())
-    val receiver by authViewModel.user.observeAsState()
+//    val messages: List<Message> by chatViewModel.messages.observeAsState(emptyList())
+    val messages by chatViewModel.messages.collectAsState()
+    val user by authViewModel.user.observeAsState()
+    //actually is sender
+    val receiver by authViewModel.userGet.observeAsState()
     val senderId = authViewModel.getCurrentUserID()
+    val receiverId by chatViewModel.receiverId.observeAsState()
 
-    val receiverId = receiver!!.uid
-    //FETCH MESSAGES using flow
-    LaunchedEffect(chatId ) {
+    LaunchedEffect(chatId){
         if (chatId != null) {
-            chatViewModel.fetchMessages(chatId)
             chatViewModel.listenForMessages(chatId)
         }
     }
 
+
+    LaunchedEffect(chatId, user?.userType){
+        if (chatId != null) {
+            chatViewModel.fetchReceiverId(chatId, user!!.userType)
+        }
+    }
+
+    LaunchedEffect(receiverId){
+        receiverId?.let { authViewModel.getUser(it) }
+    }
+    Log.d("SingleChatScreen0",receiver.toString())
+
+    Log.d("SingleChatScreen1","Navigate")
+    //FETCH MESSAGES using flow
+
+    Log.d("SingleChatScreen2", messages.isEmpty().toString())
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (profileRef, messagesRef, chatBoxRef) = createRefs()
 
@@ -93,7 +112,7 @@ fun SingleChatScreen(
                 if (receiverId != null) {
                     ChatBox(
                         senderId = senderId,
-                        receiverId = receiverId,
+                        receiverId = receiverId!!,
                         chatId = it,
                         onSend = { chatId: String, message: Message ->
                             chatViewModel.sendMessage(chatId, message )

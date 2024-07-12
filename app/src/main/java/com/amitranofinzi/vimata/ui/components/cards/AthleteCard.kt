@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amitranofinzi.vimata.data.model.User
+import com.amitranofinzi.vimata.ui.components.ProfileAvatar
 import com.amitranofinzi.vimata.ui.theme.BgColor
 import com.amitranofinzi.vimata.ui.theme.GrayColor
 import com.amitranofinzi.vimata.ui.theme.TextColor

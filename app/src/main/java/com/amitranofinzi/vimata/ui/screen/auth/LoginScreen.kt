@@ -227,43 +227,6 @@ fun LoginScreen( authViewModel: AuthViewModel = AuthViewModel(), navController: 
 
             }
 
-//        Row(verticalAlignment = Alignment.CenterVertically) {
-//                Divider(modifier = Modifier
-//                    .weight(1f)
-//                    .padding(vertical = 20.dp))
-//                Text(
-//                    text = "or",
-//                    modifier = Modifier.padding(horizontal = 8.dp),
-//                    color = Color.Gray
-//                )
-//                Divider(modifier = Modifier.weight(1f))
-//            }
-//
-//            Spacer(modifier = Modifier.height(10.dp))
-
-//            Row(
-//                modifier = Modifier
-//                    .fillMaxWidth()
-//                    .padding(horizontal = 20.dp),
-//                horizontalArrangement = Arrangement.SpaceEvenly,
-//                verticalAlignment = Alignment.CenterVertically
-//
-//            ) {
-//                GoogleSignIn(text = "Google",
-//                    icon = painterResource(id = R.drawable.ic_google_logo),
-//                    onClick = { TODO() }
-//                )
-//
-//                Spacer(modifier = Modifier.width(16.dp))
-//
-//                GoogleSignIn(text = "Google",
-//                    icon = painterResource(id = R.drawable.ic_google_logo),
-//                    onClick = { TODO() }
-//                )
-//            }
-//        }
-//    }
-
             LaunchedEffect(authState) {
                 when (authState) {
 
