@@ -188,6 +188,8 @@ fun NavGraphBuilder.trainerGraph(navController: NavHostController) {
                 ExerciseSelectionScreen(trainerViewModel, trainerID, navController)
             }
         }
+
+        // TestSet viewer screen
         composable("testSetDetails/{testSetId}",listOf( navArgument("testSetId") { type = NavType.StringType  })
         ){
             // Ottieni l'ID del test set dalla navigazione

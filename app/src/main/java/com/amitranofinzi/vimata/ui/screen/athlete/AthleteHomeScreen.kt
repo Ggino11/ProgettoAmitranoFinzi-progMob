@@ -33,9 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.amitranofinzi.vimata.ui.components.AddTrainerDialog
 import com.amitranofinzi.vimata.ui.components.TrainerCard
 import com.amitranofinzi.vimata.ui.components.cards.WorkoutCard
+import com.amitranofinzi.vimata.ui.components.dialog.AddTrainerDialog
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel

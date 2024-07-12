@@ -76,6 +76,7 @@ fun TestSetViewerScreen(
                     onVideoClick = {
                         cameraViewModel.checkCameraPermission { isGranted ->
                             if (isGranted) {
+
                                 navController.navigate("cameraScreen/${test.id}")
                             } else {
                                 cameraViewModel.requestCameraPermission()

@@ -162,6 +162,10 @@ class TestRepository {
 
             val testId = result.id
             val updatedTest = test.copy(id = testId)
+            firestore.collection("tests")
+                .document(testId)
+                .set(updatedTest)
+                .await()
 
             Log.d("TestRepository", "Test created successfully with ID: $testId")
         } catch (e: Exception) {
