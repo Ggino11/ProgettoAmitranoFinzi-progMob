@@ -5,7 +5,7 @@ import java.time.Instant
 
 
 data class Message (
-    val chatId: String,
+    val chatId: String = "",
     val senderId: String = "",
     var text: String = "",
     val timeStamp: Timestamp,

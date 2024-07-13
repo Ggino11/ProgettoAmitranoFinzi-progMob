@@ -86,13 +86,19 @@ fun ListChatScreen(
                     .padding(16.dp)
                     .align(Alignment.Start)
             )
-
+            Log.d("ListChatScreen", chats.toString())
             LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
-                items(chats.zip(receivers!!)) { (chat, receiver) ->
+                val receiversList = receivers ?: emptyList()
+
+                items(chats.zip(receiversList)) { (chat, receiver) ->
                     ChatPreview(
                         chat = chat,
                         openChat = {
-                            navController.navigate("chatDetails/${chat.chatId}")
+                            Log.d("ListChatScreen.openChat", chat.chatId)
+                            // Ensure receiver is not null before accessing its uid
+                            receiver?.let {
+                                navController.navigate("chatDetails/${chat.chatId}/${it.uid}")
+                            }
                         },
                         user = receiver
                     )

@@ -11,7 +11,6 @@ import com.amitranofinzi.vimata.data.model.Relationship
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.repository.ChatRepository
 import com.google.firebase.firestore.ListenerRegistration
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -28,6 +27,9 @@ class ChatViewModel: ViewModel() {
     private val _chats = MutableLiveData<List<Chat>>()
     val chats: LiveData<List<Chat>> get() = _chats
 
+    private val _receiver = MutableLiveData<User?>()
+    val receiver: LiveData<User?> = _receiver
+
     private val _receivers = MutableLiveData<List<User>?>()
     val receivers: LiveData<List<User>?> = _receivers
 
@@ -36,8 +38,8 @@ class ChatViewModel: ViewModel() {
     val messages: StateFlow<List<Message>> = _messages
 
     //receiverID live data
-    private val _receiverId = MutableLiveData<String>()
-    val receiverId: LiveData<String> get() = _receiverId
+    private val _receiverId = MutableLiveData<String?>()
+    val receiverId: MutableLiveData<String?> get() = _receiverId
 
     //fetch single relationship
     fun fetchReceiverId(chatId: String, userType: String) {
@@ -45,26 +47,71 @@ class ChatViewModel: ViewModel() {
             Log.d("ChatViewModel fetch receiver", "sender is ${userType}")
             val fetchedReceiverId = chatRepository.getReceiverId(chatId, userType)
             Log.d("ChatViewModel fetch receiver", "receiver is ${receiverId}")
-            _receiverId.setValue(fetchedReceiverId!!)//nullable
+            _receiverId.setValue(fetchedReceiverId)//nullable
         }
 
     }
+    fun fetchReceiverById(userID: String) {
+        viewModelScope.launch {
+            try {
+                Log.d("ChatViewModel", "Fetching user for userID: $userID")
+                val fetchedUser = chatRepository.getReceiver(userID)
+                Log.d("ChatViewModel", "Fetched user: $fetchedUser")
+                _receiver.value = fetchedUser
+            } catch (e: Exception) {
+                Log.e("ChatViewModel", "Error fetching user", e)
+                //_receiver.value = null // Assicuriamoci che se c'è un errore, _receiver sia null
+            }
+        }
+    }
+/*
+    fun fetchReceiver(chatId: String, userType: String) {
+        viewModelScope.launch {
+            try {
+                val chat = chatRepository.getChat(chatId)
+                if (chat != null) {
+                    val relationship = chatRepository.getRelationship(chat.relationshipID)
+                    if (relationship != null) {
+                        val receiverId = if (userType == "athlete") {
+                            relationship.trainerID
+                        } else {
+                            relationship.athleteID
+                        }
+                        Log.d("ChatViewModel", "Receiver id: ${receiverId}")
 
+                        val receiver = receiverId?.let { chatRepository.getUser(it) }
+                        if (receiver != null) {
+                            _receiver.setValue(receiver)
+                        } else {
+                            Log.e("ChatViewModel", "Receiver not found")
+                        }
+                    } else {
+                        Log.e("ChatViewModel", "Relationship not found")
+                    }
+                } else {
+                    Log.e("ChatViewModel", "Chat not found")
+                }
+            } catch (e: Exception) {
+                Log.e("ChatViewModel", "Error fetching receiver", e)
+            }
+        }
+    }
+*/
     fun fetchReceivers(userID: String, userType: String){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             Log.d("ChatViewModel", "fetching receivers with ${userID} and ${userType}")
             val fetchedReceivers = chatRepository.getReceivers(userID, userType)
             Log.d("ChatViewModel", fetchedReceivers.toString())
-            _receivers.postValue(fetchedReceivers)
+            _receivers.setValue(fetchedReceivers)
         }
     }
 
     fun fetchRelationships(userID: String, userType: String){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             Log.d("ChatViewModel", "fetching relationships with ${userID} and ${userType}")
             val fetchedRelationships = chatRepository.getRelationships(userID, userType)
             Log.d("ChatViewModel", fetchedRelationships.toString())
-            _relationships.postValue(fetchedRelationships)
+            _relationships.setValue(fetchedRelationships)
         }
     }
 
@@ -79,14 +126,12 @@ class ChatViewModel: ViewModel() {
     }
 
     // Function to fetch messages based on chat ID
-    fun fetchMessages(chatId: String) {
+    fun listenForMessages(chatId: String) {
         viewModelScope.launch {
-            val fetchedMessages = chatRepository.getMessages(chatId)
-            Log.d("MexList", fetchedMessages.toString())
-            _messages.value = fetchedMessages
-
+            chatRepository.getMessagesFlow(chatId).collect { messages ->
+                _messages.value = messages
+            }
         }
-
     }
 
     // Function to send a message to a specific chat
@@ -102,24 +147,7 @@ class ChatViewModel: ViewModel() {
         }
     }
 
-
-    // Function to listen for real-time updates to messages in a specific chat
-//    fun listenForMessages(chatId: String, onMessagesChanged: (List<Message>) -> Unit) {
-//        chatRepository.listenForMessages(chatId) { messages ->
-//            onMessagesChanged(messages)
-//            _messages.postValue(messages) // Optionally update LiveData for observing changes
-//        }
-//    }
     private var chatListener: ListenerRegistration? = null
-
-    fun listenForMessages(chatId: String) {
-        chatListener?.remove() //removes existing listener
-        Log.d("MexList", chatId)
-        chatListener = chatRepository.listenForMessages(chatId) { messages ->
-            _messages.value = messages
-        }
-        Log.d("MexList", chatId)
-    }
 
     override fun onCleared() {
         super.onCleared()

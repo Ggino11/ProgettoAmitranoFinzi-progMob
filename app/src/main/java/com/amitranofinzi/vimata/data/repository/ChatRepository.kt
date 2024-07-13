@@ -5,17 +5,15 @@ import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.data.model.Relationship
 import com.amitranofinzi.vimata.data.model.User
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ListenerRegistration
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 
 class ChatRepository() {
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-    val currentUser: FirebaseUser? get() = firebaseAuth.currentUser
 
     /**
      * Fetches relationships (chats) associated with a specific user ID.
@@ -39,18 +37,20 @@ class ChatRepository() {
             Log.d("getReceiverId", "Extracted relationshipId: $relationshipId for chatId: $chatId")
 
             // Fetch the relationship document using the relationshipId
-            val snapshotRelationship = firestore.collection("relationships")
-                .document(relationshipId!!)
-                .get()
-                .await()
+            val snapshotRelationship = relationshipId?.let {
+                firestore.collection("relationships")
+                    .document(it)
+                    .get()
+                    .await()
+            }
             Log.d("getReceiverId", "Fetched relationship document for relationshipId: $relationshipId")
 
             // Convert the document to Relationship object
-            val relationshipObj = snapshotRelationship.toObject(Relationship::class.java)!!
+            val relationshipObj = snapshotRelationship?.toObject(Relationship::class.java)
             Log.d("getReceiverId", "Converted relationship document to Relationship object: $relationshipObj")
 
             // Determine and return the receiverId based on userType
-            val receiverId = if (userType == "trainer") relationshipObj.athleteID else relationshipObj.trainerID
+            val receiverId = if (userType == "trainer") relationshipObj?.athleteID else relationshipObj?.trainerID
             Log.d("getReceiverId", "Determined receiverId: $receiverId for chatId: $chatId and userType: $userType")
 
             return receiverId
@@ -61,7 +61,29 @@ class ChatRepository() {
         }
     }
 
+    suspend fun getReceiver(userId: String): User? {
+        return try {
+            Log.d("ChatRepository", "Fetching user with ID: $userId")
 
+            val querySnapshot = firestore.collection("users")
+                .whereEqualTo("id", userId)
+                .get()
+                .await()
+
+            if (!querySnapshot.isEmpty) {
+                val documentSnapshot = querySnapshot.documents.first()
+                val user = documentSnapshot.toObject(User::class.java)
+                Log.d("ChatRepository", "User found: $user")
+                user
+            } else {
+                Log.d("ChatRepository", "No user found with ID: $userId")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("ChatRepository", "Error fetching user", e)
+            null
+        }
+    }
 
     suspend fun getRelationships(userId: String, userType: String): List<Relationship> {
         return try {
@@ -119,34 +141,7 @@ class ChatRepository() {
     }
 
     //get messages from a specific chat based on the caht id
-    suspend fun getMessages(chatId: String): List<Message> {
-        return try {
-            Log.d("ChatRepo", "Starting to fetch messages for chatId: $chatId")
 
-            val snapshot = firestore.collection("messages")
-                .whereEqualTo("chatId", chatId)
-                .get().await()
-
-            Log.d("ChatRepo", "Constructed query: $snapshot")
-
-            val messages = snapshot.documents.mapNotNull {
-                val message = it.toObject(Message::class.java)
-                if (message != null) {
-                    Log.d("ChatRepo", "Fetched message: ${message.text} with timestamp: ${message.timeStamp}")
-                } else {
-                    Log.w("ChatRepo", "Failed to convert document to Message object")
-                }
-                message
-            }
-            //return list of messages
-            Log.d("ChatRepo", "Successfully fetched ${messages.size} messages for chatId: $chatId")
-            messages
-
-        } catch (e: Exception) {
-            Log.e("ChatRepo", "Error fetching messages for chatId: $chatId", e)
-            emptyList()
-        }
-    }
 
 
     //sends message to a specific chat
@@ -180,81 +175,78 @@ class ChatRepository() {
         }
     }
 
-    /**
-     * Listens for real-time updates to messages in a specific chat.
-     *
-     * @param chatId The ID of the chat for which real-time message updates are to be listened.
-     * @param onMessagesChanged Callback function invoked when messages in the chat are updated.
+    suspend fun getChat(chatId: String): Chat? {
+        return try {
+            val documentSnapshot = firestore.collection("chats")
+                .document(chatId)
+                .get()
+                .await()
 
-    fun listenForMessages(chatId: String, onMessagesChanged: (List<Message>) -> Unit): ListenerRegistration {
-        Log.d("Listener", "Setting up listener for chatId: $chatId")
+            if (documentSnapshot.exists()) {
+                documentSnapshot.toObject(Chat::class.java)
+            } else {
+                Log.d("ChatRepository", "No chat found with ID: $chatId")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("ChatRepository", "Error fetching chat", e)
+            null
+        }
+    }
 
-        return firestore.collection("messages")
+    suspend fun getRelationship(relationshipId: String): Relationship? {
+        return try {
+            val documentSnapshot = firestore.collection("relationships")
+                .document(relationshipId)
+                .get()
+                .await()
+
+            if (documentSnapshot.exists()) {
+                documentSnapshot.toObject(Relationship::class.java)
+            } else {
+                Log.d("ChatRepository", "No relationship found with ID: $relationshipId")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("ChatRepository", "Error fetching relationship", e)
+            null
+        }
+    }
+
+    suspend fun getUser(userId: String): User? {
+        return try {
+            val documentSnapshot = firestore.collection("users")
+                .document(userId)
+                .get()
+                .await()
+
+            if (documentSnapshot.exists()) {
+                documentSnapshot.toObject(User::class.java)
+            } else {
+                Log.d("ChatRepository", "No user found with ID: $userId")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("ChatRepository", "Error fetching user", e)
+            null
+        }
+    }
+
+    fun getMessagesFlow(chatId: String): Flow<List<Message>> = callbackFlow {
+        val listenerRegistration = firestore.collection("messages")
             .whereEqualTo("chatId", chatId)
-            .orderBy("timeStamp", Query.Direction.ASCENDING)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    Log.e("Listener", "Listen failed for chatId: $chatId", error)
-                    onMessagesChanged(emptyList())
+            .orderBy("timeStamp")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    close(e)
                     return@addSnapshotListener
                 }
-                if (snapshot != null) {
-                    if (snapshot.isEmpty) {
-                        Log.d("ListenerForChat", "No messages found for chatId: $chatId")
-                        onMessagesChanged(emptyList())
-                    } else {
-                        val messages = snapshot.documents.mapNotNull {
-                            it.toObject(Message::class.java)
-                        }
-                        Log.d("ListenerForChat", "Received ${messages.size} messages for chatId: $chatId")
-                        onMessagesChanged(messages)
-                    }
-                } else {
-                    Log.d("ListenerForChat", "Snapshot is null for chatId: $chatId")
-                    onMessagesChanged(emptyList())
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val messages = snapshot.toObjects(Message::class.java)
+                    trySend(messages).isSuccess
                 }
             }
-    }*/
-    fun listenForMessages(chatId: String, onMessagesChanged: (List<Message>) -> Unit): ListenerRegistration {
-        Log.d("Listener", "Setting up listener for chatId: $chatId")
-
-        // Setup Firestore query to listen for messages in the specified chatId
-        return firestore.collection("messages")
-            .whereEqualTo("chatId", chatId)
-            //.orderBy("timeStamp", Query.Direction.ASCENDING)
-            .addSnapshotListener { snapshot, error ->
-                if (error != null) {
-                    // Handle error if listener fails
-                    Log.e("Listener", "Listen failed for chatId: $chatId", error)
-                    onMessagesChanged(emptyList())
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null) {
-                    // Check if snapshot is empty
-                    if (snapshot.isEmpty) {
-                        Log.d("ListenerForChat", "No messages found for chatId: $chatId")
-                        onMessagesChanged(emptyList())
-                    } else {
-                        // Extract messages from snapshot documents
-                        val messages = snapshot.documents.mapNotNull { document ->
-                            document.toObject(Message::class.java)
-                        }
-
-                        // Log and notify UI of received messages
-                        Log.d("ListenerForChat", "Received ${messages.size} messages for chatId: $chatId")
-                        onMessagesChanged(messages.toList()) // Use toList() to trigger UI update
-
-                        // Optionally, create a copy of messages to ensure immutability
-                        val messagesCopy = messages.toList()
-                        // Use messagesCopy in further operations to maintain original data integrity
-                    }
-                } else {
-                    // Handle null snapshot scenario
-                    Log.d("ListenerForChat", "Snapshot is null for chatId: $chatId")
-                    onMessagesChanged(emptyList())
-                }
-            }
+        awaitClose { listenerRegistration.remove() }
     }
 
     suspend fun getReceivers(userID: String, userType: String): List<User>? {
@@ -302,33 +294,6 @@ class ChatRepository() {
             }
         }
     }
-//    fun listenForMessages(chatId: String): Flow<List<Message>> = callbackFlow {
-//        Log.d("Listener", "Setting up listener for chatId: $chatId")
-//
-//        val registration = firestore.collection("messages")
-//            .whereEqualTo("chatId", chatId)
-//            .orderBy("timestamp") // Assicurati che il campo sia corretto
-//            .addSnapshotListener { snapshot, error ->
-//                if (error != null) {
-//                    Log.e("Listener", "Listen failed for chatId: $chatId", error)
-//                    trySend(emptyList())
-//                    return@addSnapshotListener
-//                }
-//
-//                val messages = snapshot?.documents?.mapNotNull { doc ->
-//                    doc.toObject(Message::class.java).also { message ->
-//                        if (message == null) {
-//                            Log.w("ListenerForChat", "Failed to convert document to Message object")
-//                        }
-//                    }
-//                }.orEmpty()
-//
-//                Log.d("ListenerForChat", "Received ${messages.size} messages for chatId: $chatId")
-//                trySend(messages)
-//            }
-//        awaitClose { registration.remove() }
-//    }
-
 
 
 

@@ -18,7 +18,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.amitranofinzi.vimata.ui.screen.athlete.AthleteScreen
 import com.amitranofinzi.vimata.ui.screen.auth.LoginScreen
-//import com.amitranofinzi.vimata.ui.screen.chat.SingleChatScreen
+import com.amitranofinzi.vimata.ui.screen.chat.SingleChatScreen
 import com.amitranofinzi.vimata.ui.screen.editor.ExerciseEditorScreen
 import com.amitranofinzi.vimata.ui.screen.editor.ExerciseSelectionScreen
 import com.amitranofinzi.vimata.ui.screen.sensing.VideoPlayerScreen
@@ -95,9 +95,16 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
             TestSetViewerScreen(authViewModel, athleteViewModel,cameraViewModel,testSetId, navController)
         }
 
-        composable("chatDetails/{chatId}", listOf( navArgument("chatId") { type = NavType.StringType})
+        composable("chatDetails/{chatId}/{receiverId}",
+                listOf(
+                    navArgument("chatId") { type = NavType.StringType},
+                    navArgument("receiverId") { type = NavType.StringType })
         ){
+
             val chatId = it.arguments?.getString("chatId")
+            val receiverId = it.arguments?.getString("receiverId")
+
+            Log.d("NavigationTOSingleChat",chatId!!)
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
             val chatViewModel = it.sharedViewModel<ChatViewModel>(navController)
             if (chatId != null) {
@@ -105,7 +112,7 @@ fun NavGraphBuilder.athleteGraph(navController: NavHostController) {
             } else {
                 Log.d("NavigationTOSingleChat","NUll")
             }
-           // SingleChatScreen(authViewModel,chatViewModel,chatId, navController)
+            SingleChatScreen(authViewModel,chatViewModel,chatId, receiverId, navController)
         }
         composable("cameraScreen/{testID}", listOf( navArgument("testID") { type = NavType.StringType})){
             Log.d("AppNav","dentro cameraScreen route")
@@ -200,13 +207,24 @@ fun NavGraphBuilder.trainerGraph(navController: NavHostController) {
             // Visualizza i dettagli del test set con l'ID specificato
             TestSetViewerScreen(authViewModel, athleteViewModel,cameraViewModel,testSetId, navController)
         }
-        composable("chatDetails/{chatId}", listOf( navArgument("chatId") { type = NavType.StringType})
+        composable("chatDetails/{chatId}/{receiverId}",
+            listOf(
+                navArgument("chatId") { type = NavType.StringType},
+                navArgument("receiverId") { type = NavType.StringType })
         ){
+
             val chatId = it.arguments?.getString("chatId")
+            val receiverId = it.arguments?.getString("receiverId")
+
+            Log.d("NavigationTOSingleChat",chatId!!)
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
             val chatViewModel = it.sharedViewModel<ChatViewModel>(navController)
-
-            //SingleChatScreen(authViewModel,chatViewModel,chatId, navController)
+            if (chatId != null) {
+                Log.d("NavigationTOSingleChat",chatId)
+            } else {
+                Log.d("NavigationTOSingleChat","NUll")
+            }
+            SingleChatScreen(authViewModel,chatViewModel,chatId, receiverId, navController)
         }
         composable("cameraScreen/{testID}", listOf( navArgument("testID") { type = NavType.StringType})){
             Log.d("AppNav","dentro cameraScreen route")
