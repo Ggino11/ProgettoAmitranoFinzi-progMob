@@ -1,5 +1,6 @@
 package com.amitranofinzi.vimata.data.extensions
 
+//for tests status
 enum class TestStatus {
     TODO,
     DONE,

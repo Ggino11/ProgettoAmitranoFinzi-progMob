@@ -18,7 +18,7 @@ val AppTypography = Typography(
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
     )
-    // aggiungere altri stili di font
+
 )
 
 val AppShapes = Shapes(
