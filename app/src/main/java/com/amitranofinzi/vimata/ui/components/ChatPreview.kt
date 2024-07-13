@@ -23,21 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.ui.theme.BgColor
 import com.amitranofinzi.vimata.ui.theme.TextColor
-import com.amitranofinzi.vimata.ui.theme.VimataTheme
 
 // Esempio di dati mock per le chat
-val mockChats = listOf(
-    Chat("chat1", "fwij33848 ", "Hello!"),
-    Chat("chat2", "fwij33848 ", "Hi there!"),
-    Chat("chat3", "fwij33848 ", "How are you?") ,
-    Chat("chat3", "fwij33848 ", "How are you?"),
-)
+
 
 
 @Composable
@@ -46,6 +39,12 @@ fun ChatPreview(
     openChat: () -> Unit,
     user: User,
 ) {
+    /**
+     * @param chat for updating last message
+     * @param function to enter chat
+     * @param user receiver message and initials of username in profile
+    * */
+
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -88,6 +87,7 @@ fun ChatPreview(
                 }
                 HorizontalDivider(modifier = Modifier.fillMaxWidth())
             }
+            //remove
             IconButton(
                 onClick = { },
                 modifier = Modifier.size(36.dp),
@@ -103,19 +103,19 @@ fun ChatPreview(
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun ChatPreviewPreview() {
-    VimataTheme {
-
-        val user = User(
-            email = "john.doe@example.com",
-            name = "John",
-            password = "hashed_password",
-            surname = "Doe",
-            uid = "user_id_123",
-            userType = "TRAINER"
-        )
-    ChatPreview(chat = mockChats[0], openChat = {}, user = user)
-}
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun ChatPreviewPreview() {
+//    VimataTheme {
+//
+//        val user = User(
+//            email = "john.doe@example.com",
+//            name = "John",
+//            password = "hashed_password",
+//            surname = "Doe",
+//            uid = "user_id_123",
+//            userType = "TRAINER"
+//        )
+//    ChatPreview(chat = mockChats[0], openChat = {}, user = user)
+//}
+//}

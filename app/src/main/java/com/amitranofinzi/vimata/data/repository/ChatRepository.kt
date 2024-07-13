@@ -85,13 +85,17 @@ class ChatRepository() {
             null
         }
     }
-
+    /** FETCH ALL REALATIONSHIP
+     * @param userId: to compare with ids in relationships
+     * @param userType: to get either trainer id or athlete
+     * return
+     * */
     suspend fun getRelationships(userId: String, userType: String): List<Relationship> {
         return try {
             Log.d("ChatRepository", "UserID: $userId")
             Log.d("ChatRepository", "UserType: $userType")
 
-            // Scegli la collezione giusta in base al tipo di utente
+            // query firestore to get all relatioships where id is equal to athlete or trainer id
             val query = if (userType == "athlete") {
                 firestore.collection("relationships")
                     .whereEqualTo("athleteID", userId)
@@ -266,7 +270,6 @@ class ChatRepository() {
             Log.d("ChatRepository", "Listener removed for chatId: $chatId")
         }
     }
-
 
     suspend fun getReceivers(userID: String, userType: String): List<User>? {
             return try {

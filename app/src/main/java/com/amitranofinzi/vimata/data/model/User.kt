@@ -4,7 +4,7 @@ package com.amitranofinzi.vimata.data.model
 data class User(
     val email: String,
     val name: String,
-    val password: String, // Hashed password
+    val password: String, // Hashed password for now stored in db for teting purposes, need to be deleted
     val surname: String,
     val uid: String?, // User ID assigned by Firebase Auth
     val userType: String, //maybe define an enum for UserType (ATHLETE, TRAINER)

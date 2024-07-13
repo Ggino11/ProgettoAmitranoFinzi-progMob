@@ -123,7 +123,7 @@ fun AthleteHomeScreen(athleteViewModel: AthleteViewModel = AthleteViewModel(),
         }
     }
     // Show Dialog
-    //TODO: funciton to remove
+    //TODO: function to remove trainer taht deletes all relationships and all that
     if (showDialog) {
         AddTrainerDialog(
             onDismiss = { showDialog = false },

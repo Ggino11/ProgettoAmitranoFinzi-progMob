@@ -76,7 +76,7 @@ dependencies {
     implementation("androidx.camera:camera-view:${camerax_version}")
 
     implementation("com.google.guava:guava:30.1-jre")
-
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.4.1")
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
@@ -94,6 +94,7 @@ dependencies {
     implementation("androidx.compose.runtime:runtime-livedata:1.6.8")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.compose.material3:material3-android:1.2.1")
+
 
     // PDF viewer
     implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
