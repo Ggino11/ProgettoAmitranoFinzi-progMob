@@ -66,9 +66,10 @@ class ChatRepository() {
             Log.d("ChatRepository", "Fetching user with ID: $userId")
 
             val querySnapshot = firestore.collection("users")
-                .whereEqualTo("id", userId)
+                .whereEqualTo("uid", userId)
                 .get()
                 .await()
+
 
             if (!querySnapshot.isEmpty) {
                 val documentSnapshot = querySnapshot.documents.first()
@@ -233,21 +234,39 @@ class ChatRepository() {
     }
 
     fun getMessagesFlow(chatId: String): Flow<List<Message>> = callbackFlow {
+        Log.d("ChatRepository", "Starting getMessagesFlow for chatId: $chatId")
+
         val listenerRegistration = firestore.collection("messages")
             .whereEqualTo("chatId", chatId)
             .orderBy("timeStamp")
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
+                    Log.e("ChatRepository", "Error in snapshot listener", e)
                     close(e)
                     return@addSnapshotListener
                 }
-                if (snapshot != null && !snapshot.isEmpty) {
-                    val messages = snapshot.toObjects(Message::class.java)
-                    trySend(messages).isSuccess
+                if (snapshot != null) {
+                    if (!snapshot.isEmpty) {
+                        val messages = snapshot.toObjects(Message::class.java)
+                        Log.d("ChatRepository", "Fetched ${messages.size} messages for chatId: $chatId")
+                        val sendResult = trySend(messages).isSuccess
+                        Log.d("ChatRepository", "Sending messages success: $sendResult")
+                    } else {
+                        Log.d("ChatRepository", "No messages found for chatId: $chatId")
+                    }
+                } else {
+                    Log.d("ChatRepository", "Snapshot is null for chatId: $chatId")
                 }
             }
-        awaitClose { listenerRegistration.remove() }
+
+        Log.d("ChatRepository", "Listener registered for chatId: $chatId")
+
+        awaitClose {
+            listenerRegistration.remove()
+            Log.d("ChatRepository", "Listener removed for chatId: $chatId")
+        }
     }
+
 
     suspend fun getReceivers(userID: String, userType: String): List<User>? {
             return try {

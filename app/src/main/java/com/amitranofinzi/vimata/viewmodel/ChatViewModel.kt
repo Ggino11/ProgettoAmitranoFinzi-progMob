@@ -128,8 +128,14 @@ class ChatViewModel: ViewModel() {
     // Function to fetch messages based on chat ID
     fun listenForMessages(chatId: String) {
         viewModelScope.launch {
+            Log.d("ChatViewModel", "Starting to listen for messages for chatId: $chatId")
             chatRepository.getMessagesFlow(chatId).collect { messages ->
+                Log.d("ChatViewModel", "Collected ${messages.size} messages for chatId: $chatId")
+                messages.forEach { message ->
+                    Log.d("ChatViewModel", "Message: ${message.text}, Timestamp: ${message.timeStamp}")
+                }
                 _messages.value = messages
+                Log.d("ChatViewModel", "Updated _messages with ${_messages.value.size} messages for chatId: $chatId")
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.amitranofinzi.vimata.data.model
 
 import com.google.firebase.Timestamp
-import java.time.Instant
 
 
 data class Message (
@@ -16,7 +15,7 @@ data class Message (
         chatId = "",
         senderId = "",
         text = "",
-        timeStamp = Timestamp(Instant.now()),
+        timeStamp = Timestamp.now(),
         receiverId = "",
         id = "",
     )}

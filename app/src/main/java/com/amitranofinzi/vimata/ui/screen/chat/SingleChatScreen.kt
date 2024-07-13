@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,18 +45,25 @@ fun SingleChatScreen(
         if (receiverId != null) {
             chatViewModel.fetchReceiverById(receiverId)
         }
+
     }
 
+
+
+    Log.d("SingleChatScreen", "Messages: ${messages.size}")
+    Log.d("SingleChatScreen", "Messages: ${messages.toString()}")
+
     Log.d("SingleChatScreen", receiver.toString())
+
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (profileRef, messagesRef, chatBoxRef) = createRefs()
 
 
-            // Profile section
+        // Profile section
         ProfileChatBar(
-            userName = "c",//receiver?.name,
-            userLastName = "d",//receiver?.surname,
+            userName = receiver?.name,
+            userLastName = receiver?.surname,
             onBackClicked = { navController.popBackStack() },
             modifier = Modifier.constrainAs(profileRef) {
                 top.linkTo(parent.top)
@@ -65,7 +73,7 @@ fun SingleChatScreen(
                 width = Dimension.fillToConstraints
             }
         )
-
+        Text(messages.toString())
         // Messages section
         LazyColumn(
             modifier = Modifier.constrainAs(messagesRef) {
@@ -77,6 +85,7 @@ fun SingleChatScreen(
             }
         ) {
             items(messages) { message ->
+                Log.d("SingleChatScreen", "Messaggio in lazy column: ${message.toString()}")
                 Column {
                     MessageBubble(
                         message = message,
@@ -97,18 +106,20 @@ fun SingleChatScreen(
         ) {
             chatId?.let {
 
+                receiver?.uid?.let { it1 ->
                     ChatBox(
                         senderId = senderId,
-                        receiverId = "receiver.uid",
+                        receiverId = it1,
                         chatId = it,
                         onSend = { chatId: String, message: Message ->
                             chatViewModel.sendMessage(chatId, message)
                         }
                     )
                 }
-
             }
+
         }
+    }
 
 }
 

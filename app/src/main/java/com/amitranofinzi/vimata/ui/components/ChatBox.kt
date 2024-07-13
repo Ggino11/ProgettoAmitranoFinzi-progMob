@@ -32,7 +32,6 @@ import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.ui.theme.MessageColor
 import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.google.firebase.Timestamp
-import java.time.Instant
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,7 +75,7 @@ fun ChatBox(
                     val message = Message(
                         chatId = chatId,
                         senderId = senderId,
-                        timeStamp = Timestamp(Instant.now()),
+                        timeStamp = Timestamp.now(),
                         receiverId = receiverId,
                         text = textMessage.text,
                         id = ""

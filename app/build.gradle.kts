@@ -79,7 +79,7 @@ dependencies {
 
 
     // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.firebase:firebase-firestore")
