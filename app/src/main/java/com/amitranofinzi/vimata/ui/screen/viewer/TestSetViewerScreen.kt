@@ -4,21 +4,39 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.amitranofinzi.vimata.data.extensions.TestStatus
 import com.amitranofinzi.vimata.ui.components.cards.TestCard
+import com.amitranofinzi.vimata.ui.theme.Primary
+import com.amitranofinzi.vimata.ui.theme.Secondary
 import com.amitranofinzi.vimata.viewmodel.AthleteViewModel
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 import com.amitranofinzi.vimata.viewmodel.CameraViewModel
@@ -63,9 +81,50 @@ fun TestSetViewerScreen(
     Log.d("TestSetViewer", tests.isEmpty().toString())
     Column(modifier = Modifier
         .fillMaxSize()
-        .padding(16.dp)) {
+        .padding(bottom= 16.dp)) {
 
-        LazyColumn {
+        // Top bar
+        Surface(
+            color = Color.White,
+            shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            border = BorderStroke(1.dp, Secondary)
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp)
+            ) {
+                Text(
+                    text = "TEST VIEWER",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Primary, // Colore gradiente iniziale
+                                Secondary  // Colore gradiente finale
+                            )
+                        )
+                    )
+                )
+                IconButton(
+                    onClick = { navController.popBackStack() },
+                    modifier = Modifier.align(Alignment.CenterStart)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Go back"
+                    )
+                }
+            }
+        }
+        LazyColumn (
+            modifier = Modifier.padding(horizontal=16.dp)
+        ){
             Log.d("TestSetViewer", tests.toString())
             items(tests) { test ->
                 Log.d("TestSetViewer", test.toString())

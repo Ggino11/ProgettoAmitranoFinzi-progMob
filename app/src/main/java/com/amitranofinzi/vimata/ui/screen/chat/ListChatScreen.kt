@@ -3,6 +3,7 @@ package com.amitranofinzi.vimata.ui.screen.chat
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -81,6 +82,7 @@ fun ListChatScreen(
                     .padding(16.dp)
                     .align(Alignment.Start)
             )
+            Spacer(modifier = Modifier.padding(vertical = 12.dp))
             Log.d("ListChatScreen", chats.toString())
             LazyColumn(modifier = Modifier.padding(horizontal = 16.dp)) {
                 val receiversList = receivers ?: emptyList()
@@ -103,13 +105,3 @@ fun ListChatScreen(
     }
 }
 
-
-/*
-@Composable
-@Preview
-fun Preview () {
-    VimataTheme {
-        ListChatScreen()
-    }
-}
-*/
