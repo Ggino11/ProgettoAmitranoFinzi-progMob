@@ -70,7 +70,8 @@ fun SingleChatScreen(
 
         // Messages section
         LazyColumn(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier.weight(1f),
+            state = listState,
         ) {
             items(messages) { message ->
                 Log.d("Rendering messages", message.text)

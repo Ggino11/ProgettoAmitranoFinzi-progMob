@@ -107,8 +107,6 @@ class TestRepository {
             Log.d("TestRepository", "Update successful")
         } catch (e: Exception) {
             Log.e("TestRepository", "Error updating test result: ${e.message}", e)
-            // Gestisci l'errore qui, ad esempio:
-            throw e  // Lancia l'eccezione per gestirla nel chiamante, se necessario
         }
     }
 
@@ -121,15 +119,13 @@ class TestRepository {
             Log.d("TestRepository", "Update status successful")
         } catch (e: Exception) {
             Log.e("TestRepository", "Error updating test status: ${e.message}", e)
-            // Gestisci l'errore qui, ad esempio:
-            throw e  // Lancia l'eccezione per gestirla nel chiamante, se necessario
         }
     }
 
     suspend fun createTestSet(testSet: TestSet): String {
         val firestore = FirebaseFirestore.getInstance()
         try {
-            // Aggiungi il testSet al Firestore
+            // add testSet in Firestore
             val result = firestore.collection("testSets")
                 .add(testSet)
                 .await()
@@ -137,7 +133,7 @@ class TestRepository {
             val testSetId = result.id
             Log.d("TestRepository", "TestSet added successfully with ID: $testSetId")
 
-            // Aggiorna il testSet nel Firestore per assicurarsi che l'ID sia assegnato correttamente
+            // update testSet i Firestore to make sure id is correctly updated
             val updatedTestSet = testSet.copy(id = testSetId)
             firestore.collection("testSets")
                 .document(testSetId)
@@ -147,7 +143,7 @@ class TestRepository {
             Log.d("TestRepository", "TestSet: ${updatedTestSet.toString()}")
 
 
-            return testSetId // Ritorna l'ID del nuovo TestSet creato
+            return testSetId
         } catch (e: Exception) {
             Log.e("WorkbookRepository", "Error creating TestSet", e)
             return ""

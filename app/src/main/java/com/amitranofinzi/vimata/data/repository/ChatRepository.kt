@@ -145,10 +145,6 @@ class ChatRepository() {
         }
     }
 
-    //get messages from a specific chat based on the caht id
-
-
-
     //sends message to a specific chat
     suspend fun sendMessage(chatId: String, message: Message) {
         try {
@@ -237,9 +233,10 @@ class ChatRepository() {
         }
     }
 
+    // creates a listner to obtain real time messages in the chat
     fun getMessagesFlow(chatId: String): Flow<List<Message>> = callbackFlow {
         Log.d("ChatRepository", "Starting getMessagesFlow for chatId: $chatId")
-
+        // Register a Firestore snapshot listener to listen for changes in the "messages" collection
         val listenerRegistration = firestore.collection("messages")
             .whereEqualTo("chatId", chatId)
             .orderBy("timeStamp")
@@ -264,13 +261,14 @@ class ChatRepository() {
             }
 
         Log.d("ChatRepository", "Listener registered for chatId: $chatId")
-
+        // Await the closing of the flow and remove the listener when the flow is closed
         awaitClose {
             listenerRegistration.remove()
             Log.d("ChatRepository", "Listener removed for chatId: $chatId")
         }
     }
 
+    //get users that are receiving the messages
     suspend fun getReceivers(userID: String, userType: String): List<User>? {
             return try {
                 Log.d("ChatRepository", "UserID: $userID")

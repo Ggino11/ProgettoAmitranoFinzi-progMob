@@ -29,9 +29,6 @@ import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.ui.theme.BgColor
 import com.amitranofinzi.vimata.ui.theme.TextColor
 
-// Esempio di dati mock per le chat
-
-
 
 @Composable
 fun ChatPreview(

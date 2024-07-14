@@ -81,14 +81,14 @@ fun TrainerWorkbookScreen(
                         .padding(vertical = 16.dp)
                 ) {
                     Text(
-                        text = "TEST VIEWER",
+                        text = "WORKBOOK",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold,
                          style = MaterialTheme.typography.titleLarge.copy(
                         brush = Brush.linearGradient(
                              colors = listOf(
-                                 Primary, // Colore gradiente iniziale
-                                 Secondary  // Colore gradiente finale
+                                 Primary,
+                                 Secondary
                         )
                     )
                 ))
