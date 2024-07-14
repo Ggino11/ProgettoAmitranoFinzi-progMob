@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,6 +34,7 @@ fun SingleChatScreen(
     val messages by chatViewModel.messages.collectAsState()
     val receiver by chatViewModel.receiver.observeAsState()
     val senderId = authViewModel.getCurrentUserID()
+    val listState = rememberLazyListState()
 
     LaunchedEffect(chatId) {
         if (chatId != null) {
@@ -95,26 +97,3 @@ fun SingleChatScreen(
     }
 }
 
-
-// Profile section
-
-/*
-@Composable
-@Preview(showBackground = true)
-fun SingleChatScreenPreview() {
-
-   VimataTheme {
-       val user = User("userId", "John", "Doe","doe","fnweoi","trainer") // Esempio di utente
-       val message = Message("chatId", "userId", "text",
-           java.sql.Timestamp(System.currentTimeMillis())) // Esempio di messaggio
-       val chatViewModel = ChatViewModel() // ViewModel
-       SingleChatScreen(
-           user = user,
-           message = message,
-           chatId = "chatId", // Esempio di ID della chat
-           chatViewModel = chatViewModel
-       )
-   }
-
-}
-*/
