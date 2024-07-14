@@ -194,7 +194,9 @@ fun AthleteHandlerViewerScreen(
             )
             Spacer(modifier = Modifier.weight(1f))
             FloatingActionButton(
-                onClick = { /* Navigate to add new Workout screen */ },
+                onClick = {
+                          navController.navigate("workoutEditor/${athleteID}")
+                          },
                 containerColor = Secondary,
                 contentColor = Color.White,
                 modifier = Modifier

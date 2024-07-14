@@ -226,7 +226,11 @@ class TrainerViewModel: ViewModel() {
         _selectedExercises.value = exercises
     }
 
-
+    fun addWorkout(workout: Workout) {
+        viewModelScope.launch {
+            workbookRepository.uploadWorkout( workout.copy())
+        }
+    }
 
 }
 

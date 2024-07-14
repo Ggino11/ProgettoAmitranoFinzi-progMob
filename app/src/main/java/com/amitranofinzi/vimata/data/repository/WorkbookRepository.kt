@@ -3,6 +3,7 @@ package com.amitranofinzi.vimata.data.repository
 import android.util.Log
 import com.amitranofinzi.vimata.data.model.Collection
 import com.amitranofinzi.vimata.data.model.Exercise
+import com.amitranofinzi.vimata.data.model.Workout
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -74,5 +75,25 @@ class WorkbookRepository {
         }
     }
 
+    suspend fun uploadWorkout(workout: Workout) {
+        val firestore = FirebaseFirestore.getInstance()
+
+        try {
+            val result = firestore.collection("workouts")
+                .add(workout)
+                .await()
+
+            // Assegnamento dell'ID generato da Firebase all'oggetto Exercise
+            val exerciseWithId = workout.copy(id = result.id)
+
+            firestore.collection("workouts")
+                .document(result.id)
+                .set(exerciseWithId)
+
+            Log.d("WorkbookRepository", "workout uploaded successfully with ID: ${result.id}")
+        } catch (e: Exception) {
+            Log.e("WorkbookRepository", "Error uploading workout", e)
+        }
+    }
 
 }

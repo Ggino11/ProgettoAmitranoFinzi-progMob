@@ -22,6 +22,7 @@ import com.amitranofinzi.vimata.ui.screen.auth.LoginScreen
 import com.amitranofinzi.vimata.ui.screen.chat.SingleChatScreen
 import com.amitranofinzi.vimata.ui.screen.editor.ExerciseEditorScreen
 import com.amitranofinzi.vimata.ui.screen.editor.ExerciseSelectionScreen
+import com.amitranofinzi.vimata.ui.screen.editor.WorkoutEditorScreen
 import com.amitranofinzi.vimata.ui.screen.sensing.VideoPlayerScreen
 import com.amitranofinzi.vimata.ui.screen.trainer.TrainerScreen
 import com.amitranofinzi.vimata.ui.screen.viewer.AthleteHandlerViewerScreen
@@ -186,6 +187,16 @@ fun NavGraphBuilder.trainerGraph(navController: NavHostController) {
             val trainerViewModel = it.sharedViewModel<TrainerViewModel>(navController)
             if (trainerID != null) {
                 ExerciseEditorScreen(trainerViewModel, trainerID, navController)
+            }
+        }
+        composable("workoutEditor/{athleteID}",listOf( navArgument("athleteID") { type = NavType.StringType  }))
+        {
+            val athleteID = it.arguments?.getString("athleteID")
+            val trainerViewModel = it.sharedViewModel<TrainerViewModel>(navController)
+            val authViewModel = it.sharedViewModel<AuthViewModel>(navController)
+
+            if (athleteID != null) {
+                WorkoutEditorScreen(trainerViewModel, authViewModel, athleteID, navController)
             }
         }
         composable("exerciseSelection/{trainerID}",listOf( navArgument("trainerID") { type = NavType.StringType  }))
