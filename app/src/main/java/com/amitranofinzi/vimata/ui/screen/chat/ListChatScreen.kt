@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -23,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.amitranofinzi.vimata.ui.components.ChatPreview
+import com.amitranofinzi.vimata.ui.components.ChatTopBar
 import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 import com.amitranofinzi.vimata.viewmodel.ChatViewModel
 
@@ -70,10 +67,8 @@ fun ListChatScreen(
     Log.d("ListChatScreen", "receivers: ${chats.toString()}")
 
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(onClick = { /* Show AddCollectionDialog */ }) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Collection")
-            }
+        topBar = {
+            ChatTopBar()
         }
     ){
         Column {

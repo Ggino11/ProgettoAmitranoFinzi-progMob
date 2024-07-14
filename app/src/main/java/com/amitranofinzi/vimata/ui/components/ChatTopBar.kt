@@ -36,7 +36,7 @@ fun ChatTopBar(
 
     CenterAlignedTopAppBar(
         modifier = Modifier
-            .padding(bottom = 10.dp)
+            .padding(bottom = 16.dp)
             .shadow(elevation = 4.dp, shape = RoundedCornerShape(bottomStart = 16.dp, bottomEnd = 16.dp))
             .then(modifier),
         colors = TopAppBarDefaults.topAppBarColors(
