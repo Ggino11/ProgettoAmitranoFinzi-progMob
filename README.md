@@ -4,6 +4,11 @@ Vimata is a fitness management application designed to facilitate seamless commu
 
 ## Features
 
+### LOGIN & REGISTRATION
+- Users can register as athletes or trainers, based on this type the application offers different funcionalities.
+- The authentication process was implemented using firebase Auth and firestore for storing data
+- Password for semplicty during testing are stored in the database, in the feature will be hashed or managed by firebase Auth
+
 ### Trainer Features
 1. **Profile Management**
     - Trainers can securely log out.
