@@ -31,9 +31,16 @@ fun SingleChatScreen(
     receiverId: String?,
     navController: NavController
 ) {
+    //messages flow for showing messages in lazy column
     val messages by chatViewModel.messages.collectAsState()
+
+    //receiver data
     val receiver by chatViewModel.receiver.observeAsState()
+
+    //senderID: equal to current user
     val senderId = authViewModel.getCurrentUserID()
+
+    // remembers state of lazy column
     val listState = rememberLazyListState()
 
     LaunchedEffect(chatId) {
@@ -49,13 +56,9 @@ fun SingleChatScreen(
 
     }
 
-
-
     Log.d("SingleChatScreen", "Messages: ${messages.size}")
     Log.d("SingleChatScreen", "Messages: ${messages.toString()}")
-
     Log.d("SingleChatScreen", receiver.toString())
-
 
     Column(
         modifier = Modifier.fillMaxSize()

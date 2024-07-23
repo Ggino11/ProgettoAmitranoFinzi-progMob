@@ -64,39 +64,7 @@ class ChatViewModel: ViewModel() {
             }
         }
     }
-/*
-    fun fetchReceiver(chatId: String, userType: String) {
-        viewModelScope.launch {
-            try {
-                val chat = chatRepository.getChat(chatId)
-                if (chat != null) {
-                    val relationship = chatRepository.getRelationship(chat.relationshipID)
-                    if (relationship != null) {
-                        val receiverId = if (userType == "athlete") {
-                            relationship.trainerID
-                        } else {
-                            relationship.athleteID
-                        }
-                        Log.d("ChatViewModel", "Receiver id: ${receiverId}")
 
-                        val receiver = receiverId?.let { chatRepository.getUser(it) }
-                        if (receiver != null) {
-                            _receiver.setValue(receiver)
-                        } else {
-                            Log.e("ChatViewModel", "Receiver not found")
-                        }
-                    } else {
-                        Log.e("ChatViewModel", "Relationship not found")
-                    }
-                } else {
-                    Log.e("ChatViewModel", "Chat not found")
-                }
-            } catch (e: Exception) {
-                Log.e("ChatViewModel", "Error fetching receiver", e)
-            }
-        }
-    }
-*/
     fun fetchReceivers(userID: String, userType: String){
         viewModelScope.launch {
             Log.d("ChatViewModel", "fetching receivers with ${userID} and ${userType}")

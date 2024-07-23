@@ -1,7 +1,11 @@
 package com.amitranofinzi.vimata.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "workouts")
 data class Workout(
-    val id: String,
+    @PrimaryKey val id: String,
     val title: String,
     val status: String,
     val trainerID: String?,

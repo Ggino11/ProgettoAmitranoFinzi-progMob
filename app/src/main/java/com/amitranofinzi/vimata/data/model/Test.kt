@@ -1,9 +1,11 @@
 package com.amitranofinzi.vimata.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.amitranofinzi.vimata.data.extensions.TestStatus
-
+@Entity(tableName = "tests")
 data class Test(
-    val id: String = "",
+    @PrimaryKey val id: String = "",
     val testSetID: String = "",
     val exerciseName: String = "",
     val videoUrl: String = "",

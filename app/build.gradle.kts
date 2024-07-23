@@ -85,6 +85,12 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
 
+    // Room dependencies
+    implementation ("androidx.room:room-runtime:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
+
+    // Coroutines support for Room
+    implementation ("androidx.room:room-ktx:2.6.1")
 
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
     implementation("androidx.annotation:annotation:1.8.0")
