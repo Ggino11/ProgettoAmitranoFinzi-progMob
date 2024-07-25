@@ -10,7 +10,9 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
-class AuthRepository() {
+class AuthRepository(firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance(), firestore: FirebaseFirestore = FirebaseFirestore.getInstance()) {
+
+
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 

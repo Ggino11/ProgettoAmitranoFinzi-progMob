@@ -1,12 +1,12 @@
 package com.amitranofinzi.vimata.data.database
 
+import RelationshipDao
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.amitranofinzi.vimata.data.dao.ChatDao
 import com.amitranofinzi.vimata.data.dao.MessageDao
-import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import com.amitranofinzi.vimata.data.dao.TestDao
 import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.model.Chat

@@ -129,6 +129,10 @@ class AuthViewModel() : ViewModel() {
         _authState.value = AuthState.Idle
     }
 
+    fun setAuthState(state: AuthState) {
+        _authState.value = state
+    }
+
 
     //validate signUpform
     sealed class AuthState {

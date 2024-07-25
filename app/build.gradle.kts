@@ -49,6 +49,8 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    testOptions.unitTests.isIncludeAndroidResources = true
+
 }
 
 
@@ -65,6 +67,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended-android:1.6.8")
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.test.ext:junit-ktx:1.2.1")
 
 
     // CameraX core library using the camera2 implementation
@@ -88,6 +91,7 @@ dependencies {
     // Room dependencies
     implementation ("androidx.room:room-runtime:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
+    androidTestImplementation("androidx.room:room-testing:2.6.1")
 
     // Coroutines support for Room
     implementation ("androidx.room:room-ktx:2.6.1")
@@ -107,13 +111,18 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
 
     testImplementation("junit:junit:4.13.2")
+
+    androidTestImplementation("androidx.test:core:1.7.0")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4")
+    androidTestImplementation("androidx.test:runner:1.6.1")
+    androidTestImplementation("androidx.test:rules:1.6.1")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
     testImplementation ("org.mockito:mockito-core:3.9.0")
     testImplementation ("org.mockito:mockito-inline:3.9.0")
+    testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation("com.google.truth:truth:1.1.3")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:<version>")
+
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 }

@@ -1,65 +1,57 @@
 package com.amitranofinzi.vimata.data.dao
 
+import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.amitranofinzi.vimata.data.model.Chat
-import com.amitranofinzi.vimata.data.model.Message
-import kotlinx.coroutines.flow.Flow
 
+@Dao
 interface ChatDao {
+
     /**
-     * Retrieves chats by their relationship ID as a Flow.
+     * Retrieves a list of Chat where the value of a specific field equals a given value.
      *
-     * @param relationshipId The relationship ID to query.
-     * @return A Flow emitting the list of chats.
+     * @param field The name of the field to be compared.
+     * @param value The value to be compared with the specified field.
+     * @return A list of Chat objects that meet the equality condition.
      */
-    @Query("SELECT * FROM chats WHERE relationshipID = :relationshipId")
-    fun getChatsByRelationshipId(relationshipId: String): List<Chat>
+    @Query("SELECT * FROM chats WHERE :field = :value")
+    fun getWhereEqual(field: String, value: String): List<Chat>
 
     /**
-     * Inserts a chat into the database.
+     * Retrieves a list of Chat where the value of a specific field is in a list of values.
      *
-     * @param chat The chat to insert.
+     * @param field The name of the field to be compared.
+     * @param values The list of values to be compared with the specified field.
+     * @return A list of Chat objects that meet the inclusion condition.
      */
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertChat(chat: Chat)
+    @Query("SELECT * FROM chats WHERE :field IN (:values)")
+    fun getWhereIn(field: String, values: List<String>): List<Chat>
 
     /**
-     * Retrieves chats by a list of relationship IDs.
+     * Retrieves a Chat with a specific primary key.
      *
-     * @param relationshipIds The list of relationship IDs to query.
-     * @return A list of Chat objects.
+     * @param chatId The primary key of the Chat to retrieve.
+     * @return The Chat object with the specified primary key, or null if not found.
      */
-    @Query("SELECT * FROM chats WHERE relationshipID IN (:relationshipIds)")
-    suspend fun getChatsByRelationshipIds(relationshipIds: List<String>): List<Chat>
+    @Query("SELECT * FROM chats WHERE chatId = :chatId")
+    fun getWithPrimaryKey(chatId: String): Chat?
 
     /**
-     * Retrieves a chat by its ID.
+     * Inserts a Chat into the database. If a conflict occurs, the existing entry will be replaced.
      *
-     * @param chatId The ID of the chat to retrieve.
-     * @return The Chat object if found, null otherwise.
-     */
-    @Query("SELECT * FROM chats WHERE chatId = :chatId LIMIT 1")
-    suspend fun getChatById(chatId: String): Chat?
-
-    // MESSAGE FUNCTIONS, {TODO: make dao for message}
-    //bisogna capire cosa quale tra le due opzioni è più adatta
-
-    /**
-     * Retrieves messages by their chat ID as a Flow.
-     *
-     * @param chatId The chat ID to query.
-     * @return A Flow emitting the list of messages.
-     */
-    @Query("SELECT * FROM messages WHERE chatId = :chatId ORDER BY timeStamp")
-    fun getMessagesByChatId(chatId: String): Flow<List<Message>>
-
-    /**
-     * Inserts a message into the database.
-     *
-     * @param message The message to insert.
+     * @param chat The Chat object to insert.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertMessage(message: Message)
+    fun insert(chat: Chat)
+
+    /**
+     * Updates an existing Chat in the database.
+     *
+     * @param chat The Chat object to update.
+     */
+    @Update
+    fun update(chat: Chat)
 }

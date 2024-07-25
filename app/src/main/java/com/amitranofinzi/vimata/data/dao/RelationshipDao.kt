@@ -1,37 +1,55 @@
-package com.amitranofinzi.vimata.data.dao
-
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Update
 import com.amitranofinzi.vimata.data.model.Relationship
-
 
 @Dao
 interface RelationshipDao {
-    /**
-     * Retrieves relationships by user ID.
-     *
-     * @param userId The user ID to query.
-     * @return A list of Relationship objects.
-     */
-    @Query("SELECT * FROM relationships WHERE athleteID = :userId OR trainerID = :userId")
-    suspend fun getRelationshipsByUserId(userId: String): List<Relationship>
 
     /**
-     * Inserts a relationship into the database.
+     * Retrieves a list of Relationship where the value of a specific field equals a given value.
      *
-     * @param relationship The relationship to insert.
+     * @param field The name of the field to be compared.
+     * @param value The value to be compared with the specified field.
+     * @return A list of Relationship objects that meet the equality condition.
+     */
+    @Query("SELECT * FROM relationships WHERE :field = :value")
+    fun getWhereEqual(field: String, value: String): List<Relationship>
+
+    /**
+     * Retrieves a list of Relationship where the value of a specific field is in a list of values.
+     *
+     * @param field The name of the field to be compared.
+     * @param values The list of values to be compared with the specified field.
+     * @return A list of Relationship objects that meet the inclusion condition.
+     */
+    @Query("SELECT * FROM relationships WHERE :field IN (:values)")
+    fun getWhereIn(field: String, values: List<String>): List<Relationship>
+
+    /**
+     * Retrieves a Relationship with a specific primary key.
+     *
+     * @param id The primary key of the Relationship to retrieve.
+     * @return The Relationship object with the specified primary key, or null if not found.
+     */
+    @Query("SELECT * FROM relationships WHERE id = :id")
+    fun getWithPrimaryKey(id: String): Relationship?
+
+    /**
+     * Inserts a Relationship into the database. If a conflict occurs, the existing entry will be replaced.
+     *
+     * @param relationship The Relationship object to insert.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRelationship(relationship: Relationship)
+    fun insert(relationship: Relationship)
 
     /**
-     * Retrieves a relationship by its ID.
+     * Updates an existing Relationship in the database.
      *
-     * @param relationshipId The ID of the relationship to retrieve.
-     * @return The Relationship object if found, null otherwise.
+     * @param relationship The Relationship object to update.
      */
-    @Query("SELECT * FROM relationships WHERE id = :relationshipId LIMIT 1")
-    suspend fun getRelationshipById(relationshipId: String): Relationship?
+    @Update
+    fun update(relationship: Relationship)
 }

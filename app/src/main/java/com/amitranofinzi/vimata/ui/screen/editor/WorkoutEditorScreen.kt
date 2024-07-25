@@ -105,7 +105,7 @@ fun WorkoutEditorScreen(
                         val workout = Workout(
                             id = "",
                             title = workoutName,
-                            status = "",
+                            status = "active",
                             trainerID = authViewModel.getCurrentUserID(),
                             athleteID = athleteID,
                             pdfUrl = ""
