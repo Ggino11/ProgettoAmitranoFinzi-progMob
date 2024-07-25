@@ -10,7 +10,7 @@ import com.google.firebase.firestore.DocumentId
  * This is a Room entity annotated for database table creation.
  * The `relationships` table has two foreign keys with the `users` table.
  *
- * @property relationshipID The unique ID of the relationship.
+ * @property relationshipID The unique ID of the relationship. And the firebase document ID
  * @property trainerID The ID of the trainer in the relationship.
  * @property athleteID The ID of the athlete in the relationship.
  */

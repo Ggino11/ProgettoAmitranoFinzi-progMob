@@ -5,6 +5,15 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.DocumentId
 
+/**
+ * Represents a collection of exercises created by a trainer.
+ * This is a Room entity annotated for database table creation.
+ * The `collections` table has a foreign key relationship with the `users` table.
+ *
+ * @property id The unique ID of the collection.
+ * @property title The title of the collection.
+ * @property trainerID The ID of the trainer who created the collection.
+ */
 
 @Entity(tableName = "collections",
     foreignKeys = [

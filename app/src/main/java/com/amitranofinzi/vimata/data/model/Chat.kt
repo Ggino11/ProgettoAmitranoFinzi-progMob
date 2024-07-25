@@ -10,7 +10,7 @@ import com.google.firebase.firestore.DocumentId
  * This is a Room entity annotated for database table creation.
  * The `chats` table has a foreign key relationship with the `relationships` table.
  *
- * @property chatId The unique ID of the chat.
+ * @property chatId The unique ID of the chat. And the firebase document ID
  * @property lastMessage The content of the last message in the chat.
  * @property relationshipID The ID of the relationship associated with this chat.
  */

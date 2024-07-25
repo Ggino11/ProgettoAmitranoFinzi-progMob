@@ -5,7 +5,20 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.amitranofinzi.vimata.data.extensions.TestStatus
 import com.google.firebase.firestore.DocumentId
-
+/**
+ * Represents a test within a test set.
+ * This is a Room entity annotated for database table creation.
+ * The `tests` table has a foreign key relationship with the `test_sets` table.
+ *
+ * @property id The unique ID of the test. And the firebase document ID
+ * @property testSetID The ID of the test set to which this test belongs.
+ * @property exerciseName The name of the exercise being tested.
+ * @property videoUrl The URL of the video for the test.
+ * @property result The result of the test.
+ * @property unit The unit of measure for the result.
+ * @property comment Any comments associated with the test.
+ * @property status The status of the test.
+ */
 @Entity(tableName = "tests",
     foreignKeys = [
         ForeignKey(

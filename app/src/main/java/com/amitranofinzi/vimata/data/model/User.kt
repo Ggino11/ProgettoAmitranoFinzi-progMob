@@ -7,7 +7,7 @@ import com.google.firebase.firestore.DocumentId
  * Represents a user in the application.
  * This is a Room entity annotated for database table creation.
  *
- * @property uid The unique ID of the user.
+ * @property uid The unique ID of the user. And the firebase document ID
  * @property name The name of the user.
  * @property email The email address of the user.
  * @property surname The last name of the user

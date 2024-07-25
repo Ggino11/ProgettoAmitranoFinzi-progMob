@@ -11,7 +11,7 @@ import com.google.firebase.firestore.DocumentId
  * Room entity annotated for database table creation.
  * The `messages` table has two foreign keys with the `users` and `chats` tables.
  *
- * @property chatId The ID of the chat to which this message belongs.
+ * @property chatId The ID of the chat to which this message belongs. And the firebase document ID
  * @property senderId The ID of the user who sent the message.
  * @property text The content of the message.
  * @property timeStamp The time when the message was sent.
