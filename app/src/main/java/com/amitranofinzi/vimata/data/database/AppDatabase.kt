@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.amitranofinzi.vimata.data.dao.ChatDao
+import com.amitranofinzi.vimata.data.dao.MessageDao
 import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import com.amitranofinzi.vimata.data.dao.TestDao
 import com.amitranofinzi.vimata.data.dao.UserDao
@@ -36,6 +37,7 @@ abstract class AppDatabase : RoomDatabase() {
     // functions to provide access to dao interface of each entity of db
     abstract fun userDao(): UserDao
     abstract fun chatDao(): ChatDao
+    abstract fun messageDao(): MessageDao
     abstract fun testDao(): TestDao
     abstract fun relationshipDao(): RelationshipDao
 
