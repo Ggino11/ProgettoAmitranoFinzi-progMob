@@ -1,7 +1,9 @@
 package com.amitranofinzi.vimata.data.model
 
+import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentId
@@ -23,7 +25,7 @@ import com.google.firebase.firestore.DocumentId
         ForeignKey(
             entity = User::class,
             parentColumns = ["uid"],
-            childColumns = ["ReceiverId"],
+            childColumns = ["receiverId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
@@ -37,21 +39,23 @@ import com.google.firebase.firestore.DocumentId
             parentColumns = ["chatId"],
             childColumns = ["chatId"],
             onDelete = ForeignKey.CASCADE
-        )]
+        )],
+        indices = [Index(value = ["receiverId"]), Index(value = ["senderId"]), Index(value = ["chatId"]) ] // Aggiungi un indice qui
+
 )
 data class Message (
     val chatId: String = "",
     val senderId: String = "",
     var text: String = "",
-    val timeStamp: Timestamp,
+    val timeStamp: String = "",
     val receiverId: String = "",
-    @PrimaryKey @DocumentId val id: String = ""
+    @PrimaryKey @DocumentId @NonNull val id: String = ""
 ) {
     constructor() : this(
         chatId = "",
         senderId = "",
         text = "",
-        timeStamp = Timestamp.now(),
+        timeStamp = Timestamp.now().toString(),
         receiverId = "",
         id = "",
     )}

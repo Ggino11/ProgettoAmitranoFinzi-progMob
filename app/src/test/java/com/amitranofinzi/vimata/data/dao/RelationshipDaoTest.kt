@@ -1,6 +1,5 @@
 package com.amitranofinzi.vimata.data.dao
 
-import RelationshipDao
 import com.amitranofinzi.vimata.data.model.Relationship
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -13,12 +12,12 @@ import org.mockito.Mockito.`when`
 
 class RelationshipDaoTest {
 
-    // Mock RelationshipDao object
+    // Mock com.amitranofinzi.vimata.data.dao.RelationshipDao object
     private lateinit var relationshipDao: RelationshipDao
 
     @Before
     fun setup() {
-        // Initialize the RelationshipDao mock
+        // Initialize the com.amitranofinzi.vimata.data.dao.RelationshipDao mock
         relationshipDao = mock(RelationshipDao::class.java)
     }
 

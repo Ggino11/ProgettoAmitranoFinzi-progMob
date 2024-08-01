@@ -1,7 +1,9 @@
 package com.amitranofinzi.vimata.data.model
 
+import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.DocumentId
 
@@ -19,13 +21,15 @@ import com.google.firebase.firestore.DocumentId
     foreignKeys = [
         ForeignKey(
             entity = Relationship::class,
-            parentColumns = ["relationshipId"],
-            childColumns = ["relationshipId"],
+            parentColumns = ["id"],
+            childColumns = ["relationshipID"],
             onDelete = ForeignKey.CASCADE
         )
-    ])
+    ],
+    indices = [Index(value = ["relationshipID"])]
+    )
 data class Chat (
-    @PrimaryKey @DocumentId val chatId: String,
+    @PrimaryKey @DocumentId @NonNull val chatId: String,
     val relationshipID: String,
     val lastMessage: String
 ) {

@@ -1,92 +1,137 @@
 package com.amitranofinzi.vimata.data.repository
 
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
+import com.amitranofinzi.vimata.data.dao.ChatDao
+import com.amitranofinzi.vimata.data.dao.UserDao
+import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.Relationship
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.model.Workout
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import java.net.HttpURLConnection
 import java.net.URL
 
 class AthleteRepository(
+    private val relationshipDao: RelationshipDao,
+    private val userDao: UserDao,
+    private val workoutDao: WorkoutDao,
+    private val chatDao: ChatDao,
+    private val context: Context // Added context to check network availability
 ) {
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    //gets list of all trainers for a given athleteID
-    suspend fun getTrainerIdsForAthlete(athleteID: String): List<String> {
-        val snapshot = firestore.collection("relationships")
-            .whereEqualTo("athleteID", athleteID)
-            .get()
-            .await()
-
-        return snapshot.documents.mapNotNull { it.getString("trainerID") }
-    }
-
-    //get trainers as a list of User
-    suspend fun getTrainers(trainerIds: List<String>): List<User> {
-        if (trainerIds.isEmpty()) {
-            Log.d("AthleteRepository", "Empty athleteIds list")
-            return emptyList()
-        }
-        try {
-            //Query firestore database in order to find all the users with uid equal to a value in AthleteIds
-            val snapshot = firestore.collection("users")
-                .whereIn("uid", trainerIds)
-                .get()
-                .await()
-            Log.d("AthleteRepository", "Fetched documents: ${snapshot.documents.map { it.id }}")
-            val trainers = snapshot.documents.mapNotNull { document ->
-                try {
-                    Log.d("AthleteRepository", "Document data: ${document.data}")
-                    val trainer = document.toObject(User::class.java)
-                    if (trainer!= null) {
-                        Log.d("AthleteRepository", "User found: $trainer")
-                    } else {
-                        Log.d("AthleteRepository", "Document ${document.id} could not be converted to User")
-                    }
-                    trainer
-                } catch (e: Exception) {
-                    Log.e("AthleteRepository", "Error converting document to User: ${document.id}", e)
-                    null
-                }
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+            return when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
             }
-            return trainers
-        } catch (e: Exception) {
-            return emptyList()
+        } else {
+            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
+            return networkInfo.isConnected
         }
     }
 
-    suspend fun getAthletesWorkouts(athleteID: String) : List<Workout> {
-        val snapshot = firestore.collection("workouts")
-            .whereEqualTo("athleteID", athleteID)
-            .get()
-            .await()
-        return snapshot.documents.mapNotNull { document->
-            document.toObject(Workout::class.java)
-        }
-    }
-
-    suspend fun getWorkoutPdf(workoutId: String): ByteArray? {
-        val document = firestore.collection("workouts")
-            .document(workoutId)
-            .get()
-            .await()
-
-        return document.get("pdfUrl")?.let { pdfUrl ->
-
+    // Fetch trainer IDs for a given athleteID
+    suspend fun getTrainerIdsForAthlete(athleteID: String): List<String> {
+        return if (isNetworkAvailable()) {
             try {
-                val url = URL(pdfUrl as String)
+                val snapshot = firestore.collection("relationships")
+                    .whereEqualTo("athleteID", athleteID)
+                    .get()
+                    .await()
+                val remoteTrainerIds = snapshot.documents.mapNotNull { it.getString("trainerID") }
+
+                // Update local DB
+                val relationships = snapshot.documents.mapNotNull { it.toObject(Relationship::class.java) }
+                relationshipDao.insertAll(relationships)
+
+                remoteTrainerIds
+            } catch (e: Exception) {
+                Log.e("AthleteRepository", "Error fetching trainer IDs from Firebase", e)
+                relationshipDao.getWhereEqual("athleteID", athleteID).mapNotNull { it.trainerID }
+            }
+        } else {
+            relationshipDao.getWhereEqual("athleteID", athleteID).mapNotNull { it.trainerID }
+        }
+    }
+
+    // Get trainers as a list of User
+    suspend fun getTrainers(trainerIds: List<String>): List<User> {
+        return if (isNetworkAvailable()) {
+            try {
+                val snapshot = firestore.collection("users")
+                    .whereIn("uid", trainerIds)
+                    .get()
+                    .await()
+                val trainers = snapshot.documents.mapNotNull { document ->
+                    document.toObject(User::class.java)
+                }
+
+                // Update local DB
+                userDao.insertAll(trainers)
+                trainers
+            } catch (e: Exception) {
+                Log.e("AthleteRepository", "Error fetching trainers from Firebase", e)
+                userDao.getWhereIn("uid", trainerIds)
+            }
+        } else {
+            userDao.getWhereIn("uid", trainerIds)
+        }
+    }
+
+    // Fetch workouts for a given athleteID
+    suspend fun getAthletesWorkouts(athleteID: String): List<Workout> {
+        return if (isNetworkAvailable()) {
+            try {
+                val snapshot = firestore.collection("workouts")
+                    .whereEqualTo("athleteID", athleteID)
+                    .get()
+                    .await()
+                val workouts = snapshot.documents.mapNotNull { document ->
+                    document.toObject(Workout::class.java)
+                }
+
+                // Update local DB
+                workoutDao.insertAll(workouts)
+                workouts
+            } catch (e: Exception) {
+                Log.e("AthleteRepository", "Error fetching workouts from Firebase", e)
+                workoutDao.getWhereEqual("athleteID", athleteID)
+            }
+        } else {
+            workoutDao.getWhereEqual("athleteID", athleteID)
+        }
+    }
+
+    // Fetch workout PDF
+    suspend fun getWorkoutPdf(workoutId: String): ByteArray? {
+        val workout = workoutDao.getWithPrimaryKey(workoutId)
+        val pdfUrl = workout?.pdfUrl
+
+        return if (pdfUrl != null && isNetworkAvailable()) {
+            try {
+                val url = URL(pdfUrl)
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"
                 connection.connect()
 
                 if (connection.responseCode == HttpURLConnection.HTTP_OK) {
                     val inputStream = connection.inputStream
-                    return@let inputStream.readBytes()
+                    inputStream.readBytes()
                 } else {
                     Log.e("AthleteRepository", "Failed to load PDF. Response code: ${connection.responseCode}")
                     null
@@ -95,63 +140,85 @@ class AthleteRepository(
                 Log.e("AthleteRepository", "Error loading PDF", e)
                 null
             }
+        } else {
+            null
         }
     }
 
-    //get trainers email
+    // Get user by email
     suspend fun getUserByEmail(email: String): User? {
-        try {
-            val snapshot = firestore.collection("users")
-                .whereEqualTo("email", email)
-                .limit(1) // Limitiamo la query a 1, anche se in teoria dovrebbe esserci solo un documento con quella email
-                .get()
-                .await()
+        return if (isNetworkAvailable()) {
+            try {
+                val snapshot = firestore.collection("users")
+                    .whereEqualTo("email", email)
+                    .limit(1)
+                    .get()
+                    .await()
+                val user = snapshot.documents
+                    .firstOrNull()
+                    ?.toObject(User::class.java)
 
-            return snapshot.documents
-                .firstOrNull()
-                ?.toObject(User::class.java)
-                //?.copy(uid = snapshot.documents[0].id)
+                // Update local DB
+                if (user != null) {
+                    userDao.insert(user)
+                }
 
-        } catch (e: Exception) {
-            Log.e("AthleteRepository", "Error getting user by email: $email", e)
-            return null
+                user
+            } catch (e: Exception) {
+                Log.e("AthleteRepository", "Error getting user by email: $email", e)
+                userDao.getWhereEqual("email", email).firstOrNull()
+            }
+        } else {
+            userDao.getWhereEqual("email", email).firstOrNull()
         }
     }
 
-
+    // Add trainer relationship
     suspend fun addTrainerRelationship(trainerId: String?, currentUserId: String): String? {
-        Log.d("AddTrainer", "${trainerId} ${currentUserId}")
-        try {
-            val relationship = Relationship(
-                id = "", // generated by firestore
-                athleteID = currentUserId,
-                trainerID = trainerId
-            )
-            //adddocument to firestore
-            Log.d("AthleteReference",relationship.toString())
-            val relationshipReference= firestore.collection("relationships")
-                .add(relationship)
-                .await()
+        return if (isNetworkAvailable()) {
+            Log.d("AddTrainer", "$trainerId $currentUserId")
+            try {
+                val relationship = Relationship(
+                    id = "", // generated by firestore
+                    athleteID = currentUserId,
+                    trainerID = trainerId
+                )
+                Log.d("AthleteReference", relationship.toString())
+                val relationshipReference = firestore.collection("relationships")
+                    .add(relationship)
+                    .await()
 
-            Log.d("AthleteReference",relationshipReference.toString())
+                Log.d("AthleteReference", relationshipReference.toString())
 
-            //generated id
-            val generatedId = relationshipReference.id
+                // generated id
+                val generatedId = relationshipReference.id
 
-            Log.d("AthleteReference",generatedId)
-            val document = firestore.collection("relationships").document(generatedId)
-            Log.d("AthleteDocument", document.toString())
-            document.update("id", generatedId).await()
-            Log.d("AthleteDocument", relationship.toString())
+                Log.d("AthleteReference", generatedId)
+                val document = firestore.collection("relationships").document(generatedId)
+                Log.d("AthleteDocument", document.toString())
+                document.update("id", generatedId).await()
+                Log.d("AthleteDocument", relationship.toString())
 
-            return firestore.collection("relationships").document(generatedId).get().await().toObject(Relationship::class.java)!!.id
-        } catch (e: Exception) {
-            Log.e("AthleteRepository", "Error adding relationship", e)
-            return null
+                // Update local DB
+                relationshipDao.insert(relationship.copy(id = generatedId))
+                generatedId
+            } catch (e: Exception) {
+                Log.e("AthleteRepository", "Error adding relationship", e)
+                null
+            }
+        } else {
+            Log.e("AthleteRepository", "No network available to add relationship")
+            null
         }
     }
 
+    // Start new chat
     suspend fun startNewChat(email: String, currentUserId: String) {
+        if (!isNetworkAvailable()) {
+            Log.e("AthleteRepository", "No network available to start new chat")
+            return
+        }
+
         try {
             // Find the trainer by email to get trainerId
             val trainer = getUserByEmail(email)
@@ -172,22 +239,22 @@ class AthleteRepository(
                 relationshipID = relationshipId,
                 lastMessage = "New Chat Started"
             )
-            //Add the Chat object to Firestore
+            // Add the Chat object to Firestore
             val chatReference = firestore.collection("chats")
                 .add(newChat)
                 .await()
 
-            //update id generated
+            // Update id generated
             val generatedId = chatReference.id
-            val  document = firestore.collection("chats").document(generatedId)
+            val document = firestore.collection("chats").document(generatedId)
             Log.d("CreationChat", document.toString())
-            document.update("chatId", generatedId)
-                .await()
+            document.update("chatId", generatedId).await()
+
+            // Update local DB
+            chatDao.insert(newChat.copy(chatId = generatedId))
             Log.d("AthleteRepository", "New chat started successfully")
         } catch (e: Exception) {
             Log.e("AthleteRepository", "Error starting new chat", e)
-            // Handle error, possibly show error message to UI
         }
     }
-
 }

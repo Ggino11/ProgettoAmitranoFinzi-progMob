@@ -1,3 +1,5 @@
+package com.amitranofinzi.vimata.data.dao
+
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -44,6 +46,14 @@ interface RelationshipDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(relationship: Relationship)
+
+    /**
+     * Inserts a list of Relationships into the database.
+     *
+     * @param relationships The list of Relationship objects to be inserted.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(relationships: List<Relationship>)
 
     /**
      * Updates an existing Relationship in the database.

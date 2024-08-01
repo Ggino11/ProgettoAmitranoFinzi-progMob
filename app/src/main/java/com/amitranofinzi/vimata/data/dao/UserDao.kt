@@ -48,6 +48,14 @@ interface UserDao {
     fun insert(user: User)
 
     /**
+     * Inserts a list of Users into the database.
+     *
+     * @param users The list of User objects to be inserted.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(users: List<User>)
+
+    /**
      * Updates an existing User in the database.
      *
      * @param user The User object to update.

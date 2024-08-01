@@ -1,5 +1,6 @@
 package com.amitranofinzi.vimata.data.model
 
+import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -23,12 +24,14 @@ import com.google.firebase.firestore.DocumentId
     foreignKeys = [
         ForeignKey(
             entity = TestSet::class,
-            parentColumns = ["Id"],
-            childColumns = ["testSetId"],
+            parentColumns = ["id"],
+            childColumns = ["testSetID"],
             onDelete = ForeignKey.CASCADE
-        ),])
+        )],
+    indices = [androidx.room.Index(value = ["testSetID"])]
+)
 data class Test(
-    @PrimaryKey @DocumentId val id: String = "",
+    @PrimaryKey @DocumentId @NonNull val id: String = "",
     val testSetID: String = "",
     val exerciseName: String = "",
     val videoUrl: String = "",

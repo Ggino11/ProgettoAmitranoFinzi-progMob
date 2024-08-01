@@ -48,6 +48,14 @@ interface WorkoutDao {
     fun insert(workout: Workout)
 
     /**
+     * Inserts a list of Workouts into the database.
+     *
+     * @param workouts The list of Workout objects to be inserted.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(workouts: List<Workout>)
+
+    /**
      * Updates an existing Workout in the database.
      *
      * @param workout The Workout object to update.

@@ -1,22 +1,48 @@
 package com.amitranofinzi.vimata.viewmodel
 
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.dao.ChatDao
+import com.amitranofinzi.vimata.data.dao.UserDao
+import com.amitranofinzi.vimata.data.dao.WorkoutDao
+import com.amitranofinzi.vimata.data.database.AppDatabase
 import com.amitranofinzi.vimata.data.model.Test
 import com.amitranofinzi.vimata.data.model.TestSet
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.model.Workout
 import com.amitranofinzi.vimata.data.repository.AthleteRepository
 import com.amitranofinzi.vimata.data.repository.TestRepository
+import com.amitranofinzi.vimata.ui.navigation.InitializableViewModel
 import kotlinx.coroutines.launch
 
-class AthleteViewModel: ViewModel() {
+class AthleteViewModel : ViewModel(), InitializableViewModel {
+    lateinit var appDatabase: AppDatabase
+    lateinit var context: Context
 
-    private val athleteRepository : AthleteRepository = AthleteRepository()
+    override fun initialize(appDatabase: AppDatabase, context: Context) {
+        this.appDatabase = appDatabase
+        this.context = context
+    }
 
+    private val relationshipDao: RelationshipDao by lazy { appDatabase.relationshipDao() }
+    private val userDao: UserDao by lazy { appDatabase.userDao() }
+    private val workoutDao: WorkoutDao by lazy { appDatabase.workoutDao() }
+    private val chatDao: ChatDao by lazy { appDatabase.chatDao() }
+
+    private val athleteRepository: AthleteRepository by lazy {
+        AthleteRepository(
+            relationshipDao = relationshipDao,
+            userDao = userDao,
+            workoutDao = workoutDao,
+            chatDao = chatDao,
+            context = context
+        )
+    }
     private val _workouts = MutableLiveData<List<Workout>>()
     val workouts: LiveData<List<Workout>> = _workouts
 

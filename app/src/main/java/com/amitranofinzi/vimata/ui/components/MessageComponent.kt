@@ -57,7 +57,7 @@ fun MessageBubble(
         Spacer(modifier = Modifier.height(4.dp))
         Log.d("Messagebubble", "Ci sono 3" )
         Text(
-            text = formatTimestamp(message.timeStamp),
+            text = message.timeStamp,
             color = Color.LightGray,
             modifier = Modifier.padding(horizontal = 4.dp)
         )

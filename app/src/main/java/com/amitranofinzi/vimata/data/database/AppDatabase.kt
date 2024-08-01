@@ -1,6 +1,6 @@
 package com.amitranofinzi.vimata.data.database
 
-import RelationshipDao
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
@@ -9,7 +9,9 @@ import com.amitranofinzi.vimata.data.dao.ChatDao
 import com.amitranofinzi.vimata.data.dao.MessageDao
 import com.amitranofinzi.vimata.data.dao.TestDao
 import com.amitranofinzi.vimata.data.dao.UserDao
+import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.model.Chat
+import com.amitranofinzi.vimata.data.model.Collection
 import com.amitranofinzi.vimata.data.model.Exercise
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.data.model.Relationship
@@ -26,17 +28,20 @@ import com.amitranofinzi.vimata.data.model.Workout
         Message::class,
         Relationship::class,
         Exercise::class,
+        Collection::class,
         Workout::class,
         Test::class,
         TestSet::class
     ],
     version = 1,
     exportSchema = false
+
 )
 abstract class AppDatabase : RoomDatabase() {
     // functions to provide access to dao interface of each entity of db
     abstract fun userDao(): UserDao
     abstract fun chatDao(): ChatDao
+    abstract fun workoutDao(): WorkoutDao
     abstract fun messageDao(): MessageDao
     abstract fun testDao(): TestDao
     abstract fun relationshipDao(): RelationshipDao
@@ -61,6 +66,7 @@ abstract class AppDatabase : RoomDatabase() {
                 instance
             }
         }
+
     }
 }
 

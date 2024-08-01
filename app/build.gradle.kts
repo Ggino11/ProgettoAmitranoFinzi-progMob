@@ -2,7 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
-    //id ("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -90,12 +90,14 @@ dependencies {
     implementation("com.google.firebase:firebase-storage")
 
     // Room dependencies
-    implementation ("androidx.room:room-runtime:2.6.1")
-    annotationProcessor("androidx.room:room-compiler:2.6.1")
-    androidTestImplementation("androidx.room:room-testing:2.6.1")
+    val room_version = "2.5.2"
+    implementation("androidx.room:room-common:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    implementation("androidx.room:room-runtime:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
 
-    // Coroutines support for Room
-    implementation ("androidx.room:room-ktx:2.6.1")
+    testImplementation ("androidx.room:room-testing:$room_version")
+
 
     implementation("androidx.navigation:navigation-runtime-ktx:2.7.7")
     implementation("androidx.annotation:annotation:1.8.0")
@@ -109,10 +111,7 @@ dependencies {
 
     // PDF viewer
     implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
-    implementation("androidx.room:room-ktx:2.6.1")
 
-
-    androidTestImplementation("androidx.test:core:1.7.0")
     androidTestImplementation("androidx.test:runner:1.6.1")
     androidTestImplementation("androidx.test:rules:1.6.1")
     debugImplementation("androidx.compose.ui:ui-tooling")
@@ -122,15 +121,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
 
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:<version>")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
 
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
     // Testing dependencies
     testImplementation ("junit:junit:4.13.2")
-    testImplementation ("androidx.room:room-testing:2.6.1")
     testImplementation ("org.mockito:mockito-core:4.2.0")
-    testImplementation ("androidx.test:core:1.6.1")
     testImplementation ("androidx.test.ext:junit:1.2.1")
 }
+

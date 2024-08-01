@@ -1,10 +1,12 @@
 package com.amitranofinzi.vimata.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.database.AppDatabase
 import com.amitranofinzi.vimata.data.model.Collection
 import com.amitranofinzi.vimata.data.model.Exercise
 import com.amitranofinzi.vimata.data.model.Test
@@ -14,11 +16,19 @@ import com.amitranofinzi.vimata.data.model.Workout
 import com.amitranofinzi.vimata.data.repository.TestRepository
 import com.amitranofinzi.vimata.data.repository.TrainerRepository
 import com.amitranofinzi.vimata.data.repository.WorkbookRepository
+import com.amitranofinzi.vimata.ui.navigation.InitializableViewModel
 import kotlinx.coroutines.launch
 
 
 
-class TrainerViewModel: ViewModel() {
+class TrainerViewModel: ViewModel(), InitializableViewModel {
+    lateinit var appDatabase: AppDatabase
+    lateinit var context: Context
+
+    override fun initialize(appDatabase: AppDatabase, context: Context) {
+        this.appDatabase = appDatabase
+        this.context = context
+    }
 
     private val trainerRepository : TrainerRepository = TrainerRepository()
     private val workbookRepository : WorkbookRepository = WorkbookRepository()

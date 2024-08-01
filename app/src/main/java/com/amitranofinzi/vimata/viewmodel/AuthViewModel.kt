@@ -1,19 +1,29 @@
 package com.amitranofinzi.vimata.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.database.AppDatabase
 import com.amitranofinzi.vimata.data.model.FormField
 import com.amitranofinzi.vimata.data.model.FormState
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.repository.AuthRepository
+import com.amitranofinzi.vimata.ui.navigation.InitializableViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-class AuthViewModel() : ViewModel() {
+class AuthViewModel() : ViewModel(), InitializableViewModel {
+    lateinit var appDatabase: AppDatabase
+    lateinit var context: Context
+
+    override fun initialize(appDatabase: AppDatabase, context: Context) {
+        this.appDatabase = appDatabase
+        this.context = context
+    }
 
     private val authRepository : AuthRepository = AuthRepository()
 

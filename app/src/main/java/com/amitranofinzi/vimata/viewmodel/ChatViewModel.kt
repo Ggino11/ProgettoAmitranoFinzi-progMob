@@ -1,21 +1,31 @@
 package com.amitranofinzi.vimata.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.database.AppDatabase
 import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.data.model.Relationship
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.repository.ChatRepository
+import com.amitranofinzi.vimata.ui.navigation.InitializableViewModel
 import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class ChatViewModel: ViewModel() {
+class ChatViewModel: ViewModel(), InitializableViewModel {
+    lateinit var appDatabase: AppDatabase
+    lateinit var context: Context
+
+    override fun initialize(appDatabase: AppDatabase, context: Context) {
+        this.appDatabase = appDatabase
+        this.context = context
+    }
     private val chatRepository: ChatRepository = ChatRepository()
 
 

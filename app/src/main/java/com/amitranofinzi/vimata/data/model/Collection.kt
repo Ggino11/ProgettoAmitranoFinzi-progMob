@@ -1,5 +1,6 @@
 package com.amitranofinzi.vimata.data.model
 
+import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -25,7 +26,8 @@ import com.google.firebase.firestore.DocumentId
         )
     ])
 data class Collection(
-    @PrimaryKey @DocumentId val id: String = "",
+    @PrimaryKey @DocumentId @NonNull
+    val id: String = "",
     val title: String = "",
     val trainerID: String = "",
 ){  constructor() : this(

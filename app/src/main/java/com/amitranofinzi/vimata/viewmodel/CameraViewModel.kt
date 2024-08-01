@@ -5,14 +5,23 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.database.AppDatabase
 import com.amitranofinzi.vimata.data.repository.CameraRepository
+import com.amitranofinzi.vimata.ui.navigation.InitializableViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 
-class CameraViewModel : ViewModel() {
+class CameraViewModel : ViewModel(), InitializableViewModel {
+    lateinit var appDatabase: AppDatabase
+    lateinit var context: Context
+
+    override fun initialize(appDatabase: AppDatabase, context: Context) {
+        this.appDatabase = appDatabase
+        this.context = context
+    }
     private val cameraRepository: CameraRepository = CameraRepository()
 
     // Channel to communicate permission requests and results

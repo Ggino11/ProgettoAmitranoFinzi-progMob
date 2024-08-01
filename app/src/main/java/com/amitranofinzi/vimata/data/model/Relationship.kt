@@ -1,7 +1,9 @@
 package com.amitranofinzi.vimata.data.model
 
+import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.DocumentId
 
@@ -28,9 +30,11 @@ import com.google.firebase.firestore.DocumentId
             parentColumns = ["uid"],
             childColumns = ["trainerID"],
             onDelete = ForeignKey.CASCADE
-        )])
+        )],
+    indices = [Index(value = ["athleteID"]), Index(value = ["trainerID"])]
+)
 data class Relationship(
-    @PrimaryKey @DocumentId val id: String,
+    @PrimaryKey @DocumentId @NonNull val id: String,
     val athleteID: String,
     val trainerID: String?
 ) {

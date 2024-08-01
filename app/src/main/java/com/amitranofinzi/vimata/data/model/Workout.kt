@@ -1,7 +1,9 @@
 package com.amitranofinzi.vimata.data.model
 
+import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.firebase.firestore.DocumentId
 
@@ -22,18 +24,20 @@ import com.google.firebase.firestore.DocumentId
         ForeignKey(
             entity = User::class,
             parentColumns = ["uid"],
-            childColumns = ["trainerId"],
+            childColumns = ["trainerID"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
             entity = User::class,
             parentColumns = ["uid"],
-            childColumns = ["athleteId"],
+            childColumns = ["athleteID"],
             onDelete = ForeignKey.CASCADE
-        )]
-    )
+        )],
+    indices = [Index(value = ["trainerID"]), Index(value = ["athleteID"]) ]
+
+)
 data class Workout(
-    @PrimaryKey @DocumentId val id: String,
+    @PrimaryKey @DocumentId @NonNull val id: String,
     val title: String,
     val status: String,
     val trainerID: String?,
