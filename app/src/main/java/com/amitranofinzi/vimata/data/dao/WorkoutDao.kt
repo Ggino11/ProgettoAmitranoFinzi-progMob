@@ -18,7 +18,7 @@ interface WorkoutDao {
      * @return A list of Workout objects that meet the equality condition.
      */
     @Query("SELECT * FROM workouts WHERE :field = :value")
-    fun getWhereEqual(field: String, value: String): List<Workout>
+    suspend fun getWhereEqual(field: String, value: String): List<Workout>
 
     /**
      * Retrieves a list of Workout where the value of a specific field is in a list of values.
@@ -28,7 +28,7 @@ interface WorkoutDao {
      * @return A list of Workout objects that meet the inclusion condition.
      */
     @Query("SELECT * FROM workouts WHERE :field IN (:values)")
-    fun getWhereIn(field: String, values: List<String>): List<Workout>
+    suspend fun getWhereIn(field: String, values: List<String>): List<Workout>
 
     /**
      * Retrieves a Workout with a specific primary key.
@@ -37,7 +37,7 @@ interface WorkoutDao {
      * @return The Workout object with the specified primary key, or null if not found.
      */
     @Query("SELECT * FROM workouts WHERE id = :id")
-    fun getWithPrimaryKey(id: String): Workout?
+    suspend fun getWithPrimaryKey(id: String): Workout?
 
     /**
      * Inserts a Workout into the database. If a conflict occurs, the existing entry will be replaced.
@@ -45,7 +45,7 @@ interface WorkoutDao {
      * @param workout The Workout object to insert.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(workout: Workout)
+    suspend fun insert(workout: Workout)
 
     /**
      * Inserts a list of Workouts into the database.
@@ -61,5 +61,5 @@ interface WorkoutDao {
      * @param workout The Workout object to update.
      */
     @Update
-    fun update(workout: Workout)
+    suspend fun update(workout: Workout)
 }

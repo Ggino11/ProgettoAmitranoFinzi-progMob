@@ -3,9 +3,7 @@ package com.amitranofinzi.vimata.data.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import androidx.room.Query
 import com.amitranofinzi.vimata.data.model.Message
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MessageDao {
@@ -16,8 +14,8 @@ interface MessageDao {
      * @param chatId The chat ID to query.
      * @return A Flow emitting the list of messages.
      */
-    @Query("SELECT * FROM messages WHERE chatId = :chatId ORDER BY timeStamp")
-    fun getMessagesByChatId(chatId: String): Flow<List<Message>>
+//    @Query("SELECT * FROM messages WHERE chatId = :chatId ORDER BY timeStamp")
+//    suspend fun getMessagesByChatId(chatId: String): Flow<List<Message>>
 
     /**
      * Inserts a message into the database.

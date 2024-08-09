@@ -4,7 +4,6 @@ import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.google.firebase.firestore.DocumentId
 
 /**
  * Represents a collection of exercises created by a trainer.
@@ -26,7 +25,7 @@ import com.google.firebase.firestore.DocumentId
         )
     ])
 data class Collection(
-    @PrimaryKey @DocumentId @NonNull
+    @PrimaryKey @NonNull
     val id: String = "",
     val title: String = "",
     val trainerID: String = "",

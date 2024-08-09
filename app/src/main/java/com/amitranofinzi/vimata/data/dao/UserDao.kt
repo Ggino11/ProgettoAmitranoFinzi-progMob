@@ -18,7 +18,7 @@ interface UserDao {
      * @return A list of User objects that meet the equality condition.
      */
     @Query("SELECT * FROM users WHERE :field = :value")
-    fun getWhereEqual(field: String, value: String): List<User>
+    suspend fun getWhereEqual(field: String, value: String): List<User>
 
     /**
      * Retrieves a list of User where the value of a specific field is in a list of values.
@@ -28,7 +28,7 @@ interface UserDao {
      * @return A list of User objects that meet the inclusion condition.
      */
     @Query("SELECT * FROM users WHERE :field IN (:values)")
-    fun getWhereIn(field: String, values: List<String>): List<User>
+    suspend fun getWhereIn(field: String, values: List<String>): List<User>
 
     /**
      * Retrieves a User with a specific primary key.
@@ -37,7 +37,7 @@ interface UserDao {
      * @return The User object with the specified primary key, or null if not found.
      */
     @Query("SELECT * FROM users WHERE uid = :uid")
-    fun getWithPrimaryKey(uid: String?): User?
+    suspend fun getWithPrimaryKey(uid: String?): User?
 
     /**
      * Inserts a User into the database. If a conflict occurs, the existing entry will be replaced.
@@ -45,7 +45,7 @@ interface UserDao {
      * @param user The User object to insert.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(user: User)
+    suspend fun insert(user: User)
 
     /**
      * Inserts a list of Users into the database.
@@ -61,5 +61,5 @@ interface UserDao {
      * @param user The User object to update.
      */
     @Update
-    fun update(user: User)
+    suspend fun update(user: User)
 }

@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.google.firebase.firestore.DocumentId
 
 /**
  * Represents a chat session in the application.
@@ -29,7 +28,7 @@ import com.google.firebase.firestore.DocumentId
     indices = [Index(value = ["relationshipID"])]
     )
 data class Chat (
-    @PrimaryKey @DocumentId @NonNull val chatId: String,
+    @PrimaryKey @NonNull val chatId: String,
     val relationshipID: String,
     val lastMessage: String
 ) {

@@ -3,7 +3,6 @@ package com.amitranofinzi.vimata.data.model
 import androidx.annotation.NonNull
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.firebase.firestore.DocumentId
 /**
  * Represents a user in the application.
  * This is a Room entity annotated for database table creation.
@@ -18,7 +17,7 @@ import com.google.firebase.firestore.DocumentId
 
 @Entity(tableName="users")
 data class User(
-    @PrimaryKey @DocumentId @NonNull val uid: String, // User ID assigned by Firebase Auth
+    @PrimaryKey @NonNull val uid: String, // User ID assigned by Firebase Auth
     val email: String,
     val name: String,
     val password: String, // Hashed password for now stored in db for teting purposes, need to be deleted

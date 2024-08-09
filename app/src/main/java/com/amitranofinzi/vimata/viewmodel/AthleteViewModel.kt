@@ -1,6 +1,5 @@
 package com.amitranofinzi.vimata.viewmodel
 
-import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -8,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amitranofinzi.vimata.data.dao.ChatDao
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.database.AppDatabase
@@ -61,9 +61,6 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
     private val _tests = MutableLiveData<List<Test>>()
     val tests: LiveData<List<Test>> get() = _tests
 
-
-
-
     fun fetchWorkouts(athleteID: String){
         viewModelScope.launch {
             _workouts.value = athleteRepository.getAthletesWorkouts(athleteID)
@@ -76,7 +73,7 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
             try {
                 Log.d("AthleteViewModel", "Launching coroutine")
                 val trainerIds = athleteRepository.getTrainerIdsForAthlete(atheleteId)
-//                Log.d("TrainerViewModel", "Athlete IDs: $athleteIds")
+                Log.d("TrainerViewModel", "trainers IDs fetched: $trainerIds")
                 val trainerDetails = athleteRepository.getTrainers(trainerIds)
                 Log.d("AthleteViewModel", "Athlete details fetched: $trainerDetails")
                 _trainers.value = trainerDetails

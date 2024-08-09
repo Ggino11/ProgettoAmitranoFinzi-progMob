@@ -1,12 +1,12 @@
 package com.amitranofinzi.vimata.data.repository
 
-import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import android.util.Log
 import com.amitranofinzi.vimata.data.dao.ChatDao
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.model.Chat
@@ -14,7 +14,9 @@ import com.amitranofinzi.vimata.data.model.Relationship
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.model.Workout
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -56,18 +58,30 @@ class AthleteRepository(
                 val remoteTrainerIds = snapshot.documents.mapNotNull { it.getString("trainerID") }
 
                 // Update local DB
-                val relationships = snapshot.documents.mapNotNull { it.toObject(Relationship::class.java) }
-                relationshipDao.insertAll(relationships)
+                val relationships = snapshot.documents.mapNotNull { document ->
+                    document.toObject(Relationship::class.java)?.apply {
+                        id = document.id
+                    }
+                }
+                withContext(Dispatchers.IO) {
+                    relationshipDao.insertAll(relationships)
+                }
 
                 remoteTrainerIds
             } catch (e: Exception) {
                 Log.e("AthleteRepository", "Error fetching trainer IDs from Firebase", e)
-                relationshipDao.getWhereEqual("athleteID", athleteID).mapNotNull { it.trainerID }
+                withContext(Dispatchers.IO) {
+                    relationshipDao.getWhereEqual("athleteID", athleteID)
+                        .mapNotNull { it.trainerID }
+                }
             }
         } else {
-            relationshipDao.getWhereEqual("athleteID", athleteID).mapNotNull { it.trainerID }
+            withContext(Dispatchers.IO) {
+                relationshipDao.getWhereEqual("athleteID", athleteID).mapNotNull { it.trainerID }
+            }
         }
     }
+
 
     // Get trainers as a list of User
     suspend fun getTrainers(trainerIds: List<String>): List<User> {
@@ -82,14 +96,20 @@ class AthleteRepository(
                 }
 
                 // Update local DB
-                userDao.insertAll(trainers)
+                withContext(Dispatchers.IO) {
+                    userDao.insertAll(trainers)
+                }
                 trainers
             } catch (e: Exception) {
                 Log.e("AthleteRepository", "Error fetching trainers from Firebase", e)
-                userDao.getWhereIn("uid", trainerIds)
+                withContext(Dispatchers.IO) {
+                    userDao.getWhereIn("uid", trainerIds)
+                }
             }
         } else {
-            userDao.getWhereIn("uid", trainerIds)
+            withContext(Dispatchers.IO) {
+                userDao.getWhereIn("uid", trainerIds)
+            }
         }
     }
 
@@ -106,14 +126,20 @@ class AthleteRepository(
                 }
 
                 // Update local DB
-                workoutDao.insertAll(workouts)
+                withContext(Dispatchers.IO) {
+                    workoutDao.insertAll(workouts)
+                }
                 workouts
             } catch (e: Exception) {
                 Log.e("AthleteRepository", "Error fetching workouts from Firebase", e)
-                workoutDao.getWhereEqual("athleteID", athleteID)
+                withContext(Dispatchers.IO) {
+                    workoutDao.getWhereEqual("athleteID", athleteID)
+                }
             }
         } else {
-            workoutDao.getWhereEqual("athleteID", athleteID)
+            withContext(Dispatchers.IO) {
+                workoutDao.getWhereEqual("athleteID", athleteID)
+            }
         }
     }
 
@@ -160,16 +186,22 @@ class AthleteRepository(
 
                 // Update local DB
                 if (user != null) {
-                    userDao.insert(user)
+                    withContext(Dispatchers.IO) {
+                        userDao.insert(user)
+                    }
                 }
 
                 user
             } catch (e: Exception) {
                 Log.e("AthleteRepository", "Error getting user by email: $email", e)
-                userDao.getWhereEqual("email", email).firstOrNull()
+                withContext(Dispatchers.IO) {
+                    userDao.getWhereEqual("email", email).firstOrNull()
+                }
             }
         } else {
-            userDao.getWhereEqual("email", email).firstOrNull()
+            withContext(Dispatchers.IO) {
+                userDao.getWhereEqual("email", email).firstOrNull()
+            }
         }
     }
 
@@ -200,7 +232,9 @@ class AthleteRepository(
                 Log.d("AthleteDocument", relationship.toString())
 
                 // Update local DB
-                relationshipDao.insert(relationship.copy(id = generatedId))
+                withContext(Dispatchers.IO) {
+                    relationshipDao.insert(relationship.copy(id = generatedId))
+                }
                 generatedId
             } catch (e: Exception) {
                 Log.e("AthleteRepository", "Error adding relationship", e)
@@ -251,7 +285,9 @@ class AthleteRepository(
             document.update("chatId", generatedId).await()
 
             // Update local DB
-            chatDao.insert(newChat.copy(chatId = generatedId))
+            withContext(Dispatchers.IO) {
+                chatDao.insert(newChat.copy(chatId = generatedId))
+            }
             Log.d("AthleteRepository", "New chat started successfully")
         } catch (e: Exception) {
             Log.e("AthleteRepository", "Error starting new chat", e)

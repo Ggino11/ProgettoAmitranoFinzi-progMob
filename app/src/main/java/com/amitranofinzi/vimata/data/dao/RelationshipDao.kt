@@ -18,7 +18,7 @@ interface RelationshipDao {
      * @return A list of Relationship objects that meet the equality condition.
      */
     @Query("SELECT * FROM relationships WHERE :field = :value")
-    fun getWhereEqual(field: String, value: String): List<Relationship>
+    suspend fun getWhereEqual(field: String, value: String): List<Relationship>
 
     /**
      * Retrieves a list of Relationship where the value of a specific field is in a list of values.
@@ -28,7 +28,7 @@ interface RelationshipDao {
      * @return A list of Relationship objects that meet the inclusion condition.
      */
     @Query("SELECT * FROM relationships WHERE :field IN (:values)")
-    fun getWhereIn(field: String, values: List<String>): List<Relationship>
+    suspend fun getWhereIn(field: String, values: List<String>): List<Relationship>
 
     /**
      * Retrieves a Relationship with a specific primary key.
@@ -37,7 +37,7 @@ interface RelationshipDao {
      * @return The Relationship object with the specified primary key, or null if not found.
      */
     @Query("SELECT * FROM relationships WHERE id = :id")
-    fun getWithPrimaryKey(id: String): Relationship?
+    suspend fun getWithPrimaryKey(id: String): Relationship?
 
     /**
      * Inserts a Relationship into the database. If a conflict occurs, the existing entry will be replaced.
@@ -45,7 +45,7 @@ interface RelationshipDao {
      * @param relationship The Relationship object to insert.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(relationship: Relationship)
+    suspend fun insert(relationship: Relationship)
 
     /**
      * Inserts a list of Relationships into the database.
@@ -61,5 +61,5 @@ interface RelationshipDao {
      * @param relationship The Relationship object to update.
      */
     @Update
-    fun update(relationship: Relationship)
+    suspend fun update(relationship: Relationship)
 }

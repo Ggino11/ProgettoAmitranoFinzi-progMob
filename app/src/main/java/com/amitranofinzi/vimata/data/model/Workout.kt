@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.google.firebase.firestore.DocumentId
 
 /**
  * Represents a workout plan created by a trainer for an athlete.
@@ -37,7 +36,7 @@ import com.google.firebase.firestore.DocumentId
 
 )
 data class Workout(
-    @PrimaryKey @DocumentId @NonNull val id: String,
+    @PrimaryKey @NonNull val id: String,
     val title: String,
     val status: String,
     val trainerID: String?,

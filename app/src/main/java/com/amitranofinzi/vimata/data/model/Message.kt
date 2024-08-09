@@ -6,7 +6,6 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.firebase.Timestamp
-import com.google.firebase.firestore.DocumentId
 
 
 /**
@@ -49,7 +48,7 @@ data class Message (
     var text: String = "",
     val timeStamp: String = "",
     val receiverId: String = "",
-    @PrimaryKey @DocumentId @NonNull val id: String = ""
+    @PrimaryKey @NonNull val id: String = ""
 ) {
     constructor() : this(
         chatId = "",

@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.google.firebase.firestore.DocumentId
 
 /**
  * Represents an exercise created by a trainer within a collection.
@@ -38,7 +37,7 @@ import com.google.firebase.firestore.DocumentId
     indices = [Index(value = ["trainerID"]), Index(value = ["collectionID"]) ]
 )
 data class Exercise(
-    @PrimaryKey @DocumentId @NonNull val id: String = "",
+    @PrimaryKey @NonNull val id: String = "",
     val name: String = "",
     val description: String = "",
     val videoUrl: String = "",

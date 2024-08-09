@@ -6,6 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.dao.ChatDao
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
+import com.amitranofinzi.vimata.data.dao.UserDao
+import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.database.AppDatabase
 import com.amitranofinzi.vimata.data.model.FormField
 import com.amitranofinzi.vimata.data.model.FormState
@@ -24,8 +28,20 @@ class AuthViewModel() : ViewModel(), InitializableViewModel {
         this.appDatabase = appDatabase
         this.context = context
     }
+    private val relationshipDao: RelationshipDao by lazy { appDatabase.relationshipDao() }
+    private val userDao: UserDao by lazy { appDatabase.userDao() }
+    private val workoutDao: WorkoutDao by lazy { appDatabase.workoutDao() }
+    private val chatDao: ChatDao by lazy { appDatabase.chatDao() }
 
-    private val authRepository : AuthRepository = AuthRepository()
+    private val authRepository: AuthRepository by lazy {
+        AuthRepository(
+            relationshipDao = relationshipDao,
+            userDao = userDao,
+            workoutDao = workoutDao,
+            chatDao = chatDao,
+            context = context
+        )
+    }
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)
     val authState: StateFlow<AuthState> = _authState
@@ -48,9 +64,10 @@ class AuthViewModel() : ViewModel(), InitializableViewModel {
             _user.value = fetchedUser
         }
     }
-    //function to updtates data stream for flow of formState
+    //function to updates data stream for flow of formState
     // takes in input the name of the field and the value
     fun updateField(field: FormField, value: String) {
+
         _formState.value = when(field) {
             FormField.NAME -> _formState.value.copy(name = value)
             FormField.SURNAME -> _formState.value.copy(surname = value)
@@ -69,30 +86,16 @@ class AuthViewModel() : ViewModel(), InitializableViewModel {
     //check email exists
     fun emailAlreadyUsed(email: String){
         viewModelScope.launch {
+            Log.d("email_check","email use")
             // used to launch a coroutine. Inside this coroutine, the repository function authRepository.checkEmail(email) is called asynchronously
             val emailExists = authRepository.checkEmailExists(email)
             _formState.value = _formState.value.copy(
                 emailErrorMessage = if (emailExists) "Email already exists" else "",
                 emailError = emailExists)
+            Log.d("email_check","email used fine routine")
+
         }
     }
-
-    /*validate password
-    *(?=.*[A-Z]): to ensure at least one uppercase letter exists.
-    *(?=.*[!@#\$%^&*()-_=+{};:,<.>]): to ensure at least one special character exists
-    *(.{6,}):  to ensure at least 6 chars --> firebase default
-    *  */
-//    fun validatePassword(password: String) {
-//        //regular expression
-//        val regex = Regex("^(?=.*[A-Z])(?=.*[!@#\$%^&*()-_=+{};:,<.>])(.{6,})")
-//        val isValid = regex.containsMatchIn(password)
-//        _formState.value = _formState.value.copy(
-//            passwordErrorMessage = if (isValid) "Password must contain at least one uppercase letter and one special character " else "",
-//            passwordError = isValid)
-//    }
-
-
-
 
     fun register(formState: FormState) {
         viewModelScope.launch {

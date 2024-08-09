@@ -66,7 +66,9 @@ fun NavGraphBuilder.authGraph(
     navigation( startDestination = "login", route = "auth"){
 
         composable("login"){
+            Log.d("login", "Login prima dello shared view model")
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController, appDatabase, context)
+            Log.d("login", "Login dopo lo shared view model")
             LoginScreen(authViewModel = authViewModel, navController = navController);
         }
         composable("signup"){
@@ -91,7 +93,7 @@ fun NavGraphBuilder.athleteGraph(
             val athleteViewModel = it.sharedViewModel<AthleteViewModel>(navController, appDatabase, context)
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController, appDatabase, context)
             val chatViewModel = it.sharedViewModel<ChatViewModel>(navController, appDatabase, context)
-
+            Log.d("athlete graph", "prima di athlete screen")
             AthleteScreen(athleteViewModel, authViewModel, chatViewModel, navController)
         }
         composable("testSetDetails/{testSetId}",listOf( navArgument("testSetId") { type = NavType.StringType  })

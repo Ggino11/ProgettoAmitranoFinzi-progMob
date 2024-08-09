@@ -18,7 +18,7 @@ interface TestDao {
      * @return A list of Test objects that meet the equality condition.
      */
     @Query("SELECT * FROM tests WHERE :field = :value")
-    fun getWhereEqual(field: String, value: String): List<Test>
+    suspend fun getWhereEqual(field: String, value: String): List<Test>
 
     /**
      * Retrieves a list of Test where the value of a specific field is in a list of values.
@@ -28,7 +28,7 @@ interface TestDao {
      * @return A list of Test objects that meet the inclusion condition.
      */
     @Query("SELECT * FROM tests WHERE :field IN (:values)")
-    fun getWhereIn(field: String, values: List<String>): List<Test>
+    suspend fun getWhereIn(field: String, values: List<String>): List<Test>
 
     /**
      * Retrieves a Test with a specific primary key.
@@ -37,7 +37,7 @@ interface TestDao {
      * @return The Test object with the specified primary key, or null if not found.
      */
     @Query("SELECT * FROM tests WHERE id = :id")
-    fun getWithPrimaryKey(id: String): Test?
+    suspend fun getWithPrimaryKey(id: String): Test?
 
     /**
      * Inserts a Test into the database. If a conflict occurs, the existing entry will be replaced.
@@ -45,7 +45,7 @@ interface TestDao {
      * @param test The Test object to insert.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(test: Test)
+    suspend fun insert(test: Test)
 
     /**
      * Updates an existing Test in the database.
@@ -53,5 +53,5 @@ interface TestDao {
      * @param test The Test object to update.
      */
     @Update
-    fun update(test: Test)
+    suspend fun update(test: Test)
 }

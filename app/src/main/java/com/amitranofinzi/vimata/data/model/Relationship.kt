@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
-import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.PropertyName
 
 /**
  * Represents a relationship between a trainer and an athlete in the application.
@@ -34,9 +34,9 @@ import com.google.firebase.firestore.DocumentId
     indices = [Index(value = ["athleteID"]), Index(value = ["trainerID"])]
 )
 data class Relationship(
-    @PrimaryKey @DocumentId @NonNull val id: String,
-    val athleteID: String,
-    val trainerID: String?
+    @PrimaryKey @PropertyName("id") @NonNull var id: String,
+    @PropertyName("athleteID") var athleteID: String,
+    @PropertyName("trainerID") var trainerID: String?
 ) {
     constructor() : this (
         id = "",

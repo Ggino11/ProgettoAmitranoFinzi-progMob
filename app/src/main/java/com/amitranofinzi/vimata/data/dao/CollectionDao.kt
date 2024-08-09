@@ -18,7 +18,7 @@ interface CollectionDao {
      * @return A list of Collection objects that meet the equality condition.
      */
     @Query("SELECT * FROM collections WHERE :field = :value")
-    fun getWhereEqual(field: String, value: String): List<Collection>
+    suspend fun getWhereEqual(field: String, value: String): List<Collection>
 
     /**
      * Retrieves a list of Collection where the value of a specific field is in a list of values.
@@ -28,7 +28,7 @@ interface CollectionDao {
      * @return A list of Collection objects that meet the inclusion condition.
      */
     @Query("SELECT * FROM collections WHERE :field IN (:values)")
-    fun getWhereIn(field: String, values: List<String>): List<Collection>
+    suspend fun getWhereIn(field: String, values: List<String>): List<Collection>
 
     /**
      * Retrieves a Collection with a specific primary key.
@@ -37,7 +37,7 @@ interface CollectionDao {
      * @return The Collection object with the specified primary key, or null if not found.
      */
     @Query("SELECT * FROM collections WHERE id = :id")
-    fun getWithPrimaryKey(id: String): Collection?
+    suspend fun getWithPrimaryKey(id: String): Collection?
 
     /**
      * Inserts a Collection into the database. If a conflict occurs, the existing entry will be replaced.
@@ -45,7 +45,7 @@ interface CollectionDao {
      * @param collection The Collection object to insert.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(collection: Collection)
+    suspend fun insert(collection: Collection)
 
     /**
      * Updates an existing Collection in the database.
@@ -53,5 +53,5 @@ interface CollectionDao {
      * @param collection The Collection object to update.
      */
     @Update
-    fun update(collection: Collection)
+    suspend fun update(collection: Collection)
 }

@@ -5,7 +5,6 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.amitranofinzi.vimata.data.extensions.TestStatus
-import com.google.firebase.firestore.DocumentId
 /**
  * Represents a test within a test set.
  * This is a Room entity annotated for database table creation.
@@ -31,7 +30,7 @@ import com.google.firebase.firestore.DocumentId
     indices = [androidx.room.Index(value = ["testSetID"])]
 )
 data class Test(
-    @PrimaryKey @DocumentId @NonNull val id: String = "",
+    @PrimaryKey @NonNull val id: String = "",
     val testSetID: String = "",
     val exerciseName: String = "",
     val videoUrl: String = "",

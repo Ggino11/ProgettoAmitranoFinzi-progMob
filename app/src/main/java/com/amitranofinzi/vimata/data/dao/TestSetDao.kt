@@ -18,7 +18,7 @@ interface TestSetDao {
      * @return A list of TestSet objects that meet the equality condition.
      */
     @Query("SELECT * FROM testSets WHERE :field = :value")
-    fun getWhereEqual(field: String, value: String): List<TestSet>
+    suspend fun getWhereEqual(field: String, value: String): List<TestSet>
 
     /**
      * Retrieves a list of TestSet where the value of a specific field is in a list of values.
@@ -28,7 +28,7 @@ interface TestSetDao {
      * @return A list of TestSet objects that meet the inclusion condition.
      */
     @Query("SELECT * FROM testSets WHERE :field IN (:values)")
-    fun getWhereIn(field: String, values: List<String>): List<TestSet>
+    suspend fun getWhereIn(field: String, values: List<String>): List<TestSet>
 
     /**
      * Retrieves a TestSet with a specific primary key.
@@ -37,7 +37,7 @@ interface TestSetDao {
      * @return The TestSet object with the specified primary key, or null if not found.
      */
     @Query("SELECT * FROM testSets WHERE id = :id")
-    fun getWithPrimaryKey(id: String): TestSet?
+    suspend fun getWithPrimaryKey(id: String): TestSet?
 
     /**
      * Inserts a TestSet into the database. If a conflict occurs, the existing entry will be replaced.
@@ -45,7 +45,7 @@ interface TestSetDao {
      * @param testSet The TestSet object to insert.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(testSet: TestSet)
+    suspend fun insert(testSet: TestSet)
 
     /**
      * Updates an existing TestSet in the database.
@@ -53,5 +53,5 @@ interface TestSetDao {
      * @param testSet The TestSet object to update.
      */
     @Update
-    fun update(testSet: TestSet)
+    suspend fun update(testSet: TestSet)
 }

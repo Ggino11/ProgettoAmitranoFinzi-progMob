@@ -59,12 +59,13 @@ fun AthleteHomeScreen(
     val workouts by athleteViewModel.workouts.observeAsState(emptyList())
     val trainers by athleteViewModel.trainers.observeAsState(emptyList())
     val athleteID = authViewModel.getCurrentUserID()
-    Log.d("homeAthlete", trainers.isEmpty().toString())
 
     LaunchedEffect(athleteID) {
         athleteViewModel.getTrainersForAthletes(athleteID)
         athleteViewModel.fetchWorkouts(athleteID)
     }
+
+    Log.d("homeAthlete", trainers.isEmpty().toString())
 
     Column(
         modifier = Modifier.fillMaxSize()

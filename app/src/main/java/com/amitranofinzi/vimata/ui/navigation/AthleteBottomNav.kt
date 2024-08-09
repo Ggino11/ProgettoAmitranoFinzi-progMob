@@ -1,5 +1,6 @@
 package com.amitranofinzi.vimata.ui.navigation
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -20,7 +21,10 @@ fun AthleteBottomNav(athleteViewModel: AthleteViewModel = AthleteViewModel(),
                      navController: NavController,
                      bottomNavController: NavHostController) {
     NavHost(navController = bottomNavController, startDestination = AthleteBNavItem.Home.path) {
-        composable(AthleteBNavItem.Home.path) { AthleteHomeScreen(athleteViewModel,authViewModel,navController) }
+        composable(AthleteBNavItem.Home.path) {
+            Log.d("athlete bottom nav", "nel bottom nav")
+            AthleteHomeScreen(athleteViewModel,authViewModel,navController)
+        }
         composable(AthleteBNavItem.Progress.path) {
             AthleteProgressScreen(athleteViewModel, authViewModel, navController)
         }
