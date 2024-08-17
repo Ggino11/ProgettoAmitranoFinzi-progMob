@@ -23,7 +23,9 @@ import androidx.room.PrimaryKey
             childColumns = ["trainerID"],
             onDelete = ForeignKey.CASCADE
         )
-    ])
+    ],
+    indices = [androidx.room.Index(value = ["trainerID"])]
+)
 data class Collection(
     @PrimaryKey @NonNull
     val id: String = "",

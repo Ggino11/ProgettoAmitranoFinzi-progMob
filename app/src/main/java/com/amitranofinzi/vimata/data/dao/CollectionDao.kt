@@ -48,6 +48,14 @@ interface CollectionDao {
     suspend fun insert(collection: Collection)
 
     /**
+     * Inserts a list of Collections into the database. If a conflict occurs, the existing entry will be replaced.
+     *
+     * @param collections The List of Collection objects to insert.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(collections: List<Collection>)
+
+    /**
      * Updates an existing Collection in the database.
      *
      * @param collection The Collection object to update.

@@ -48,6 +48,15 @@ interface ExerciseDao {
     suspend fun insert(exercise: Exercise)
 
     /**
+     * Inserts a list of Exercises into the database. If a conflict occurs, the existing entry will be replaced.
+     *
+     * @param exercises The List of Exercises object to insert.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(exercises: List<Exercise>)
+
+
+    /**
      * Updates an existing Exercise in the database.
      *
      * @param exercise The Exercise object to update.

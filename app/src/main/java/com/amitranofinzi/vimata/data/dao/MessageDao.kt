@@ -24,4 +24,12 @@ interface MessageDao {
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessage(message: Message)
+
+    /**
+     * Inserts a list of messages into the database.
+     *
+     * @param messages The list of messages to insert.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(messages: List<Message>)
 }

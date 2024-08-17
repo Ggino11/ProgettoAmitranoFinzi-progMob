@@ -8,18 +8,17 @@ import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import com.google.firebase.FirebaseApp
 
 
-
-
-
 class MainActivity : BaseActivity() {
     lateinit var appDatabase: AppDatabase
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
 
+        // Initialize room database
         appDatabase = AppDatabase.getDatabase(this)
-
+        // Initializing Firebase
         FirebaseApp.initializeApp(this)
         setContent {
 
@@ -31,4 +30,6 @@ class MainActivity : BaseActivity() {
         }
     }
 }
+
+
 

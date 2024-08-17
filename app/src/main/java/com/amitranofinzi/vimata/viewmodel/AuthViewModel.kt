@@ -7,7 +7,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amitranofinzi.vimata.data.dao.ChatDao
+import com.amitranofinzi.vimata.data.dao.CollectionDao
+import com.amitranofinzi.vimata.data.dao.ExerciseDao
+import com.amitranofinzi.vimata.data.dao.MessageDao
 import com.amitranofinzi.vimata.data.dao.RelationshipDao
+import com.amitranofinzi.vimata.data.dao.TestDao
 import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.database.AppDatabase
@@ -32,14 +36,21 @@ class AuthViewModel() : ViewModel(), InitializableViewModel {
     private val userDao: UserDao by lazy { appDatabase.userDao() }
     private val workoutDao: WorkoutDao by lazy { appDatabase.workoutDao() }
     private val chatDao: ChatDao by lazy { appDatabase.chatDao() }
-
+    private val exerciseDao: ExerciseDao by lazy { appDatabase.exerciseDao()}
+    private val collectionDao: CollectionDao by lazy { appDatabase.collectionDao()}
+    private val messageDao: MessageDao by lazy { appDatabase.messageDao()}
+    private val testDao: TestDao by lazy { appDatabase.testDao()}
     private val authRepository: AuthRepository by lazy {
         AuthRepository(
             relationshipDao = relationshipDao,
             userDao = userDao,
             workoutDao = workoutDao,
             chatDao = chatDao,
-            context = context
+            context = context,
+            exerciseDao = exerciseDao,
+            collectionDao = collectionDao,
+            testDao = testDao,
+            messageDao = messageDao
         )
     }
 

@@ -39,14 +39,14 @@ import com.google.firebase.Timestamp
             childColumns = ["chatId"],
             onDelete = ForeignKey.CASCADE
         )],
-        indices = [Index(value = ["receiverId"]), Index(value = ["senderId"]), Index(value = ["chatId"]) ] // Aggiungi un indice qui
+        indices = [Index(value = ["receiverId"]), Index(value = ["senderId"]), Index(value = ["chatId"]) ]
 
 )
 data class Message (
     val chatId: String = "",
     val senderId: String = "",
     var text: String = "",
-    val timeStamp: String = "",
+    var timeStamp: Timestamp,
     val receiverId: String = "",
     @PrimaryKey @NonNull val id: String = ""
 ) {
@@ -54,7 +54,7 @@ data class Message (
         chatId = "",
         senderId = "",
         text = "",
-        timeStamp = Timestamp.now().toString(),
+        timeStamp = Timestamp.now(),
         receiverId = "",
         id = "",
     )}

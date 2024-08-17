@@ -48,6 +48,14 @@ interface TestDao {
     suspend fun insert(test: Test)
 
     /**
+     * Inserts a list of Tests into the database. If a conflict occurs, the existing entry will be replaced.
+     *
+     * @param tests The list of tests to insert.
+     */
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(tests: List<Test>)
+
+    /**
      * Updates an existing Test in the database.
      *
      * @param test The Test object to update.

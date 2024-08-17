@@ -1,15 +1,19 @@
 package com.amitranofinzi.vimata.data.database
 
-import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.amitranofinzi.vimata.data.dao.ChatDao
+import com.amitranofinzi.vimata.data.dao.CollectionDao
+import com.amitranofinzi.vimata.data.dao.ExerciseDao
 import com.amitranofinzi.vimata.data.dao.MessageDao
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import com.amitranofinzi.vimata.data.dao.TestDao
 import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.dao.WorkoutDao
+import com.amitranofinzi.vimata.data.extensions.Converters
 import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.Collection
 import com.amitranofinzi.vimata.data.model.Exercise
@@ -33,10 +37,11 @@ import com.amitranofinzi.vimata.data.model.Workout
         Test::class,
         TestSet::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false
 
 )
+@TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     // functions to provide access to dao interface of each entity of db
     abstract fun userDao(): UserDao
@@ -45,6 +50,8 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun messageDao(): MessageDao
     abstract fun testDao(): TestDao
     abstract fun relationshipDao(): RelationshipDao
+    abstract fun collectionDao(): CollectionDao
+    abstract fun exerciseDao(): ExerciseDao
 
     companion object {
         @Volatile
