@@ -47,6 +47,10 @@ interface TestSetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(testSet: TestSet)
 
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(testSets: List<TestSet>)
+
     /**
      * Updates an existing TestSet in the database.
      *

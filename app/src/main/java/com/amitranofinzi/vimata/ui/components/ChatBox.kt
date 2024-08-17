@@ -75,7 +75,7 @@ fun ChatBox(
                     val message = Message(
                         chatId = chatId,
                         senderId = senderId,
-                        timeStamp = Timestamp.now().toString(),
+                        timeStamp = Timestamp.now(),
                         receiverId = receiverId,
                         text = textMessage.text,
                         id = ""

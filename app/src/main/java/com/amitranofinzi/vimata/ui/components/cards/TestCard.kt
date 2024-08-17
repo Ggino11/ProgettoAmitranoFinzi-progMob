@@ -33,13 +33,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.amitranofinzi.vimata.data.extensions.TestStatus
 import com.amitranofinzi.vimata.data.model.Test
 import com.amitranofinzi.vimata.ui.components.dialog.InputResultDialog
 import com.amitranofinzi.vimata.ui.theme.VerifiedColor
-import com.amitranofinzi.vimata.ui.theme.VimataTheme
 import java.util.Locale
 
 @Composable
@@ -197,7 +195,7 @@ fun FloatingIconButton(onClick: () -> Unit, icon: androidx.compose.ui.graphics.v
         Icon(icon, contentDescription = description)
     }
 }
-
+/*
 @Composable
 @Preview
 fun PreviewTestCard() {
@@ -221,3 +219,4 @@ fun PreviewTestCard() {
         )
     }
 }
+*/

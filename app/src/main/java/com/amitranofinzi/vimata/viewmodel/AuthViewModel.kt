@@ -12,6 +12,7 @@ import com.amitranofinzi.vimata.data.dao.ExerciseDao
 import com.amitranofinzi.vimata.data.dao.MessageDao
 import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import com.amitranofinzi.vimata.data.dao.TestDao
+import com.amitranofinzi.vimata.data.dao.TestSetDao
 import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.database.AppDatabase
@@ -33,6 +34,7 @@ class AuthViewModel() : ViewModel(), InitializableViewModel {
         this.context = context
     }
     private val relationshipDao: RelationshipDao by lazy { appDatabase.relationshipDao() }
+    private val testSetDao: TestSetDao by lazy {appDatabase.testSetDao()}
     private val userDao: UserDao by lazy { appDatabase.userDao() }
     private val workoutDao: WorkoutDao by lazy { appDatabase.workoutDao() }
     private val chatDao: ChatDao by lazy { appDatabase.chatDao() }
@@ -43,6 +45,7 @@ class AuthViewModel() : ViewModel(), InitializableViewModel {
     private val authRepository: AuthRepository by lazy {
         AuthRepository(
             relationshipDao = relationshipDao,
+            testSetDao = testSetDao,
             userDao = userDao,
             workoutDao = workoutDao,
             chatDao = chatDao,

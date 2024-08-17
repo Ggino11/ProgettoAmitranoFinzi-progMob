@@ -11,6 +11,7 @@ import com.amitranofinzi.vimata.data.dao.ExerciseDao
 import com.amitranofinzi.vimata.data.dao.MessageDao
 import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import com.amitranofinzi.vimata.data.dao.TestDao
+import com.amitranofinzi.vimata.data.dao.TestSetDao
 import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.extensions.Converters
@@ -37,7 +38,7 @@ import com.amitranofinzi.vimata.data.model.Workout
         Test::class,
         TestSet::class
     ],
-    version = 2,
+    version = 1,
     exportSchema = false
 
 )
@@ -49,6 +50,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun workoutDao(): WorkoutDao
     abstract fun messageDao(): MessageDao
     abstract fun testDao(): TestDao
+    abstract fun testSetDao(): TestSetDao
     abstract fun relationshipDao(): RelationshipDao
     abstract fun collectionDao(): CollectionDao
     abstract fun exerciseDao(): ExerciseDao

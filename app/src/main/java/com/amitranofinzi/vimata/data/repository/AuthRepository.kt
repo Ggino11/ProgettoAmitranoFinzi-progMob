@@ -13,6 +13,7 @@ import com.amitranofinzi.vimata.data.dao.ExerciseDao
 import com.amitranofinzi.vimata.data.dao.MessageDao
 import com.amitranofinzi.vimata.data.dao.RelationshipDao
 import com.amitranofinzi.vimata.data.dao.TestDao
+import com.amitranofinzi.vimata.data.dao.TestSetDao
 import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.model.Chat
@@ -21,6 +22,7 @@ import com.amitranofinzi.vimata.data.model.Exercise
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.data.model.Relationship
 import com.amitranofinzi.vimata.data.model.Test
+import com.amitranofinzi.vimata.data.model.TestSet
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.model.Workout
 import com.google.firebase.Firebase
@@ -40,6 +42,7 @@ class AuthRepository(
     private val context: Context,
     private val exerciseDao: ExerciseDao,
     private val collectionDao: CollectionDao,
+    private val testSetDao: TestSetDao,
     private val testDao: TestDao,
     private val messageDao: MessageDao
 ) {
@@ -166,6 +169,12 @@ class AuthRepository(
                             it.toObject(Relationship::class.java)
                         }
 
+                        val testSetSnapshot = firestore.collection("testSets").get().await()
+                        val testSets = testSetSnapshot.documents.mapNotNull {
+                            Log.d("SyncUserData", "TestSet document: ${it.id}")
+                            it.toObject(TestSet::class.java)
+                        }
+
                         val chatSnapshot = firestore.collection("chats").get().await()
                         val chats = chatSnapshot.documents.mapNotNull {
                             Log.d("SyncUserData", "Chat document: ${it.id}")
@@ -175,9 +184,14 @@ class AuthRepository(
                         val workoutsSnapshot = firestore.collection("workouts").get().await()
                         val workouts = workoutsSnapshot.documents.mapNotNull {
                             Log.d("SyncUserData", "Workout document: ${it.id}")
-                            it.toObject(Workout::class.java)
+                            it.toObject(Workout::class.java)?.also { workout ->
+                                if (workout.trainerID.isNullOrEmpty() || workout.athleteID.isNullOrEmpty()) {
+                                    Log.e("SyncUserData", "Invalid Workout: $workout")
+                                } else {
+                                    Log.d("SyncUserData", "Valid Workout: $workout")
+                                }
+                            }
                         }
-
                         val exercisesSnapshot = firestore.collection("exercises").get().await()
                         val exercises = exercisesSnapshot.documents.mapNotNull {
                             Log.d("SyncUserData", "Exercise document: ${it.id}")
@@ -206,13 +220,15 @@ class AuthRepository(
                             Log.d("SyncUserData", "Inserting data into Room database")
                             userDao.insertAll(users)
                             relationshipDao.insertAll(relationships)
+                            testSetDao.insertAll(testSets)
                             collectionDao.insertAll(collections)
-                            exerciseDao.insertAll(exercises)
                             workoutDao.insertAll(workouts)
+                            exerciseDao.insertAll(exercises)
                             chatDao.insertAll(chats)
                             testDao.insertAll(tests)
                             messageDao.insertAll(messages)
                             Log.d("SyncUserData", "Data insertion successful")
+
                         } catch (e: SQLiteConstraintException) {
                             Log.e("SyncUserData", "Foreign key constraint failed during insert", e)
                             return@withContext Result.failure(e)

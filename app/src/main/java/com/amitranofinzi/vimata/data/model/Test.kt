@@ -31,7 +31,7 @@ import com.amitranofinzi.vimata.data.extensions.TestStatus
 )
 data class Test(
     @PrimaryKey @NonNull val id: String = "",
-    val testSetID: String = "",
+    val testSetID: String?,
     val exerciseName: String = "",
     val videoUrl: String = "",
     val result: Double = 0.0,
@@ -41,7 +41,7 @@ data class Test(
 ) {
     constructor() : this(
         id = "",
-        testSetID = "",
+        testSetID = null,
         exerciseName = "",
         videoUrl = "",
         result = 0.0,
