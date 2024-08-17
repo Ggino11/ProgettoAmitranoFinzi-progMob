@@ -1,6 +1,5 @@
 package com.amitranofinzi.vimata.data.repository
 
-//import com.google.firebase.firestore.FirebaseFirestore
 import android.content.Context
 import android.database.sqlite.SQLiteConstraintException
 import android.net.ConnectivityManager
@@ -217,16 +216,26 @@ class AuthRepository(
 
                         // Insert data into Room database
                         try {
+
                             Log.d("SyncUserData", "Inserting data into Room database")
                             userDao.insertAll(users)
+                            Log.d("authRepo", relationships.toString())
                             relationshipDao.insertAll(relationships)
+                            Log.d("authRepo", testSets.toString())
+
                             testSetDao.insertAll(testSets)
+                            Log.d("authRepo", collections.toString())
                             collectionDao.insertAll(collections)
+                            Log.d("SyncUserData", "Collections inserted into database: ${collectionDao.getAll().toString()}")
                             workoutDao.insertAll(workouts)
                             exerciseDao.insertAll(exercises)
                             chatDao.insertAll(chats)
                             testDao.insertAll(tests)
                             messageDao.insertAll(messages)
+                            Log.d("SyncUserData",
+                                collectionDao.getWhereEqual("id", "ODhhdDw8S32SMey6B9C9").toString()
+                            )
+
                             Log.d("SyncUserData", "Data insertion successful")
 
                         } catch (e: SQLiteConstraintException) {

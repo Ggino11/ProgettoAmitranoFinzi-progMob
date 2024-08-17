@@ -47,6 +47,7 @@ fun AppNav(
 
     val navController = rememberNavController()
 
+
     // NESTED GRAPH CONSTRUCTOR
     // Vengono in questa funzione tutti i grafi di navigazione principali
     // definiti ognuno tramite una funzione dedicata
@@ -290,6 +291,7 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
     // Inizializza il ViewModel se supporta l'inizializzazione
     if (viewModel is InitializableViewModel) {
         (viewModel as InitializableViewModel).initialize(appDatabase, context)
+        Log.d("appNav context", context.toString())
     }
 
     return viewModel

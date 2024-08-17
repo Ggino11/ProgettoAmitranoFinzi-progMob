@@ -11,7 +11,6 @@ import com.google.firebase.FirebaseApp
 class MainActivity : BaseActivity() {
     lateinit var appDatabase: AppDatabase
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
@@ -24,7 +23,7 @@ class MainActivity : BaseActivity() {
 
             // Applying style theme on every UI component
             VimataTheme {
-                AppNav(appDatabase, context = this)
+                AppNav(appDatabase, this)
             }
 
         }

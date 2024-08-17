@@ -33,6 +33,7 @@ class AuthViewModel() : ViewModel(), InitializableViewModel {
         this.appDatabase = appDatabase
         this.context = context
     }
+
     private val relationshipDao: RelationshipDao by lazy { appDatabase.relationshipDao() }
     private val testSetDao: TestSetDao by lazy {appDatabase.testSetDao()}
     private val userDao: UserDao by lazy { appDatabase.userDao() }

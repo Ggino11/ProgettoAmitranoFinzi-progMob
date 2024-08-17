@@ -64,20 +64,22 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
     fun fetchWorkouts(athleteID: String){
         viewModelScope.launch {
             _workouts.value = athleteRepository.getAthletesWorkouts(athleteID)
+            Log.d("fetchWorkouts", workouts.toString())
+
         }
     }
 
     //gets coaches for athlete
-    fun getTrainersForAthletes(atheleteId: String) {
+    fun getTrainersForAthletes(athleteId: String) {
         viewModelScope.launch {
             try {
                 Log.d("AthleteViewModel", "Launching coroutine")
-                val trainerIds = athleteRepository.getTrainerIdsForAthlete(atheleteId)
-                Log.d("TrainerViewModel", "trainers IDs fetched: $trainerIds")
+                val trainerIds = athleteRepository.getTrainerIdsForAthlete(athleteId)
+                Log.d("AthleteViewModel", "trainers IDs fetched: $trainerIds")
                 val trainerDetails = athleteRepository.getTrainers(trainerIds)
-                Log.d("AthleteViewModel", "Athlete details fetched: $trainerDetails")
+                Log.d("AthleteViewModel", "Trainer details fetched: $trainerDetails")
                 _trainers.value = trainerDetails
-                Log.d("AthleteViewModel", "Athlete details assigned to LiveData")
+                Log.d("AthleteViewModel", "Trainer details  assigned to LiveData")
                 Log.d("AthleteViewModel", _trainers.toString())
             } catch (e: Exception) {
                 // Handle the error

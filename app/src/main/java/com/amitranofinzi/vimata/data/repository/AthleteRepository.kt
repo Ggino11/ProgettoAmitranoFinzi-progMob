@@ -49,69 +49,87 @@ class AthleteRepository(
 
     // Fetch trainer IDs for a given athleteID
     suspend fun getTrainerIdsForAthlete(athleteID: String): List<String> {
-        return if (isNetworkAvailable()) {
+        return   withContext(Dispatchers.IO) {
+            if (isNetworkAvailable()) {
             try {
+                Log.d("AthleteRepository", "Network available, fetching from Firestore")
                 val snapshot = firestore.collection("relationships")
                     .whereEqualTo("athleteID", athleteID)
                     .get()
                     .await()
                 val remoteTrainerIds = snapshot.documents.mapNotNull { it.getString("trainerID") }
 
-                // Update local DB
+                // Aggiorna il DB locale
                 val relationships = snapshot.documents.mapNotNull { document ->
                     document.toObject(Relationship::class.java)?.apply {
                         id = document.id
                     }
                 }
-                withContext(Dispatchers.IO) {
-                    relationshipDao.insertAll(relationships)
-                }
+
+                Log.d("AthleteRepository", "Fetched ${relationships.size} relationships from Firestore")
+
+                    try {
+                        Log.d("AthleteRepository", "Inserting ${relationships.size} relationships into local DB")
+                        relationshipDao.insertAll(relationships)
+                        Log.d("AthleteRepository", "Insert completed successfully")
+                    } catch (e: Exception) {
+                        Log.e("AthleteRepository", "Error inserting relationships into local DB", e)
+                    }
+
 
                 remoteTrainerIds
             } catch (e: Exception) {
                 Log.e("AthleteRepository", "Error fetching trainer IDs from Firebase", e)
                 withContext(Dispatchers.IO) {
+                    Log.d("AthleteRepository", "Fetching trainer IDs from local DB due to error")
                     relationshipDao.getWhereEqual("athleteID", athleteID)
                         .mapNotNull { it.trainerID }
                 }
             }
         } else {
+            Log.d("AthleteRepository", "No network, fetching trainer IDs from local DB")
             withContext(Dispatchers.IO) {
-                relationshipDao.getWhereEqual("athleteID", athleteID).mapNotNull { it.trainerID }
+                val localTrainerIds = relationshipDao.getWhereEqual("athleteID", athleteID)
+                    .mapNotNull { it.trainerID }
+                Log.d("AthleteRepository", "Fetched ${localTrainerIds.size} trainer IDs from local DB")
+                localTrainerIds
             }
         }
     }
+}
+
+
 
 
     // Get trainers as a list of User
     suspend fun getTrainers(trainerIds: List<String>): List<User> {
-        return if (isNetworkAvailable()) {
-            try {
-                val snapshot = firestore.collection("users")
-                    .whereIn("uid", trainerIds)
-                    .get()
-                    .await()
-                val trainers = snapshot.documents.mapNotNull { document ->
-                    document.toObject(User::class.java)
-                }
+        return  withContext(Dispatchers.IO) {
+            if (isNetworkAvailable()) {
+                try {
+                    val snapshot = firestore.collection("users")
+                        .whereIn("uid", trainerIds)
+                        .get()
+                        .await()
+                    val trainers = snapshot.documents.mapNotNull { document ->
+                        document.toObject(User::class.java)
+                    }
 
-                // Update local DB
-                withContext(Dispatchers.IO) {
+                    // Update local DB
                     userDao.insertAll(trainers)
-                }
-                trainers
-            } catch (e: Exception) {
-                Log.e("AthleteRepository", "Error fetching trainers from Firebase", e)
-                withContext(Dispatchers.IO) {
+
+                    trainers
+                } catch (e: Exception) {
+                    Log.e("AthleteRepository", "Error fetching trainers from Firebase", e)
                     userDao.getWhereIn("uid", trainerIds)
+
                 }
-            }
-        } else {
-            withContext(Dispatchers.IO) {
+            } else {
                 userDao.getWhereIn("uid", trainerIds)
             }
+
         }
     }
+
 
     // Fetch workouts for a given athleteID
     suspend fun getAthletesWorkouts(athleteID: String): List<Workout> {

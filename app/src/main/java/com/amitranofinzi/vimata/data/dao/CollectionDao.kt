@@ -20,6 +20,9 @@ interface CollectionDao {
     @Query("SELECT * FROM collections WHERE :field = :value")
     suspend fun getWhereEqual(field: String, value: String): List<Collection>
 
+    @Query("SELECT * FROM collections")
+    suspend fun getAll():List<Collection>
+
     /**
      * Retrieves a list of Collection where the value of a specific field is in a list of values.
      *
