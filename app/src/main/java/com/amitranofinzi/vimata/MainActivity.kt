@@ -15,10 +15,11 @@ class MainActivity : BaseActivity() {
 
         super.onCreate(savedInstanceState)
 
-        // Initialize room database
-        appDatabase = AppDatabase.getDatabase(this)
+
         // Initializing Firebase
         FirebaseApp.initializeApp(this)
+        // Initialize room database
+        appDatabase = AppDatabase.getDatabase(this)
         setContent {
 
             // Applying style theme on every UI component

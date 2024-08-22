@@ -11,33 +11,30 @@ import com.amitranofinzi.vimata.data.model.Chat
 interface ChatDao {
 
     /**
-     * Retrieves a list of Chat where the value of a specific field equals a given value.
+     * Retrieves a list of all chats.
      *
-     * @param field The name of the field to be compared.
-     * @param value The value to be compared with the specified field.
-     * @return A list of Chat objects that meet the equality condition.
+     * @return A list of all Chat objects in the database.
      */
-    @Query("SELECT * FROM chats WHERE :field = :value")
-    suspend fun getWhereEqual(field: String, value: String): List<Chat>
+    @Query("SELECT * FROM chats")
+    suspend fun getAll(): List<Chat>
 
     /**
-     * Retrieves a list of Chat where the value of a specific field is in a list of values.
+     * Retrieves a chat from the database by its unique ID.
      *
-     * @param field The name of the field to be compared.
-     * @param values The list of values to be compared with the specified field.
-     * @return A list of Chat objects that meet the inclusion condition.
-     */
-    @Query("SELECT * FROM chats WHERE :field IN (:values)")
-    suspend fun getWhereIn(field: String, values: List<String>): List<Chat>
-
-    /**
-     * Retrieves a Chat with a specific primary key.
-     *
-     * @param chatId The primary key of the Chat to retrieve.
-     * @return The Chat object with the specified primary key, or null if not found.
+     * @param chatId The unique ID of the chat to be fetched.
+     * @return The Chat object with the specified ID, or null if not found.
      */
     @Query("SELECT * FROM chats WHERE chatId = :chatId")
-    suspend fun getWithPrimaryKey(chatId: String): Chat?
+    suspend fun getChatById(chatId: String): Chat?
+
+    /**
+     * Retrieves all chats associated with a specific relationship ID.
+     *
+     * @param relationshipID The ID of the relationship whose chats are to be fetched.
+     * @return A list of Chat objects associated with the specified relationship ID.
+     */
+    @Query("SELECT * FROM chats WHERE relationshipID = :relationshipID")
+    suspend fun getChatsByRelationshipId(relationshipID: String): List<Chat>
 
     /**
      * Inserts a Chat into the database. If a conflict occurs, the existing entry will be replaced.
@@ -48,9 +45,9 @@ interface ChatDao {
     suspend fun insert(chat: Chat)
 
     /**
-     * Inserts a list of Chats into the database.
+     * Inserts a list of Chats into the database. If a conflict occurs, the existing entry will be replaced.
      *
-     * @param chats The list of Chat objects to be inserted.
+     * @param chats The List of Chat objects to insert.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(chats: List<Chat>)
@@ -62,4 +59,18 @@ interface ChatDao {
      */
     @Update
     suspend fun update(chat: Chat)
+
+    /**
+     * Deletes a Chat with a specific primary key (chatId).
+     *
+     * @param chatId The primary key of the Chat to delete.
+     */
+    @Query("DELETE FROM chats WHERE chatId = :chatId")
+    suspend fun deleteByChatId(chatId: String)
+
+    /**
+     * Deletes all Chats from the database.
+     */
+    @Query("DELETE FROM chats")
+    suspend fun clearAll()
 }

@@ -39,6 +39,25 @@ interface RelationshipDao {
     @Query("SELECT * FROM relationships WHERE id = :id")
     suspend fun getWithPrimaryKey(id: String): Relationship?
 
+
+    /**
+     * Retrieves all relationships where the athleteID matches the given value.
+     *
+     * @param athleteID The ID of the athlete to filter by.
+     * @return A list of Relationship objects where athleteID matches the provided value.
+     */
+    @Query("SELECT * FROM relationships WHERE athleteID = :athleteID")
+    suspend fun getRelationshipsByAthleteId(athleteID: String): List<Relationship>
+
+    /**
+     * Retrieves all relationships where the trainerID matches the given value.
+     *
+     * @param trainerID The ID of the trainer to filter by.
+     * @return A list of Relationship objects where trainerID matches the provided value.
+     */
+    @Query("SELECT * FROM relationships WHERE trainerID = :trainerID")
+    suspend fun getRelationshipsByTrainerId(trainerID: String): List<Relationship>
+
     /**
      * Inserts a Relationship into the database. If a conflict occurs, the existing entry will be replaced.
      *

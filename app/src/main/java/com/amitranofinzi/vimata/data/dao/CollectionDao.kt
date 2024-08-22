@@ -17,8 +17,8 @@ interface CollectionDao {
      * @param value The value to be compared with the specified field.
      * @return A list of Collection objects that meet the equality condition.
      */
-    @Query("SELECT * FROM collections WHERE :field = :value")
-    suspend fun getWhereEqual(field: String, value: String): List<Collection>
+//    @Query("SELECT * FROM collections WHERE :field = :value")
+//    suspend fun getWhereEqual(field: String, value: String): List<Collection>
 
     @Query("SELECT * FROM collections")
     suspend fun getAll():List<Collection>
@@ -30,8 +30,8 @@ interface CollectionDao {
      * @param values The list of values to be compared with the specified field.
      * @return A list of Collection objects that meet the inclusion condition.
      */
-    @Query("SELECT * FROM collections WHERE :field IN (:values)")
-    suspend fun getWhereIn(field: String, values: List<String>): List<Collection>
+//    @Query("SELECT * FROM collections WHERE :field IN (:values)")
+//    suspend fun getWhereIn(field: String, values: List<String>): List<Collection>
 
     /**
      * Retrieves a Collection with a specific primary key.
@@ -40,7 +40,7 @@ interface CollectionDao {
      * @return The Collection object with the specified primary key, or null if not found.
      */
     @Query("SELECT * FROM collections WHERE id = :id")
-    suspend fun getWithPrimaryKey(id: String): Collection?
+    suspend fun getCollectionById(id: String): Collection?
 
     /**
      * Inserts a Collection into the database. If a conflict occurs, the existing entry will be replaced.

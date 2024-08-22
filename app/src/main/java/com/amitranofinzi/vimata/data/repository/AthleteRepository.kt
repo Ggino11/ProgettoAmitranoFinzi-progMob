@@ -120,11 +120,11 @@ class AthleteRepository(
                     trainers
                 } catch (e: Exception) {
                     Log.e("AthleteRepository", "Error fetching trainers from Firebase", e)
-                    userDao.getWhereIn("uid", trainerIds)
+                    userDao.getTrainersByIDs( trainerIds)
 
                 }
             } else {
-                userDao.getWhereIn("uid", trainerIds)
+                userDao.getTrainersByIDs( trainerIds)
             }
 
         }
@@ -151,19 +151,19 @@ class AthleteRepository(
             } catch (e: Exception) {
                 Log.e("AthleteRepository", "Error fetching workouts from Firebase", e)
                 withContext(Dispatchers.IO) {
-                    workoutDao.getWhereEqual("athleteID", athleteID)
+                    workoutDao.getWorkoutsByAthlete(athleteID)
                 }
             }
         } else {
             withContext(Dispatchers.IO) {
-                workoutDao.getWhereEqual("athleteID", athleteID)
+                workoutDao.getWorkoutsByAthlete(athleteID)
             }
         }
     }
 
     // Fetch workout PDF
     suspend fun getWorkoutPdf(workoutId: String): ByteArray? {
-        val workout = workoutDao.getWithPrimaryKey(workoutId)
+        val workout = workoutDao.getWorkoutById(workoutId)
         val pdfUrl = workout?.pdfUrl
 
         return if (pdfUrl != null && isNetworkAvailable()) {
@@ -213,12 +213,12 @@ class AthleteRepository(
             } catch (e: Exception) {
                 Log.e("AthleteRepository", "Error getting user by email: $email", e)
                 withContext(Dispatchers.IO) {
-                    userDao.getWhereEqual("email", email).firstOrNull()
+                    userDao.getUserByEmail( email)
                 }
             }
         } else {
             withContext(Dispatchers.IO) {
-                userDao.getWhereEqual("email", email).firstOrNull()
+                userDao.getUserByEmail( email)
             }
         }
     }

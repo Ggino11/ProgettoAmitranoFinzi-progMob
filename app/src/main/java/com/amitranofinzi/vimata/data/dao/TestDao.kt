@@ -11,34 +11,21 @@ import com.amitranofinzi.vimata.data.model.Test
 interface TestDao {
 
     /**
-     * Retrieves a list of Test where the value of a specific field equals a given value.
-     *
-     * @param field The name of the field to be compared.
-     * @param value The value to be compared with the specified field.
-     * @return A list of Test objects that meet the equality condition.
-     */
-    @Query("SELECT * FROM tests WHERE :field = :value")
-    suspend fun getWhereEqual(field: String, value: String): List<Test>
-
-    /**
-     * Retrieves a list of Test where the value of a specific field is in a list of values.
-     *
-     * @param field The name of the field to be compared.
-     * @param values The list of values to be compared with the specified field.
-     * @return A list of Test objects that meet the inclusion condition.
-     */
-    @Query("SELECT * FROM tests WHERE :field IN (:values)")
-    suspend fun getWhereIn(field: String, values: List<String>): List<Test>
-
-    /**
      * Retrieves a Test with a specific primary key.
      *
      * @param id The primary key of the Test to retrieve.
      * @return The Test object with the specified primary key, or null if not found.
      */
     @Query("SELECT * FROM tests WHERE id = :id")
-    suspend fun getWithPrimaryKey(id: String): Test?
+    suspend fun getTestById(id: String): Test?
 
+    /**
+     * Fetches all tests for a specific test set ID.
+     * @param testSetId: The ID of the test set to fetch tests for.
+     * @return A list of tests.
+     */
+    suspend fun getTests(testSetId: String?): List<Test>
+    
     /**
      * Inserts a Test into the database. If a conflict occurs, the existing entry will be replaced.
      *

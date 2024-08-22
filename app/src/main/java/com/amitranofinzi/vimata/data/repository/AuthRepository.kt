@@ -232,9 +232,9 @@ class AuthRepository(
                             chatDao.insertAll(chats)
                             testDao.insertAll(tests)
                             messageDao.insertAll(messages)
-                            Log.d("SyncUserData",
-                                collectionDao.getWhereEqual("id", "ODhhdDw8S32SMey6B9C9").toString()
-                            )
+                            //Log.d("SyncUserData",
+                                //collectionDao.getWhereEqual("id", "ODhhdDw8S32SMey6B9C9").toString()
+                            //
 
                             Log.d("SyncUserData", "Data insertion successful")
 

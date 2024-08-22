@@ -11,33 +11,20 @@ import com.amitranofinzi.vimata.data.model.TestSet
 interface TestSetDao {
 
     /**
-     * Retrieves a list of TestSet where the value of a specific field equals a given value.
-     *
-     * @param field The name of the field to be compared.
-     * @param value The value to be compared with the specified field.
-     * @return A list of TestSet objects that meet the equality condition.
-     */
-    @Query("SELECT * FROM testSets WHERE :field = :value")
-    suspend fun getWhereEqual(field: String, value: String): List<TestSet>
-
-    /**
-     * Retrieves a list of TestSet where the value of a specific field is in a list of values.
-     *
-     * @param field The name of the field to be compared.
-     * @param values The list of values to be compared with the specified field.
-     * @return A list of TestSet objects that meet the inclusion condition.
-     */
-    @Query("SELECT * FROM testSets WHERE :field IN (:values)")
-    suspend fun getWhereIn(field: String, values: List<String>): List<TestSet>
-
-    /**
      * Retrieves a TestSet with a specific primary key.
      *
      * @param id The primary key of the TestSet to retrieve.
      * @return The TestSet object with the specified primary key, or null if not found.
      */
     @Query("SELECT * FROM testSets WHERE id = :id")
-    suspend fun getWithPrimaryKey(id: String): TestSet?
+    suspend fun getTestSetById(id: String): TestSet?
+
+    /**
+     * Fetches all test sets for a specific athlete ID.
+     * @param athleteID: The ID of the athlete to fetch test sets for.
+     * @return A list of test sets.
+     */
+    suspend fun getTestSetsForAthlete(athleteID: String): List<TestSet>
 
     /**
      * Inserts a TestSet into the database. If a conflict occurs, the existing entry will be replaced.

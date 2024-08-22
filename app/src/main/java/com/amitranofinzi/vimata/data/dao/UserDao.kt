@@ -11,33 +11,37 @@ import com.amitranofinzi.vimata.data.model.User
 interface UserDao {
 
     /**
-     * Retrieves a list of User where the value of a specific field equals a given value.
-     *
-     * @param field The name of the field to be compared.
-     * @param value The value to be compared with the specified field.
-     * @return A list of User objects that meet the equality condition.
-     */
-    @Query("SELECT * FROM users WHERE :field = :value")
-    suspend fun getWhereEqual(field: String, value: String): List<User>
-
-    /**
-     * Retrieves a list of User where the value of a specific field is in a list of values.
-     *
-     * @param field The name of the field to be compared.
-     * @param values The list of values to be compared with the specified field.
-     * @return A list of User objects that meet the inclusion condition.
-     */
-    @Query("SELECT * FROM users WHERE :field IN (:values)")
-    suspend fun getWhereIn(field: String, values: List<String>): List<User>
-
-    /**
      * Retrieves a User with a specific primary key.
      *
      * @param uid The primary key of the User to retrieve.
      * @return The User object with the specified primary key, or null if not found.
      */
     @Query("SELECT * FROM users WHERE uid = :uid")
-    suspend fun getWithPrimaryKey(uid: String?): User?
+    suspend fun getUserById(uid: String?): User?
+
+    /**
+     * Fetches users based on their IDs.
+     * @param userIds: The list of user IDs to fetch.
+     * @return A list of users matching the provided IDs.
+     */
+    suspend fun getTrainersByIDs(userIds: List<String>): List<User>
+
+    /**
+     * Retrieves all users from the database.
+     *
+     * @return A list of all User objects.
+     */
+    @Query("SELECT * FROM users")
+    suspend fun getAllUsers(): List<User>
+
+    /**
+     * Retrieves a user from the database by their email address.
+     *
+     * @param email The email address of the user to be fetched.
+     * @return The User object with the specified email, or null if not found.
+     */
+    @Query("SELECT * FROM users WHERE email = :email")
+    suspend fun getUserByEmail(email: String): User?
 
     /**
      * Inserts a User into the database. If a conflict occurs, the existing entry will be replaced.
