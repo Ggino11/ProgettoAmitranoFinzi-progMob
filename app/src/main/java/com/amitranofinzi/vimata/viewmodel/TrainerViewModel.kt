@@ -6,6 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
+import com.amitranofinzi.vimata.data.dao.UserDao
+import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.database.AppDatabase
 import com.amitranofinzi.vimata.data.model.Collection
 import com.amitranofinzi.vimata.data.model.Exercise
@@ -30,7 +33,12 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
         this.context = context
     }
 
-    private val trainerRepository : TrainerRepository = TrainerRepository()
+    private val relationshipDao: RelationshipDao by lazy { appDatabase.relationshipDao() }
+    private val userDao: UserDao by lazy { appDatabase.userDao() }
+    private val workoutDao: WorkoutDao by lazy { appDatabase.workoutDao() }
+
+    private val trainerRepository : TrainerRepository = TrainerRepository(relationshipDao, userDao, workoutDao, context)
+
     private val workbookRepository : WorkbookRepository = WorkbookRepository()
     private val testRepository : TestRepository = TestRepository()
 

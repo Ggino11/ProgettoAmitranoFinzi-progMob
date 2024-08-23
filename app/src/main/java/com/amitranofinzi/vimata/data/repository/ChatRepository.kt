@@ -1,6 +1,14 @@
 package com.amitranofinzi.vimata.data.repository
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
+import com.amitranofinzi.vimata.data.dao.ChatDao
+import com.amitranofinzi.vimata.data.dao.MessageDao
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
+import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.Message
 import com.amitranofinzi.vimata.data.model.Relationship
@@ -12,167 +20,163 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 
-class ChatRepository() {
+class ChatRepository(
+    private val chatDao: ChatDao,
+    private val messageDao: MessageDao,
+    private val relationshipDao: RelationshipDao,
+    private val userDao: UserDao,
+    private val context: Context
+) {
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    /**
-     * Fetches relationships (chats) associated with a specific user ID.
-     * takes user id and user type and fetches all relationship for that user
-     */
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+            return when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        } else {
+            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
+            return networkInfo.isConnected
+        }
+    }
+
 
     suspend fun getReceiverId(chatId: String, userType: String): String? {
-        try {
-            // Log the start of the function
-            Log.d("getReceiverId", "Starting to fetch receiverId for chatId: $chatId and userType: $userType")
-
-            // Fetch the chat document
-            val snapshotChat = firestore.collection("chats")
-                .document(chatId)
-                .get()
-                .await()
-            Log.d("getReceiverId", "Fetched chat document for chatId: $chatId")
-
-            // Get the relationshipId from the chat document
-            val relationshipId = snapshotChat.getString("relationshipID")
-            Log.d("getReceiverId", "Extracted relationshipId: $relationshipId for chatId: $chatId")
-
-            // Fetch the relationship document using the relationshipId
-            val snapshotRelationship = relationshipId?.let {
-                firestore.collection("relationships")
-                    .document(it)
+        return if (isNetworkAvailable()) {
+            try {
+                val snapshotChat = firestore.collection("chats")
+                    .document(chatId)
                     .get()
                     .await()
+
+                val relationshipId = snapshotChat.getString("relationshipID")
+                val snapshotRelationship = relationshipId?.let {
+                    firestore.collection("relationships")
+                        .document(it)
+                        .get()
+                        .await()
+                }
+
+                val relationshipObj = snapshotRelationship?.toObject(Relationship::class.java)
+                val receiverId = if (userType == "trainer") relationshipObj?.athleteID else relationshipObj?.trainerID
+
+                receiverId
+            } catch (e: Exception) {
+                Log.e("getReceiverId", "Error fetching receiverId", e)
+                null
             }
-            Log.d("getReceiverId", "Fetched relationship document for relationshipId: $relationshipId")
-
-            // Convert the document to Relationship object
-            val relationshipObj = snapshotRelationship?.toObject(Relationship::class.java)
-            Log.d("getReceiverId", "Converted relationship document to Relationship object: $relationshipObj")
-
-            // Determine and return the receiverId based on userType
-            val receiverId = if (userType == "trainer") relationshipObj?.athleteID else relationshipObj?.trainerID
-            Log.d("getReceiverId", "Determined receiverId: $receiverId for chatId: $chatId and userType: $userType")
-
-            return receiverId
-        } catch (e: Exception) {
-            // Log any error that occurs during the function execution
-            Log.e("getReceiverId", "Error fetching receiverId for chatId: $chatId", e)
-            return null
+        } else {
+            // Recupera i dati dal database locale
+            val chat = chatDao.getChatById(chatId)
+            val relationship = chat?.relationshipID?.let { relationshipDao.getRelationshipById(it) }
+            if (userType == "trainer") relationship?.athleteID else relationship?.trainerID
         }
     }
 
     suspend fun getReceiver(userId: String): User? {
-        return try {
-            Log.d("ChatRepository", "Fetching user with ID: $userId")
+        return if (isNetworkAvailable()) {
+            try {
+                val querySnapshot = firestore.collection("users")
+                    .whereEqualTo("uid", userId)
+                    .get()
+                    .await()
 
-            val querySnapshot = firestore.collection("users")
-                .whereEqualTo("uid", userId)
-                .get()
-                .await()
+                val user = querySnapshot.documents.firstOrNull()?.toObject(User::class.java)
 
-
-            if (!querySnapshot.isEmpty) {
-                val documentSnapshot = querySnapshot.documents.first()
-                val user = documentSnapshot.toObject(User::class.java)
-                Log.d("ChatRepository", "User found: $user")
                 user
-            } else {
-                Log.d("ChatRepository", "No user found with ID: $userId")
+            } catch (e: Exception) {
+                Log.e("getReceiver", "Error fetching user", e)
                 null
             }
-        } catch (e: Exception) {
-            Log.e("ChatRepository", "Error fetching user", e)
-            null
+        } else {
+            userDao.getUserById(userId)
         }
     }
-    /** FETCH ALL REALATIONSHIP
-     * @param userId: to compare with ids in relationships
-     * @param userType: to get either trainer id or athlete
-     * return
-     * */
+
+
     suspend fun getRelationships(userId: String, userType: String): List<Relationship> {
-        return try {
-            Log.d("ChatRepository", "UserID: $userId")
-            Log.d("ChatRepository", "UserType: $userType")
-
-            // query firestore to get all relatioships where id is equal to athlete or trainer id
-            val query = if (userType == "athlete") {
-                firestore.collection("relationships")
-                    .whereEqualTo("athleteID", userId)
-            } else {
-                firestore.collection("relationships")
-                    .whereEqualTo("trainerID", userId)
-            }
-
-            val snapshot = query.get().await()
-
-            if (snapshot.isEmpty) {
-                Log.d("ChatRepository", "No relationships found for user $userId of type $userType")
-                return emptyList()
-            }
-
-            val relationships = snapshot.documents.mapNotNull {
-                it.toObject(Relationship::class.java)?.apply {
-                    Log.d("ChatRepository", "Relationship found: $this")
+        return if (isNetworkAvailable()) {
+            try {
+                val query = if (userType == "athlete") {
+                    firestore.collection("relationships")
+                        .whereEqualTo("athleteID", userId)
+                } else {
+                    firestore.collection("relationships")
+                        .whereEqualTo("trainerID", userId)
                 }
-            }
 
-            Log.d("ChatRepository", "Total relationships found: ${relationships.size}")
-            relationships
-        } catch (e: Exception) {
-            Log.e("ChatRepository", "Error fetching relationships", e)
-            emptyList()
+                val snapshot = query.get().await()
+
+                val relationships = snapshot.documents.mapNotNull { it.toObject(Relationship::class.java) }
+
+                relationshipDao.insertAll(relationships)
+
+                relationships
+            } catch (e: Exception) {
+                Log.e("getRelationships", "Error fetching relationships", e)
+                emptyList()
+            }
+        } else {
+            relationshipDao.getRelationshipsByUserId(userId, userType)
         }
     }
 
     //get chats based on relationship id
     suspend fun getChats(relationshipIDs: List<String>): List<Chat> {
-        // Verifica che relationshipIDs non sia vuota
-        if (relationshipIDs.isEmpty()) {
-            Log.e("ChatRepository", "Error: Empty relationshipIDs list provided")
-            return emptyList()
-        }
+        return if (isNetworkAvailable()) {
+            try {
+                val snapshot = firestore.collection("chats")
+                    .whereIn("relationshipID", relationshipIDs)
+                    .get()
+                    .await()
 
-        return try {
-            val snapshot = firestore.collection("chats")
-                .whereIn("relationshipID", relationshipIDs)
-                .get()
-                .await()
-            snapshot.documents.mapNotNull { it.toObject(Chat::class.java) }
-        } catch (e: Exception) {
-            Log.e("ChatRepository", "Error fetching chats", e)
-            emptyList()
+                val chats = snapshot.documents.mapNotNull { it.toObject(Chat::class.java) }
+
+                // Salva le chat nel database locale
+                chatDao.insertAll(chats)
+
+                chats
+            } catch (e: Exception) {
+                Log.e("getChats", "Error fetching chats", e)
+                emptyList()
+            }
+        } else {
+            // Recupera i dati dal database locale
+            chatDao.getChatsByRelationshipIDs(relationshipIDs)
         }
     }
 
     //sends message to a specific chat
     suspend fun sendMessage(chatId: String, message: Message) {
-        try {
-            // Log to debug message being sent
-            Log.d("SendChat", "Sending message: ${message.text} to chatId: ${chatId}")
+        if (isNetworkAvailable()) {
+            try {
+                val messageReference = firestore.collection("messages")
+                    .add(message)
+                    .await()
 
-            // Add message to messages collection
-            val messageReference = firestore.collection("messages")
-                .add(message)
-                .await()
-            //copy firestore id into id field of document message
-            val generatedId = messageReference.id
-            val document = firestore.collection("messages").document(generatedId)
-            document.update("id", generatedId).await()
+                val generatedId = messageReference.id
+                val document = firestore.collection("messages").document(generatedId)
+                document.update("id", generatedId).await()
 
-            // Log to debug message document reference
-            Log.d("SendChat", "Message sent successfully with ID: ${messageReference.id}")
+                firestore.collection("chats").document(chatId)
+                    .update("lastMessage", message.text)
+                    .await()
 
-            // Update last message in the chat document
-            firestore.collection("chats").document(chatId)
-                .update("lastMessage", message.text)
-                .await()
-
-            // Log to debug chat document update
-            Log.d("SendChat", "Chat document $chatId updated with last message: ${message.text}")
-        } catch (e: Exception) {
-            // Log error
-            Log.e("SendChat", "Error sending message", e)
+                // Salva il messaggio nel database locale
+                messageDao.insertMessage(message.copy(id = generatedId))
+                chatDao.updateLastMessage(chatId, message.text)
+            } catch (e: Exception) {
+                Log.e("sendMessage", "Error sending message", e)
+            }
+        } else {
+            // Puoi implementare un meccanismo di salvataggio locale per i messaggi non inviati, se necessario
+            Log.e("sendMessage", "No internet connection. Unable to send message.")
         }
     }
 
@@ -214,24 +218,7 @@ class ChatRepository() {
         }
     }
 
-    suspend fun getUser(userId: String): User? {
-        return try {
-            val documentSnapshot = firestore.collection("users")
-                .document(userId)
-                .get()
-                .await()
 
-            if (documentSnapshot.exists()) {
-                documentSnapshot.toObject(User::class.java)
-            } else {
-                Log.d("ChatRepository", "No user found with ID: $userId")
-                null
-            }
-        } catch (e: Exception) {
-            Log.e("ChatRepository", "Error fetching user", e)
-            null
-        }
-    }
 
     // creates a listner to obtain real time messages in the chat
     fun getMessagesFlow(chatId: String): Flow<List<Message>> = callbackFlow {
@@ -270,10 +257,8 @@ class ChatRepository() {
 
     //get users that are receiving the messages
     suspend fun getReceivers(userID: String, userType: String): List<User>? {
-            return try {
-                Log.d("ChatRepository", "UserID: $userID")
-                Log.d("ChatRepository", "UserType: $userType")
-
+        return if (isNetworkAvailable()) {
+            try {
                 val query = if (userType == "athlete") {
                     firestore.collection("relationships")
                         .whereEqualTo("athleteID", userID)
@@ -284,16 +269,9 @@ class ChatRepository() {
 
                 val snapshot = query.get().await()
 
-                if (snapshot.isEmpty) {
-                    Log.d("ChatRepository", "No relationships found for user $userID of type $userType")
-                    return emptyList()
-                }
-
                 val userIds = snapshot.documents.mapNotNull { document ->
                     val relationship = document.toObject(Relationship::class.java)
-                    relationship?.let {
-                        if (userType == "athlete") it.trainerID else it.athleteID
-                    }
+                    if (userType == "athlete") relationship?.trainerID else relationship?.athleteID
                 }
 
                 val users = userIds.mapNotNull { userId ->
@@ -301,19 +279,27 @@ class ChatRepository() {
                         .document(userId)
                         .get()
                         .await()
-                    userSnapshot.toObject(User::class.java)?.apply {
-                        Log.d("ChatRepository", "User found: $this")
-                    }
+                    userSnapshot.toObject(User::class.java)
                 }
 
-                Log.d("ChatRepository", "Total users found: ${users.size}")
+                // Salva gli utenti nel database locale
+                users?.let { userDao.insertAll(it) }
+
                 users
             } catch (e: Exception) {
-                Log.e("ChatRepository", "Error fetching users", e)
+                Log.e("getReceivers", "Error fetching users", e)
                 emptyList()
             }
+        } else {
+            // Recupera i dati dal database locale
+            val relationships = relationshipDao.getRelationshipsByUserId(userID, userType)
+            val userIds = relationships.mapNotNull { if (userType == "athlete") it.trainerID else it.athleteID }
+            userDao.getUsersByIDs(userIds)
         }
     }
+
+}
+
 
 
 

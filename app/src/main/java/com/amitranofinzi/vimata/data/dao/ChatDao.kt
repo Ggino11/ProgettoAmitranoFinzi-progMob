@@ -27,14 +27,16 @@ interface ChatDao {
     @Query("SELECT * FROM chats WHERE chatId = :chatId")
     suspend fun getChatById(chatId: String): Chat?
 
+
     /**
-     * Retrieves all chats associated with a specific relationship ID.
+     * Retrieves a list of chats based on a list of relationship IDs.
      *
-     * @param relationshipID The ID of the relationship whose chats are to be fetched.
-     * @return A list of Chat objects associated with the specified relationship ID.
+     * @param relationshipIDs List of relationship IDs to filter chats.
+     * @return List of chats matching the given relationship IDs.
      */
-    @Query("SELECT * FROM chats WHERE relationshipID = :relationshipID")
-    suspend fun getChatsByRelationshipId(relationshipID: String): List<Chat>
+    @Query("SELECT * FROM chats WHERE relationshipID IN (:relationshipIDs)")
+    suspend fun getChatsByRelationshipIDs(relationshipIDs: List<String>): List<Chat>
+
 
     /**
      * Inserts a Chat into the database. If a conflict occurs, the existing entry will be replaced.
@@ -59,6 +61,15 @@ interface ChatDao {
      */
     @Update
     suspend fun update(chat: Chat)
+
+    /**
+     * Updates the last message in a specific chat.
+     *
+     * @param chatId ID of the chat to update.
+     * @param lastMessage The new last message.
+     */
+    @Query("UPDATE chats SET lastMessage = :lastMessage WHERE chatId = :chatId")
+    suspend fun updateLastMessage(chatId: String, lastMessage: String)
 
     /**
      * Deletes a Chat with a specific primary key (chatId).

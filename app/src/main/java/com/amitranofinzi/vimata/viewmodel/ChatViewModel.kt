@@ -6,6 +6,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.dao.ChatDao
+import com.amitranofinzi.vimata.data.dao.MessageDao
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
+import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.database.AppDatabase
 import com.amitranofinzi.vimata.data.model.Chat
 import com.amitranofinzi.vimata.data.model.Message
@@ -26,7 +30,13 @@ class ChatViewModel: ViewModel(), InitializableViewModel {
         this.appDatabase = appDatabase
         this.context = context
     }
-    private val chatRepository: ChatRepository = ChatRepository()
+
+    private val relationshipDao: RelationshipDao by lazy { appDatabase.relationshipDao() }
+    private val userDao: UserDao by lazy { appDatabase.userDao() }
+    private val messageDao: MessageDao by lazy { appDatabase.messageDao() }
+    private val chatDao: ChatDao by lazy { appDatabase.chatDao() }
+
+    private val chatRepository: ChatRepository = ChatRepository(chatDao, messageDao, relationshipDao, userDao, context)
 
 
     //Create live data for relationship

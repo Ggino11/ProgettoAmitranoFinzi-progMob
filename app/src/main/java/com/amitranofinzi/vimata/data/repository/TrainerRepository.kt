@@ -1,80 +1,125 @@
 package com.amitranofinzi.vimata.data.repository
 
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.util.Log
+import com.amitranofinzi.vimata.data.dao.RelationshipDao
+import com.amitranofinzi.vimata.data.dao.UserDao
+import com.amitranofinzi.vimata.data.dao.WorkoutDao
+import com.amitranofinzi.vimata.data.model.Relationship
 import com.amitranofinzi.vimata.data.model.User
 import com.amitranofinzi.vimata.data.model.Workout
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
-class TrainerRepository() {
+class TrainerRepository(
+    private val relationshipDao: RelationshipDao,
+    private val userDao: UserDao,
+    private val workoutDao: WorkoutDao,
+    private val context: Context
+) {
 
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
-    suspend fun getAthleteIdsForCoach(trainerID: String): List<String> {
-        val snapshot = firestore.collection("relationships")
-            .whereEqualTo("trainerID", trainerID)
-            .get()
-            .await()
-
-        return snapshot.documents.mapNotNull { it.getString("athleteID") }
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
+            return when {
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
+                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> true
+                else -> false
+            }
+        } else {
+            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
+            return networkInfo.isConnected
+        }
     }
 
-    // Given a list of athlete IDs fetch athlete data
-    suspend fun getAthletes(athleteIds: List<String>): List<User> {
-        Log.d("TrainerRepository", "getAthletes called with athleteIds: $athleteIds")
-        if (athleteIds.isEmpty()) {
-            Log.d("TrainerRepository", "Empty athleteIds list")
-            return emptyList()
-        }
-        try {
-            //Query firestore database in order to find all the users with uid equal to a value in AthleteIds
-            val snapshot = firestore.collection("users")
-                .whereIn("uid", athleteIds)
-                .get()
-                .await()
-
-            Log.d("TrainerRepository", "Fetched documents: ${snapshot.documents.map { it.id }}")
-
-            val athletes = snapshot.documents.mapNotNull { document ->
+    suspend fun getAthleteIdsForCoach(trainerID: String): List<String> {
+        return withContext(Dispatchers.IO) {
+            if (isNetworkAvailable()) {
                 try {
-                    Log.d("TrainerRepository", "Document data: ${document.data}")
-                    val athlete = document.toObject(User::class.java)
-                    if (athlete != null) {
-                        Log.d("TrainerRepository", "User found: $athlete")
-                    } else {
-                        Log.d("TrainerRepository", "Document ${document.id} could not be converted to User")
-                    }
-                    athlete
+                    val snapshot = firestore.collection("relationships")
+                        .whereEqualTo("trainerID", trainerID)
+                        .get()
+                        .await()
+
+
+                    val athleteIds = snapshot.documents.mapNotNull { it.getString("athleteID") }
+
+                    relationshipDao.insertAll(snapshot.documents.mapNotNull { it.toObject(Relationship::class.java) })
+
+                    athleteIds
                 } catch (e: Exception) {
-                    Log.e("TrainerRepository", "Error converting document to User: ${document.id}", e)
-                    null
+                    Log.e("TrainerRepository", "Error fetching athlete IDs from Firestore", e)
+                    relationshipDao.getRelationshipsByTrainerId(trainerID). mapNotNull { it.athleteID }
                 }
+            } else {
+                relationshipDao.getRelationshipsByTrainerId(trainerID). mapNotNull { it.athleteID }
             }
+        }
+    }
 
-            Log.d("TrainerRepository", "Converted users: $athletes")
-            return athletes
+    suspend fun getAthletes(athleteIds: List<String>): List<User> {
+        return withContext(Dispatchers.IO) {
+            if (isNetworkAvailable()) {
+                try {
+                    val snapshot = firestore.collection("users")
+                        .whereIn("uid", athleteIds)
+                        .get()
+                        .await()
 
-        } catch (e: Exception) {
-            Log.e("TrainerRepository", "Error fetching users", e)
-            return emptyList()
+                    val athletes = snapshot.documents.mapNotNull { document ->
+                        document.toObject(User::class.java)
+                    }
+
+                    userDao.insertAll(athletes)
+
+                    athletes
+                } catch (e: Exception) {
+                    Log.e("TrainerRepository", "Error fetching athletes from Firebase", e)
+                    userDao.getUsersByIDs(athleteIds)
+                }
+            } else {
+                userDao.getUsersByIDs(athleteIds)
+            }
         }
     }
 
     suspend fun getAthleteWorkoutsByTrainer(athleteID: String, trainerID: String): List<Workout> {
-        return try {
-            val snapshot = firestore.collection("workouts")
-                .whereEqualTo("athleteID", athleteID)
-                .whereEqualTo("trainerID", trainerID)
-                .get()
-                .await()
+        return withContext(Dispatchers.IO) {
+            if (isNetworkAvailable()) {
+                try {
+                    val snapshot = firestore.collection("workouts")
+                        .whereEqualTo("athleteID", athleteID)
+                        .whereEqualTo("trainerID", trainerID)
+                        .get()
+                        .await()
 
-            snapshot.documents.mapNotNull { document ->
-                document.toObject(Workout::class.java)
+                    val workouts = snapshot.documents.mapNotNull { document ->
+                        document.toObject(Workout::class.java)
+                    }
+
+                    // Salva gli allenamenti nel database locale
+                    workoutDao.insertAll(workouts)
+
+                    workouts
+                } catch (e: Exception) {
+                    Log.e("TrainerRepository", "Error fetching workouts from Firebase", e)
+                    // Se fallisce, prova a ottenere gli allenamenti dal database locale
+                    workoutDao.getWorkoutsByAthleteAndTrainer(athleteID, trainerID)
+                }
+            } else {
+                // Ritorna gli allenamenti da Room quando non c'è rete
+                workoutDao.getWorkoutsByAthleteAndTrainer(athleteID, trainerID)
             }
-        } catch (e: Exception) {
-            // Log the error and return an empty list or handle the error as needed
-            Log.e("FirestoreQuery", "Error fetching workouts", e)
-            emptyList()
         }
     }
 

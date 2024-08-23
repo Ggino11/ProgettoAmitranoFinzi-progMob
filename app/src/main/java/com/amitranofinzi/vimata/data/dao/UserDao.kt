@@ -24,7 +24,9 @@ interface UserDao {
      * @param userIds: The list of user IDs to fetch.
      * @return A list of users matching the provided IDs.
      */
-    suspend fun getTrainersByIDs(userIds: List<String>): List<User>
+    @Query("SELECT * FROM users WHERE uid IN (:userIds)")
+
+    suspend fun getUsersByIDs(userIds: List<String>): List<User>
 
     /**
      * Retrieves all users from the database.

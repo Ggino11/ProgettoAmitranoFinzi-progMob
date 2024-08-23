@@ -58,6 +58,17 @@ interface WorkoutDao {
     suspend fun getWorkoutsByAthlete(athleteID: String): List<Workout>
 
     /**
+    * Retrieves a list of workouts based on the athlete's ID and the trainer's ID.
+    *
+    * @param athleteId The unique identifier of the athlete whose workouts are to be retrieved.
+    * @param trainerId The unique identifier of the trainer associated with the workouts.
+    * @return A list of `Workout` objects that match the provided athlete and trainer IDs.
+    */
+    @Query("SELECT * FROM workouts WHERE athleteID = :athleteId AND trainerID = :trainerId")
+    suspend fun getWorkoutsByAthleteAndTrainer(athleteId: String, trainerId: String): List<Workout>
+
+
+    /**
      * Retrieves all workouts in the database.
      *
      * @return A list of all Workout objects.

@@ -20,6 +20,10 @@ interface CollectionDao {
 //    @Query("SELECT * FROM collections WHERE :field = :value")
 //    suspend fun getWhereEqual(field: String, value: String): List<Collection>
 
+    @Query("SELECT * FROM collections WHERE id = :value")
+    suspend fun getById(value: String): List<Collection>
+
+
     @Query("SELECT * FROM collections")
     suspend fun getAll():List<Collection>
 

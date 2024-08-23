@@ -30,6 +30,10 @@ interface RelationshipDao {
     @Query("SELECT * FROM relationships WHERE :field IN (:values)")
     suspend fun getWhereIn(field: String, values: List<String>): List<Relationship>
 
+    @Query("SELECT * FROM relationships WHERE athleteID = :value")
+    suspend fun getWhereAthleteID(value: String): List<Relationship>
+
+
     /**
      * Retrieves a Relationship with a specific primary key.
      *
@@ -48,6 +52,26 @@ interface RelationshipDao {
      */
     @Query("SELECT * FROM relationships WHERE athleteID = :athleteID")
     suspend fun getRelationshipsByAthleteId(athleteID: String): List<Relationship>
+
+    /**
+     * Retrieves a specific relationship by its ID.
+     *
+     * @param relationshipId ID of the relationship to retrieve.
+     * @return The relationship with the given ID, or null if not found.
+     */
+    @Query("SELECT * FROM relationships WHERE id = :relationshipId LIMIT 1")
+    suspend fun getRelationshipById(relationshipId: String): Relationship?
+
+    /**
+     * Retrieves a list of relationships for a specific user based on their ID and user type.
+     *
+     * @param userId The ID of the user to filter relationships.
+     * @param userType The type of the user ("athlete" or "trainer").
+     * @return List of relationships for the user.
+     */
+    @Query("SELECT * FROM relationships WHERE (:userType = 'athlete' AND athleteID = :userId) OR (:userType = 'trainer' AND trainerID = :userId)")
+    suspend fun getRelationshipsByUserId(userId: String, userType: String): List<Relationship>
+
 
     /**
      * Retrieves all relationships where the trainerID matches the given value.

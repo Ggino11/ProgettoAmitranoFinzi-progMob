@@ -68,32 +68,29 @@ class AthleteRepository(
 
                 Log.d("AthleteRepository", "Fetched ${relationships.size} relationships from Firestore")
 
-                    try {
-                        Log.d("AthleteRepository", "Inserting ${relationships.size} relationships into local DB")
-                        relationshipDao.insertAll(relationships)
-                        Log.d("AthleteRepository", "Insert completed successfully")
-                    } catch (e: Exception) {
-                        Log.e("AthleteRepository", "Error inserting relationships into local DB", e)
-                    }
+                try {
+                    Log.d("AthleteRepository", "Inserting ${relationships.size} relationships into local DB")
+                    relationshipDao.insertAll(relationships)
+                    Log.d("AthleteRepository", "Insert completed successfully")
+                } catch (e: Exception) {
+                    Log.e("AthleteRepository", "Error inserting relationships into local DB", e)
+                }
 
 
                 remoteTrainerIds
             } catch (e: Exception) {
                 Log.e("AthleteRepository", "Error fetching trainer IDs from Firebase", e)
-                withContext(Dispatchers.IO) {
                     Log.d("AthleteRepository", "Fetching trainer IDs from local DB due to error")
                     relationshipDao.getWhereEqual("athleteID", athleteID)
                         .mapNotNull { it.trainerID }
-                }
             }
         } else {
             Log.d("AthleteRepository", "No network, fetching trainer IDs from local DB")
-            withContext(Dispatchers.IO) {
-                val localTrainerIds = relationshipDao.getWhereEqual("athleteID", athleteID)
-                    .mapNotNull { it.trainerID }
-                Log.d("AthleteRepository", "Fetched ${localTrainerIds.size} trainer IDs from local DB")
-                localTrainerIds
-            }
+            val localTrainerIds = relationshipDao.getWhereAthleteID(athleteID)
+                .mapNotNull { it.trainerID }
+            Log.d("AthleteRepository", "Fetched ${localTrainerIds.size} trainer IDs from local DB")
+            localTrainerIds
+
         }
     }
 }
@@ -120,11 +117,11 @@ class AthleteRepository(
                     trainers
                 } catch (e: Exception) {
                     Log.e("AthleteRepository", "Error fetching trainers from Firebase", e)
-                    userDao.getTrainersByIDs( trainerIds)
+                    userDao.getUsersByIDs( trainerIds)
 
                 }
             } else {
-                userDao.getTrainersByIDs( trainerIds)
+                userDao.getUsersByIDs( trainerIds)
             }
 
         }
