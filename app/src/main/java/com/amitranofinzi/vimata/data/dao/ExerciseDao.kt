@@ -20,18 +20,28 @@ interface ExerciseDao {
     suspend fun getExerciseById(id: String): Exercise?
 
     /**
-     * Fetches all exercises for a specific collection ID.
-     * @param collectionID: The ID of the collection to fetch exercises for.
-     * @return A list of exercises.
+     * Retrieves a list of exercises that are associated with the specified trainer ID.
+     *
+     * This query selects all rows from the `exercise` table where the `trainerID` column matches the provided
+     * trainer ID.
+     *
+     * @param trainerID The ID of the trainer whose exercises are to be retrieved.
+     * @return A list of exercises associated with the specified trainer ID.
      */
-    suspend fun getExercisesByCollectionId(collectionID: String): List<Exercise>
+    @Query("SELECT * FROM exercises WHERE trainerID = :trainerID")
+    suspend fun getExercisesByTrainerID(trainerID: String): List<Exercise>
 
     /**
-     * Fetches all exercises for a specific trainer ID.
-     * @param trainerID: The ID of the trainer to fetch exercises for.
-     * @return A list of exercises.
+     * Retrieves a list of exercises that are associated with the specified collection ID.
+     *
+     * This query selects all rows from the `exercise` table where the `collectionID` column matches the provided
+     * collection ID.
+     *
+     * @param collectionID The ID of the collection whose exercises are to be retrieved.
+     * @return A list of exercises associated with the specified collection ID.
      */
-    suspend fun getExercisesByTrainerId(trainerID: String): List<Exercise>
+    @Query("SELECT * FROM exercises WHERE collectionID = :collectionID")
+    suspend fun getExercisesByCollectionID(collectionID: String): List<Exercise>
 
 
     /**

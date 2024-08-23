@@ -47,6 +47,18 @@ interface CollectionDao {
     suspend fun getCollectionById(id: String): Collection?
 
     /**
+     * Retrieves a list of collections that are associated with the specified trainer ID.
+     *
+     * This query selects all rows from the `collection` table where the `trainerID` column matches the provided
+     * trainer ID.
+     *
+     * @param trainerID The ID of the trainer whose collections are to be retrieved.
+     * @return A list of collections associated with the specified trainer ID.
+     */
+    @Query("SELECT * FROM collections WHERE trainerID = :trainerID")
+    suspend fun getCollectionsByTrainerId(trainerID: String): List<Collection>
+
+    /**
      * Inserts a Collection into the database. If a conflict occurs, the existing entry will be replaced.
      *
      * @param collection The Collection object to insert.

@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.amitranofinzi.vimata.data.dao.ChatDao
 import com.amitranofinzi.vimata.data.dao.RelationshipDao
+import com.amitranofinzi.vimata.data.dao.TestDao
+import com.amitranofinzi.vimata.data.dao.TestSetDao
 import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.database.AppDatabase
@@ -51,8 +53,10 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
     val trainers: LiveData<List<User>> = _trainers
 
 
-    // TEST live data
-    private val testRepository : TestRepository = TestRepository()
+    private val testDao: TestDao by lazy { appDatabase.testDao() }
+    private val testSetDao: TestSetDao by lazy { appDatabase.testSetDao() }
+
+    private val testRepository : TestRepository = TestRepository(testDao, testSetDao, context)
 
     private val _testSets = MutableLiveData<List<TestSet>>()
     val testSets: LiveData<List<TestSet>>  get() = _testSets

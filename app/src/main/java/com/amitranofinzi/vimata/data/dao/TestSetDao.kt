@@ -20,11 +20,13 @@ interface TestSetDao {
     suspend fun getTestSetById(id: String): TestSet?
 
     /**
-     * Fetches all test sets for a specific athlete ID.
-     * @param athleteID: The ID of the athlete to fetch test sets for.
-     * @return A list of test sets.
+     * Retrieves a list of TestSet entities by athlete ID.
+     *
+     * @param athleteId The ID of the athlete whose test sets are to be retrieved.
+     * @return A list of TestSet objects associated with the specified athlete ID.
      */
-    suspend fun getTestSetsForAthlete(athleteID: String): List<TestSet>
+    @Query("SELECT * FROM testSets WHERE athleteID = :athleteId")
+    suspend fun getTestSetsByAthleteId(athleteId: String): List<TestSet>
 
     /**
      * Inserts a TestSet into the database. If a conflict occurs, the existing entry will be replaced.

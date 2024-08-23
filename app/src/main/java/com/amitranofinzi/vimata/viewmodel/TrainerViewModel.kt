@@ -6,7 +6,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.amitranofinzi.vimata.data.dao.CollectionDao
+import com.amitranofinzi.vimata.data.dao.ExerciseDao
 import com.amitranofinzi.vimata.data.dao.RelationshipDao
+import com.amitranofinzi.vimata.data.dao.TestDao
+import com.amitranofinzi.vimata.data.dao.TestSetDao
 import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.dao.WorkoutDao
 import com.amitranofinzi.vimata.data.database.AppDatabase
@@ -39,8 +43,16 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
 
     private val trainerRepository : TrainerRepository = TrainerRepository(relationshipDao, userDao, workoutDao, context)
 
-    private val workbookRepository : WorkbookRepository = WorkbookRepository()
-    private val testRepository : TestRepository = TestRepository()
+
+    private val collectionDao: CollectionDao by lazy { appDatabase.collectionDao() }
+    private val exerciseDao: ExerciseDao by lazy { appDatabase.exerciseDao() }
+
+    private val workbookRepository : WorkbookRepository = WorkbookRepository(collectionDao, exerciseDao, workoutDao, context)
+
+    private val testDao: TestDao by lazy { appDatabase.testDao() }
+    private val testSetDao: TestSetDao by lazy { appDatabase.testSetDao() }
+
+    private val testRepository : TestRepository = TestRepository(testDao, testSetDao, context)
 
     private val _athletes = MutableLiveData<List<User>>()
     val athletes: LiveData<List<User>> = _athletes
