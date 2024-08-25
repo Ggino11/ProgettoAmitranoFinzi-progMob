@@ -12,119 +12,174 @@ import org.mockito.Mockito.`when`
 
 class RelationshipDaoTest {
 
-    // Mock com.amitranofinzi.vimata.data.dao.RelationshipDao object
     private lateinit var relationshipDao: RelationshipDao
 
     @Before
     fun setup() {
-        // Initialize the com.amitranofinzi.vimata.data.dao.RelationshipDao mock
+        // Mock the RelationshipDao interface
         relationshipDao = mock(RelationshipDao::class.java)
     }
 
     @Test
-    fun insertRelationship_retrieveByPrimaryKey(): Unit = runBlocking {
+    fun getWhereEqual_retrieveRelationshipsByFieldEquality(): Unit = runBlocking {
         // Arrange
-        val relationship = Relationship(
-            id = "relationship1",
-            athleteID = "athlete1",
-            trainerID = "trainer1"
+        val relationships = listOf(
+            Relationship(id = "rel1", athleteID = "athlete1", trainerID = "trainer1"),
+            Relationship(id = "rel2", athleteID = "athlete2", trainerID = "trainer1")
         )
-        `when`(relationshipDao.getWithPrimaryKey("relationship1")).thenReturn(relationship)
-
-        // Act
-        relationshipDao.insert(relationship)
-        val retrievedRelationship = relationshipDao.getWithPrimaryKey("relationship1")
-
-        // Assert
-        assertEquals(relationship, retrievedRelationship)
-        verify(relationshipDao).insert(relationship)
-        verify(relationshipDao).getWithPrimaryKey("relationship1")
-    }
-
-    @Test
-    fun getWhereEqual_fieldEqualsValue(): Unit = runBlocking {
-        // Arrange
-        val relationship1 = Relationship(
-            id = "relationship1",
-            athleteID = "athlete1",
-            trainerID = "trainer1"
-        )
-        val relationship2 = Relationship(
-            id = "relationship2",
-            athleteID = "athlete2",
-            trainerID = "trainer1"
-        )
-        val expectedRelationships = listOf(relationship1, relationship2)
-        `when`(relationshipDao.getWhereEqual("trainerID", "trainer1")).thenReturn(expectedRelationships)
+        `when`(relationshipDao.getWhereEqual("trainerID", "trainer1")).thenReturn(relationships)
 
         // Act
         val result = relationshipDao.getWhereEqual("trainerID", "trainer1")
 
         // Assert
-        assertEquals(expectedRelationships, result)
+        assertEquals(relationships, result)
         verify(relationshipDao).getWhereEqual("trainerID", "trainer1")
     }
 
     @Test
-    fun getWhereIn_fieldInValues(): Unit = runBlocking {
+    fun getWhereIn_retrieveRelationshipsByFieldInclusion(): Unit = runBlocking {
         // Arrange
-        val relationship1 = Relationship(
-            id = "relationship1",
-            athleteID = "athlete1",
-            trainerID = "trainer1"
+        val relationships = listOf(
+            Relationship(id = "rel1", athleteID = "athlete1", trainerID = "trainer1"),
+            Relationship(id = "rel2", athleteID = "athlete2", trainerID = "trainer1")
         )
-        val relationship2 = Relationship(
-            id = "relationship2",
-            athleteID = "athlete2",
-            trainerID = "trainer2"
-        )
-        val relationship3 = Relationship(
-            id = "relationship3",
-            athleteID = "athlete3",
-            trainerID = "trainer3"
-        )
-        val expectedRelationships = listOf(relationship1, relationship3)
-        `when`(relationshipDao.getWhereIn("trainerID", listOf("trainer1", "trainer3"))).thenReturn(expectedRelationships)
+        val trainerIDs = listOf("trainer1", "trainer2")
+        `when`(relationshipDao.getWhereIn("trainerID", trainerIDs)).thenReturn(relationships)
 
         // Act
-        val result = relationshipDao.getWhereIn("trainerID", listOf("trainer1", "trainer3"))
+        val result = relationshipDao.getWhereIn("trainerID", trainerIDs)
 
         // Assert
-        assertEquals(expectedRelationships, result)
-        verify(relationshipDao).getWhereIn("trainerID", listOf("trainer1", "trainer3"))
+        assertEquals(relationships, result)
+        verify(relationshipDao).getWhereIn("trainerID", trainerIDs)
+    }
+
+    @Test
+    fun getWhereAthleteID_retrieveRelationshipsByAthleteID(): Unit = runBlocking {
+        // Arrange
+        val relationships = listOf(
+            Relationship(id = "rel1", athleteID = "athlete1", trainerID = "trainer1")
+        )
+        `when`(relationshipDao.getWhereAthleteID("athlete1")).thenReturn(relationships)
+
+        // Act
+        val result = relationshipDao.getWhereAthleteID("athlete1")
+
+        // Assert
+        assertEquals(relationships, result)
+        verify(relationshipDao).getWhereAthleteID("athlete1")
+    }
+
+    @Test
+    fun getWithPrimaryKey_retrieveRelationshipByPrimaryKey(): Unit = runBlocking {
+        // Arrange
+        val relationship = Relationship(id = "rel1", athleteID = "athlete1", trainerID = "trainer1")
+        `when`(relationshipDao.getWithPrimaryKey("rel1")).thenReturn(relationship)
+
+        // Act
+        val result = relationshipDao.getWithPrimaryKey("rel1")
+
+        // Assert
+        assertEquals(relationship, result)
+        verify(relationshipDao).getWithPrimaryKey("rel1")
+    }
+
+    @Test
+    fun getRelationshipsByUserId_retrieveRelationshipsByUserIdAndUserType(): Unit = runBlocking {
+        // Arrange
+        val relationships = listOf(
+            Relationship(id = "rel1", athleteID = "athlete1", trainerID = "trainer1")
+        )
+        `when`(relationshipDao.getRelationshipsByUserId("athlete1", "athlete")).thenReturn(relationships)
+
+        // Act
+        val result = relationshipDao.getRelationshipsByUserId("athlete1", "athlete")
+
+        // Assert
+        assertEquals(relationships, result)
+        verify(relationshipDao).getRelationshipsByUserId("athlete1", "athlete")
+    }
+
+    @Test
+    fun getRelationshipsByTrainerId_retrieveRelationshipsByTrainerId(): Unit = runBlocking {
+        // Arrange
+        val relationships = listOf(
+            Relationship(id = "rel1", athleteID = "athlete1", trainerID = "trainer1"),
+            Relationship(id = "rel2", athleteID = "athlete2", trainerID = "trainer1")
+        )
+        `when`(relationshipDao.getRelationshipsByTrainerId("trainer1")).thenReturn(relationships)
+
+        // Act
+        val result = relationshipDao.getRelationshipsByTrainerId("trainer1")
+
+        // Assert
+        assertEquals(relationships, result)
+        verify(relationshipDao).getRelationshipsByTrainerId("trainer1")
+    }
+
+    @Test
+    fun insertAndRetrieveRelationship(): Unit = runBlocking {
+        // Arrange
+        val relationship = Relationship(id = "rel1", athleteID = "athlete1", trainerID = "trainer1")
+
+        // Act
+        relationshipDao.insert(relationship)
+        `when`(relationshipDao.getWithPrimaryKey("rel1")).thenReturn(relationship)
+        val retrievedRelationship = relationshipDao.getWithPrimaryKey("rel1")
+
+        // Assert
+        assertEquals(relationship, retrievedRelationship)
+        verify(relationshipDao).insert(relationship)
+        verify(relationshipDao).getWithPrimaryKey("rel1")
+    }
+
+    @Test
+    fun insertAllAndRetrieveRelationships(): Unit = runBlocking {
+        // Arrange
+        val relationships = listOf(
+            Relationship(id = "rel1", athleteID = "athlete1", trainerID = "trainer1"),
+            Relationship(id = "rel2", athleteID = "athlete2", trainerID = "trainer2")
+        )
+
+        // Act
+        relationshipDao.insertAll(relationships)
+        `when`(relationshipDao.getRelationshipsByTrainerId("trainer1")).thenReturn(listOf(relationships[0]))
+        val result = relationshipDao.getRelationshipsByTrainerId("trainer1")
+
+        // Assert
+        assertEquals(listOf(relationships[0]), result)
+        verify(relationshipDao).insertAll(relationships)
+        verify(relationshipDao).getRelationshipsByTrainerId("trainer1")
     }
 
     @Test
     fun updateRelationship_checkUpdatedValues(): Unit = runBlocking {
         // Arrange
-        val relationship = Relationship(
-            id = "relationship1",
-            athleteID = "athlete1",
-            trainerID = "trainer1"
-        )
+        val relationship = Relationship(id = "rel1", athleteID = "athlete1", trainerID = "trainer1")
         val updatedRelationship = relationship.copy(trainerID = "trainer2")
-        `when`(relationshipDao.getWithPrimaryKey("relationship1")).thenReturn(updatedRelationship)
+        `when`(relationshipDao.getWithPrimaryKey("rel1")).thenReturn(updatedRelationship)
 
         // Act
         relationshipDao.update(updatedRelationship)
-        val retrievedRelationship = relationshipDao.getWithPrimaryKey("relationship1")
+        val retrievedRelationship = relationshipDao.getWithPrimaryKey("rel1")
 
         // Assert
         assertEquals(updatedRelationship, retrievedRelationship)
         verify(relationshipDao).update(updatedRelationship)
-        verify(relationshipDao).getWithPrimaryKey("relationship1")
+        verify(relationshipDao).getWithPrimaryKey("rel1")
     }
 
     @Test
-    fun getWithPrimaryKey_noRelationshipFound(): Unit = runBlocking {
+    fun getRelationshipById_noRelationshipFound(): Unit = runBlocking {
         // Arrange
-        `when`(relationshipDao.getWithPrimaryKey("non_existing_relationship_id")).thenReturn(null)
+        `when`(relationshipDao.getRelationshipById("non_existing_id")).thenReturn(null)
 
         // Act
-        val retrievedRelationship = relationshipDao.getWithPrimaryKey("non_existing_relationship_id")
+        val retrievedRelationship = relationshipDao.getRelationshipById("non_existing_id")
 
         // Assert
         assertNull(retrievedRelationship)
-        verify(relationshipDao).getWithPrimaryKey("non_existing_relationship_id")
+        verify(relationshipDao).getRelationshipById("non_existing_id")
     }
 }

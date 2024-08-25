@@ -12,140 +12,157 @@ import org.mockito.Mockito.`when`
 
 class WorkoutDaoTest {
 
-    // Mock WorkoutDao object
     private lateinit var workoutDao: WorkoutDao
 
     @Before
     fun setup() {
-        // Initialize the WorkoutDao mock
+        // Mock the WorkoutDao interface
         workoutDao = mock(WorkoutDao::class.java)
     }
 
     @Test
-    fun insertWorkout_retrieveByPrimaryKey(): Unit = runBlocking {
+    fun getWorkoutById_retrieveWorkoutByPrimaryKey(): Unit = runBlocking {
         // Arrange
-        val workout = Workout(
-            id = "workout1",
-            title = "Workout Title",
-            status = "Pending",
-            trainerID = "trainer1",
-            athleteID = "athlete1",
-            pdfUrl = "http://example.com/workout1.pdf"
+        val workout = Workout(id = "workout1", title = "Morning Routine", status = "Completed", trainerID = "trainer1", athleteID = "athlete1", pdfUrl = "http://example.com/workout.pdf")
+        `when`(workoutDao.getWorkoutById("workout1")).thenReturn(workout)
+
+        // Act
+        val result = workoutDao.getWorkoutById("workout1")
+
+        // Assert
+        assertEquals(workout, result)
+        verify(workoutDao).getWorkoutById("workout1")
+    }
+
+    @Test
+    fun getWorkoutById_noWorkoutFound(): Unit = runBlocking {
+        // Arrange
+        `when`(workoutDao.getWorkoutById("non_existing_workout")).thenReturn(null)
+
+        // Act
+        val result = workoutDao.getWorkoutById("non_existing_workout")
+
+        // Assert
+        assertNull(result)
+        verify(workoutDao).getWorkoutById("non_existing_workout")
+    }
+
+    @Test
+    fun getWorkoutsByTrainer_retrieveWorkoutsByTrainerID(): Unit = runBlocking {
+        // Arrange
+        val workouts = listOf(
+            Workout(id = "workout1", title = "Morning Routine", status = "Completed", trainerID = "trainer1", athleteID = "athlete1", pdfUrl = "http://example.com/workout1.pdf"),
+            Workout(id = "workout2", title = "Evening Routine", status = "Scheduled", trainerID = "trainer1", athleteID = "athlete2", pdfUrl = "http://example.com/workout2.pdf")
         )
-        `when`(workoutDao.getWithPrimaryKey("workout1")).thenReturn(workout)
+        `when`(workoutDao.getWorkoutsByTrainer("trainer1")).thenReturn(workouts)
+
+        // Act
+        val result = workoutDao.getWorkoutsByTrainer("trainer1")
+
+        // Assert
+        assertEquals(workouts, result)
+        verify(workoutDao).getWorkoutsByTrainer("trainer1")
+    }
+
+    @Test
+    fun getWorkoutsByAthlete_retrieveWorkoutsByAthleteID(): Unit = runBlocking {
+        // Arrange
+        val workouts = listOf(
+            Workout(id = "workout1", title = "Morning Routine", status = "Completed", trainerID = "trainer1", athleteID = "athlete1", pdfUrl = "http://example.com/workout1.pdf"),
+            Workout(id = "workout2", title = "Evening Routine", status = "Scheduled", trainerID = "trainer2", athleteID = "athlete1", pdfUrl = "http://example.com/workout2.pdf")
+        )
+        `when`(workoutDao.getWorkoutsByAthlete("athlete1")).thenReturn(workouts)
+
+        // Act
+        val result = workoutDao.getWorkoutsByAthlete("athlete1")
+
+        // Assert
+        assertEquals(workouts, result)
+        verify(workoutDao).getWorkoutsByAthlete("athlete1")
+    }
+
+    @Test
+    fun getWorkoutsByAthleteAndTrainer_retrieveWorkoutsByAthleteAndTrainerID(): Unit = runBlocking {
+        // Arrange
+        val workouts = listOf(
+            Workout(id = "workout1", title = "Morning Routine", status = "Completed", trainerID = "trainer1", athleteID = "athlete1", pdfUrl = "http://example.com/workout1.pdf")
+        )
+        `when`(workoutDao.getWorkoutsByAthleteAndTrainer("athlete1", "trainer1")).thenReturn(workouts)
+
+        // Act
+        val result = workoutDao.getWorkoutsByAthleteAndTrainer("athlete1", "trainer1")
+
+        // Assert
+        assertEquals(workouts, result)
+        verify(workoutDao).getWorkoutsByAthleteAndTrainer("athlete1", "trainer1")
+    }
+
+    @Test
+    fun getAllWorkouts_retrieveAllWorkouts(): Unit = runBlocking {
+        // Arrange
+        val workouts = listOf(
+            Workout(id = "workout1", title = "Morning Routine", status = "Completed", trainerID = "trainer1", athleteID = "athlete1", pdfUrl = "http://example.com/workout1.pdf"),
+            Workout(id = "workout2", title = "Evening Routine", status = "Scheduled", trainerID = "trainer2", athleteID = "athlete2", pdfUrl = "http://example.com/workout2.pdf")
+        )
+        `when`(workoutDao.getAllWorkouts()).thenReturn(workouts)
+
+        // Act
+        val result = workoutDao.getAllWorkouts()
+
+        // Assert
+        assertEquals(workouts, result)
+        verify(workoutDao).getAllWorkouts()
+    }
+
+    @Test
+    fun insertWorkoutAndRetrieve(): Unit = runBlocking {
+        // Arrange
+        val workout = Workout(id = "workout1", title = "Morning Routine", status = "Completed", trainerID = "trainer1", athleteID = "athlete1", pdfUrl = "http://example.com/workout.pdf")
 
         // Act
         workoutDao.insert(workout)
-        val retrievedWorkout = workoutDao.getWithPrimaryKey("workout1")
+        `when`(workoutDao.getWorkoutById("workout1")).thenReturn(workout)
+        val retrievedWorkout = workoutDao.getWorkoutById("workout1")
 
         // Assert
         assertEquals(workout, retrievedWorkout)
         verify(workoutDao).insert(workout)
-        verify(workoutDao).getWithPrimaryKey("workout1")
+        verify(workoutDao).getWorkoutById("workout1")
     }
 
     @Test
-    fun getWhereEqual_fieldEqualsValue(): Unit = runBlocking {
+    fun insertAllWorkoutsAndRetrieve(): Unit = runBlocking {
         // Arrange
-        val workout1 = Workout(
-            id = "workout1",
-            title = "Workout Title",
-            status = "Pending",
-            trainerID = "trainer1",
-            athleteID = "athlete1",
-            pdfUrl = "http://example.com/workout1.pdf"
+        val workouts = listOf(
+            Workout(id = "workout1", title = "Morning Routine", status = "Completed", trainerID = "trainer1", athleteID = "athlete1", pdfUrl = "http://example.com/workout1.pdf"),
+            Workout(id = "workout2", title = "Evening Routine", status = "Scheduled", trainerID = "trainer2", athleteID = "athlete2", pdfUrl = "http://example.com/workout2.pdf")
         )
-        val workout2 = Workout(
-            id = "workout2",
-            title = "Another Workout Title",
-            status = "Completed",
-            trainerID = "trainer2",
-            athleteID = "athlete2",
-            pdfUrl = "http://example.com/workout2.pdf"
-        )
-        val expectedWorkouts = listOf(workout1)
-        `when`(workoutDao.getWhereEqual("status", "Pending")).thenReturn(expectedWorkouts)
 
         // Act
-        val result = workoutDao.getWhereEqual("status", "Pending")
+        workoutDao.insertAll(workouts)
+        `when`(workoutDao.getAllWorkouts()).thenReturn(workouts)
+        val result = workoutDao.getAllWorkouts()
 
         // Assert
-        assertEquals(expectedWorkouts, result)
-        verify(workoutDao).getWhereEqual("status", "Pending")
-    }
-
-    @Test
-    fun getWhereIn_fieldInValues(): Unit = runBlocking {
-        // Arrange
-        val workout1 = Workout(
-            id = "workout1",
-            title = "Workout Title",
-            status = "Pending",
-            trainerID = "trainer1",
-            athleteID = "athlete1",
-            pdfUrl = "http://example.com/workout1.pdf"
-        )
-        val workout2 = Workout(
-            id = "workout2",
-            title = "Another Workout Title",
-            status = "Completed",
-            trainerID = "trainer2",
-            athleteID = "athlete2",
-            pdfUrl = "http://example.com/workout2.pdf"
-        )
-        val workout3 = Workout(
-            id = "workout3",
-            title = "Third Workout Title",
-            status = "Pending",
-            trainerID = "trainer3",
-            athleteID = "athlete3",
-            pdfUrl = "http://example.com/workout3.pdf"
-        )
-        val expectedWorkouts = listOf(workout1, workout3)
-        `when`(workoutDao.getWhereIn("status", listOf("Pending"))).thenReturn(expectedWorkouts)
-
-        // Act
-        val result = workoutDao.getWhereIn("status", listOf("Pending"))
-
-        // Assert
-        assertEquals(expectedWorkouts, result)
-        verify(workoutDao).getWhereIn("status", listOf("Pending"))
+        assertEquals(workouts, result)
+        verify(workoutDao).insertAll(workouts)
+        verify(workoutDao).getAllWorkouts()
     }
 
     @Test
     fun updateWorkout_checkUpdatedValues(): Unit = runBlocking {
         // Arrange
-        val workout = Workout(
-            id = "workout1",
-            title = "Workout Title",
-            status = "Pending",
-            trainerID = "trainer1",
-            athleteID = "athlete1",
-            pdfUrl = "http://example.com/workout1.pdf"
-        )
-        val updatedWorkout = workout.copy(status = "Completed")
-        `when`(workoutDao.getWithPrimaryKey("workout1")).thenReturn(updatedWorkout)
+        val workout = Workout(id = "workout1", title = "Morning Routine", status = "Completed", trainerID = "trainer1", athleteID = "athlete1", pdfUrl = "http://example.com/workout.pdf")
+        val updatedWorkout = workout.copy(status = "Updated")
+        `when`(workoutDao.getWorkoutById("workout1")).thenReturn(updatedWorkout)
 
         // Act
         workoutDao.update(updatedWorkout)
-        val retrievedWorkout = workoutDao.getWithPrimaryKey("workout1")
+        val retrievedWorkout = workoutDao.getWorkoutById("workout1")
 
         // Assert
         assertEquals(updatedWorkout, retrievedWorkout)
         verify(workoutDao).update(updatedWorkout)
-        verify(workoutDao).getWithPrimaryKey("workout1")
-    }
-
-    @Test
-    fun getWithPrimaryKey_noWorkoutFound(): Unit = runBlocking {
-        // Arrange
-        `when`(workoutDao.getWithPrimaryKey("non_existing_workout_id")).thenReturn(null)
-
-        // Act
-        val retrievedWorkout = workoutDao.getWithPrimaryKey("non_existing_workout_id")
-
-        // Assert
-        assertNull(retrievedWorkout)
-        verify(workoutDao).getWithPrimaryKey("non_existing_workout_id")
+        verify(workoutDao).getWorkoutById("workout1")
     }
 }

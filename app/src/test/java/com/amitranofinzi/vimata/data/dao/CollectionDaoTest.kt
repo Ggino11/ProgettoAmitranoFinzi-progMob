@@ -1,6 +1,5 @@
 package com.amitranofinzi.vimata.data.dao
 
-
 import com.amitranofinzi.vimata.data.model.Collection
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -13,119 +12,133 @@ import org.mockito.Mockito.`when`
 
 class CollectionDaoTest {
 
-    // Mock CollectionDao object
     private lateinit var collectionDao: CollectionDao
 
     @Before
     fun setup() {
-        // Initialize the CollectionDao mock
+        // Mock the CollectionDao interface
         collectionDao = mock(CollectionDao::class.java)
     }
 
     @Test
-    fun insertCollection_retrieveByPrimaryKey(): Unit = runBlocking {
+    fun getById_retrieveCollectionById(): Unit = runBlocking {
         // Arrange
-        val collection = Collection(
-            id = "collection1",
-            title = "Collection Title",
-            trainerID = "trainer1"
-        )
-        `when`(collectionDao.getWithPrimaryKey("collection1")).thenReturn(collection)
+        val collection = Collection(id = "collection1", title = "Workout Plan A", trainerID = "trainer1")
+        `when`(collectionDao.getById("collection1")).thenReturn(listOf(collection))
+
+        // Act
+        val result = collectionDao.getById("collection1")
+
+        // Assert
+        assertEquals(listOf(collection), result)
+        verify(collectionDao).getById("collection1")
+    }
+
+    @Test
+    fun getAll_retrieveAllCollections(): Unit = runBlocking {
+        // Arrange
+        val collection1 = Collection(id = "collection1", title = "Workout Plan A", trainerID = "trainer1")
+        val collection2 = Collection(id = "collection2", title = "Workout Plan B", trainerID = "trainer2")
+        `when`(collectionDao.getAll()).thenReturn(listOf(collection1, collection2))
+
+        // Act
+        val result = collectionDao.getAll()
+
+        // Assert
+        assertEquals(listOf(collection1, collection2), result)
+        verify(collectionDao).getAll()
+    }
+
+    @Test
+    fun getCollectionById_retrieveSingleCollectionById(): Unit = runBlocking {
+        // Arrange
+        val collection = Collection(id = "collection1", title = "Workout Plan A", trainerID = "trainer1")
+        `when`(collectionDao.getCollectionById("collection1")).thenReturn(collection)
+
+        // Act
+        val result = collectionDao.getCollectionById("collection1")
+
+        // Assert
+        assertEquals(collection, result)
+        verify(collectionDao).getCollectionById("collection1")
+    }
+
+    @Test
+    fun getCollectionsByTrainerId_retrieveCollectionsByTrainerId(): Unit = runBlocking {
+        // Arrange
+        val collection1 = Collection(id = "collection1", title = "Workout Plan A", trainerID = "trainer1")
+        val collection2 = Collection(id = "collection2", title = "Workout Plan B", trainerID = "trainer1")
+        `when`(collectionDao.getCollectionsByTrainerId("trainer1")).thenReturn(listOf(collection1, collection2))
+
+        // Act
+        val result = collectionDao.getCollectionsByTrainerId("trainer1")
+
+        // Assert
+        assertEquals(listOf(collection1, collection2), result)
+        verify(collectionDao).getCollectionsByTrainerId("trainer1")
+    }
+
+    @Test
+    fun insertAndRetrieveCollection(): Unit = runBlocking {
+        // Arrange
+        val collection = Collection(id = "collection1", title = "Workout Plan A", trainerID = "trainer1")
 
         // Act
         collectionDao.insert(collection)
-        val retrievedCollection = collectionDao.getWithPrimaryKey("collection1")
+        `when`(collectionDao.getCollectionById("collection1")).thenReturn(collection)
+        val retrievedCollection = collectionDao.getCollectionById("collection1")
 
         // Assert
         assertEquals(collection, retrievedCollection)
         verify(collectionDao).insert(collection)
-        verify(collectionDao).getWithPrimaryKey("collection1")
+        verify(collectionDao).getCollectionById("collection1")
     }
 
     @Test
-    fun getWhereEqual_fieldEqualsValue(): Unit = runBlocking {
+    fun insertAllAndRetrieveCollections(): Unit = runBlocking {
         // Arrange
-        val collection1 = Collection(
-            id = "collection1",
-            title = "Collection Title",
-            trainerID = "trainer1"
-        )
-        val collection2 = Collection(
-            id = "collection2",
-            title = "Another Collection Title",
-            trainerID = "trainer2"
-        )
-        val expectedCollections = listOf(collection1)
-        `when`(collectionDao.getWhereEqual("trainerID", "trainer1")).thenReturn(expectedCollections)
+        val collection1 = Collection(id = "collection1", title = "Workout Plan A", trainerID = "trainer1")
+        val collection2 = Collection(id = "collection2", title = "Workout Plan B", trainerID = "trainer2")
+        val collections = listOf(collection1, collection2)
 
         // Act
-        val result = collectionDao.getWhereEqual("trainerID", "trainer1")
+        collectionDao.insertAll(collections)
+        `when`(collectionDao.getAll()).thenReturn(collections)
+        val result = collectionDao.getAll()
 
         // Assert
-        assertEquals(expectedCollections, result)
-        verify(collectionDao).getWhereEqual("trainerID", "trainer1")
-    }
-
-    @Test
-    fun getWhereIn_fieldInValues(): Unit = runBlocking {
-        // Arrange
-        val collection1 = Collection(
-            id = "collection1",
-            title = "Collection Title",
-            trainerID = "trainer1"
-        )
-        val collection2 = Collection(
-            id = "collection2",
-            title = "Another Collection Title",
-            trainerID = "trainer2"
-        )
-        val collection3 = Collection(
-            id = "collection3",
-            title = "Third Collection Title",
-            trainerID = "trainer3"
-        )
-        val expectedCollections = listOf(collection1, collection3)
-        `when`(collectionDao.getWhereIn("trainerID", listOf("trainer1", "trainer3"))).thenReturn(expectedCollections)
-
-        // Act
-        val result = collectionDao.getWhereIn("trainerID", listOf("trainer1", "trainer3"))
-
-        // Assert
-        assertEquals(expectedCollections, result)
-        verify(collectionDao).getWhereIn("trainerID", listOf("trainer1", "trainer3"))
+        assertEquals(collections, result)
+        verify(collectionDao).insertAll(collections)
+        verify(collectionDao).getAll()
     }
 
     @Test
     fun updateCollection_checkUpdatedValues(): Unit = runBlocking {
         // Arrange
-        val collection = Collection(
-            id = "collection1",
-            title = "Collection Title",
-            trainerID = "trainer1"
-        )
-        val updatedCollection = collection.copy(title = "Updated Collection Title")
-        `when`(collectionDao.getWithPrimaryKey("collection1")).thenReturn(updatedCollection)
+        val collection = Collection(id = "collection1", title = "Workout Plan A", trainerID = "trainer1")
+        val updatedCollection = collection.copy(title = "Updated Workout Plan A")
+        `when`(collectionDao.getCollectionById("collection1")).thenReturn(updatedCollection)
 
         // Act
         collectionDao.update(updatedCollection)
-        val retrievedCollection = collectionDao.getWithPrimaryKey("collection1")
+        val retrievedCollection = collectionDao.getCollectionById("collection1")
 
         // Assert
         assertEquals(updatedCollection, retrievedCollection)
         verify(collectionDao).update(updatedCollection)
-        verify(collectionDao).getWithPrimaryKey("collection1")
+        verify(collectionDao).getCollectionById("collection1")
     }
 
     @Test
-    fun getWithPrimaryKey_noCollectionFound(): Unit = runBlocking {
+    fun getById_noCollectionFound(): Unit = runBlocking {
         // Arrange
-        `when`(collectionDao.getWithPrimaryKey("non_existing_collection_id")).thenReturn(null)
+        `when`(collectionDao.getCollectionById("non_existing_collection_id")).thenReturn(null)
 
         // Act
-        val retrievedCollection = collectionDao.getWithPrimaryKey("non_existing_collection_id")
+        val retrievedCollection = collectionDao.getCollectionById("non_existing_collection_id")
 
         // Assert
         assertNull(retrievedCollection)
-        verify(collectionDao).getWithPrimaryKey("non_existing_collection_id")
+        verify(collectionDao).getCollectionById("non_existing_collection_id")
     }
 }

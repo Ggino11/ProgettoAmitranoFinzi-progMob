@@ -1,6 +1,5 @@
 package com.amitranofinzi.vimata.data.dao
 
-import com.amitranofinzi.vimata.data.dao.UserDao
 import com.amitranofinzi.vimata.data.model.User
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
@@ -13,140 +12,138 @@ import org.mockito.Mockito.`when`
 
 class UserDaoTest {
 
-    // Mock UserDao object
     private lateinit var userDao: UserDao
 
     @Before
     fun setup() {
-        // Initialize the UserDao mock
+        // Mock the UserDao interface
         userDao = mock(UserDao::class.java)
     }
 
     @Test
-    fun insertUser_retrieveByPrimaryKey(): Unit = runBlocking {
+    fun getUserById_retrieveUserByPrimaryKey(): Unit = runBlocking {
         // Arrange
-        val user = User(
-            uid = "user1",
-            email = "john.doe@example.com",
-            name = "John",
-            password = "hashed_password",
-            surname = "Doe",
-            userType = "ATHLETE"
+        val user = User(uid = "user1", email = "user1@example.com", name = "John", surname = "Doe", password = "password", userType = "ATHLETE")
+        `when`(userDao.getUserById("user1")).thenReturn(user)
+
+        // Act
+        val result = userDao.getUserById("user1")
+
+        // Assert
+        assertEquals(user, result)
+        verify(userDao).getUserById("user1")
+    }
+
+    @Test
+    fun getUserById_noUserFound(): Unit = runBlocking {
+        // Arrange
+        `when`(userDao.getUserById("non_existing_user")).thenReturn(null)
+
+        // Act
+        val result = userDao.getUserById("non_existing_user")
+
+        // Assert
+        assertNull(result)
+        verify(userDao).getUserById("non_existing_user")
+    }
+
+    @Test
+    fun getUsersByIDs_retrieveUsersByListOfIDs(): Unit = runBlocking {
+        // Arrange
+        val users = listOf(
+            User(uid = "user1", email = "user1@example.com", name = "John", surname = "Doe", password = "password", userType = "ATHLETE"),
+            User(uid = "user2", email = "user2@example.com", name = "Jane", surname = "Smith", password = "password", userType = "TRAINER")
         )
-        `when`(userDao.getWithPrimaryKey("user1")).thenReturn(user)
+        `when`(userDao.getUsersByIDs(listOf("user1", "user2"))).thenReturn(users)
+
+        // Act
+        val result = userDao.getUsersByIDs(listOf("user1", "user2"))
+
+        // Assert
+        assertEquals(users, result)
+        verify(userDao).getUsersByIDs(listOf("user1", "user2"))
+    }
+
+    @Test
+    fun getAllUsers_retrieveAllUsers(): Unit = runBlocking {
+        // Arrange
+        val users = listOf(
+            User(uid = "user1", email = "user1@example.com", name = "John", surname = "Doe", password = "password", userType = "ATHLETE"),
+            User(uid = "user2", email = "user2@example.com", name = "Jane", surname = "Smith", password = "password", userType = "TRAINER")
+        )
+        `when`(userDao.getAllUsers()).thenReturn(users)
+
+        // Act
+        val result = userDao.getAllUsers()
+
+        // Assert
+        assertEquals(users, result)
+        verify(userDao).getAllUsers()
+    }
+
+    @Test
+    fun getUserByEmail_retrieveUserByEmail(): Unit = runBlocking {
+        // Arrange
+        val user = User(uid = "user1", email = "user1@example.com", name = "John", surname = "Doe", password = "password", userType = "ATHLETE")
+        `when`(userDao.getUserByEmail("user1@example.com")).thenReturn(user)
+
+        // Act
+        val result = userDao.getUserByEmail("user1@example.com")
+
+        // Assert
+        assertEquals(user, result)
+        verify(userDao).getUserByEmail("user1@example.com")
+    }
+
+    @Test
+    fun insertUserAndRetrieve(): Unit = runBlocking {
+        // Arrange
+        val user = User(uid = "user1", email = "user1@example.com", name = "John", surname = "Doe", password = "password", userType = "ATHLETE")
 
         // Act
         userDao.insert(user)
-        val retrievedUser = userDao.getWithPrimaryKey("user1")
+        `when`(userDao.getUserById("user1")).thenReturn(user)
+        val retrievedUser = userDao.getUserById("user1")
 
         // Assert
         assertEquals(user, retrievedUser)
         verify(userDao).insert(user)
-        verify(userDao).getWithPrimaryKey("user1")
+        verify(userDao).getUserById("user1")
     }
 
     @Test
-    fun getWhereEqual_fieldEqualsValue(): Unit = runBlocking {
+    fun insertAllUsersAndRetrieve(): Unit = runBlocking {
         // Arrange
-        val user1 = User(
-            uid = "user1",
-            email = "john.doe@example.com",
-            name = "John",
-            password = "hashed_password",
-            surname = "Doe",
-            userType = "ATHLETE"
+        val users = listOf(
+            User(uid = "user1", email = "user1@example.com", name = "John", surname = "Doe", password = "password", userType = "ATHLETE"),
+            User(uid = "user2", email = "user2@example.com", name = "Jane", surname = "Smith", password = "password", userType = "TRAINER")
         )
-        val user2 = User(
-            uid = "user2",
-            email = "jane.doe@example.com",
-            name = "Jane",
-            password = "hashed_password",
-            surname = "Doe",
-            userType = "TRAINER"
-        )
-        val expectedUsers = listOf(user1)
-        `when`(userDao.getWhereEqual("email", "john.doe@example.com")).thenReturn(expectedUsers)
 
         // Act
-        val result = userDao.getWhereEqual("email", "john.doe@example.com")
+        userDao.insertAll(users)
+        `when`(userDao.getUsersByIDs(listOf("user1", "user2"))).thenReturn(users)
+        val result = userDao.getUsersByIDs(listOf("user1", "user2"))
 
         // Assert
-        assertEquals(expectedUsers, result)
-        verify(userDao).getWhereEqual("email", "john.doe@example.com")
-    }
-
-    @Test
-    fun getWhereIn_fieldInValues(): Unit = runBlocking {
-        // Arrange
-        val user1 = User(
-            uid = "user1",
-            email = "john.doe@example.com",
-            name = "John",
-            password = "hashed_password",
-            surname = "Doe",
-            userType = "ATHLETE"
-        )
-        val user2 = User(
-            uid = "user2",
-            email = "jane.doe@example.com",
-            name = "Jane",
-            password = "hashed_password",
-            surname = "Doe",
-            userType = "TRAINER"
-        )
-        val user3 = User(
-            uid = "user3",
-            email = "jim.beam@example.com",
-            name = "Jim",
-            password = "hashed_password",
-            surname = "Beam",
-            userType = "ATHLETE"
-        )
-        val expectedUsers = listOf(user1, user3)
-        `when`(userDao.getWhereIn("uid", listOf("user1", "user3"))).thenReturn(expectedUsers)
-
-        // Act
-        val result = userDao.getWhereIn("uid", listOf("user1", "user3"))
-
-        // Assert
-        assertEquals(expectedUsers, result)
-        verify(userDao).getWhereIn("uid", listOf("user1", "user3"))
+        assertEquals(users, result)
+        verify(userDao).insertAll(users)
+        verify(userDao).getUsersByIDs(listOf("user1", "user2"))
     }
 
     @Test
     fun updateUser_checkUpdatedValues(): Unit = runBlocking {
         // Arrange
-        val user = User(
-            uid = "user1",
-            email = "john.doe@example.com",
-            name = "John",
-            password = "hashed_password",
-            surname = "Doe",
-            userType = "ATHLETE"
-        )
-        val updatedUser = user.copy(name = "John Smith")
-        `when`(userDao.getWithPrimaryKey("user1")).thenReturn(updatedUser)
+        val user = User(uid = "user1", email = "user1@example.com", name = "John", surname = "Doe", password = "password", userType = "ATHLETE")
+        val updatedUser = user.copy(name = "John Updated")
+        `when`(userDao.getUserById("user1")).thenReturn(updatedUser)
 
         // Act
         userDao.update(updatedUser)
-        val retrievedUser = userDao.getWithPrimaryKey("user1")
+        val retrievedUser = userDao.getUserById("user1")
 
         // Assert
         assertEquals(updatedUser, retrievedUser)
         verify(userDao).update(updatedUser)
-        verify(userDao).getWithPrimaryKey("user1")
-    }
-
-    @Test
-    fun getWithPrimaryKey_noUserFound(): Unit = runBlocking {
-        // Arrange
-        `when`(userDao.getWithPrimaryKey("non_existing_user_id")).thenReturn(null)
-
-        // Act
-        val retrievedUser = userDao.getWithPrimaryKey("non_existing_user_id")
-
-        // Assert
-        assertNull(retrievedUser)
-        verify(userDao).getWithPrimaryKey("non_existing_user_id")
+        verify(userDao).getUserById("user1")
     }
 }
