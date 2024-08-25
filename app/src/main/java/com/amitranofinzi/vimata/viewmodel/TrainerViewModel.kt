@@ -31,28 +31,45 @@ import kotlinx.coroutines.launch
 class TrainerViewModel: ViewModel(), InitializableViewModel {
     lateinit var appDatabase: AppDatabase
     lateinit var context: Context
+    private var isInitialized = false
+    private lateinit var trainerRepository: TrainerRepository
+    private lateinit var workbookRepository: WorkbookRepository
+    private lateinit var testRepository: TestRepository
+
+    private val relationshipDao: RelationshipDao
+        get() = appDatabase.relationshipDao()
+    private val userDao: UserDao
+        get() = appDatabase.userDao()
+    private val workoutDao: WorkoutDao
+        get() = appDatabase.workoutDao()
+
+    private val collectionDao: CollectionDao
+        get() = appDatabase.collectionDao()
+    private val exerciseDao: ExerciseDao
+        get() = appDatabase.exerciseDao()
+
+    private val testDao: TestDao
+        get() = appDatabase.testDao()
+    private val testSetDao: TestSetDao
+        get() = appDatabase.testSetDao()
 
     override fun initialize(appDatabase: AppDatabase, context: Context) {
-        this.appDatabase = appDatabase
-        this.context = context
+        if (!isInitialized) {
+            this.appDatabase = appDatabase
+            this.context = context
+
+            // Initialize repositories after appDatabase and context are set
+            initializeRepositories()
+
+            isInitialized = true
+        }
     }
 
-    private val relationshipDao: RelationshipDao by lazy { appDatabase.relationshipDao() }
-    private val userDao: UserDao by lazy { appDatabase.userDao() }
-    private val workoutDao: WorkoutDao by lazy { appDatabase.workoutDao() }
-
-    private val trainerRepository : TrainerRepository = TrainerRepository(relationshipDao, userDao, workoutDao, context)
-
-
-    private val collectionDao: CollectionDao by lazy { appDatabase.collectionDao() }
-    private val exerciseDao: ExerciseDao by lazy { appDatabase.exerciseDao() }
-
-    private val workbookRepository : WorkbookRepository = WorkbookRepository(collectionDao, exerciseDao, workoutDao, context)
-
-    private val testDao: TestDao by lazy { appDatabase.testDao() }
-    private val testSetDao: TestSetDao by lazy { appDatabase.testSetDao() }
-
-    private val testRepository : TestRepository = TestRepository(testDao, testSetDao, context)
+    private fun initializeRepositories() {
+        trainerRepository = TrainerRepository(relationshipDao, userDao, workoutDao, context)
+        workbookRepository = WorkbookRepository(collectionDao, exerciseDao, workoutDao, context)
+        testRepository = TestRepository(testDao, testSetDao, context)
+    }
 
     private val _athletes = MutableLiveData<List<User>>()
     val athletes: LiveData<List<User>> = _athletes

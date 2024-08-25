@@ -25,37 +25,63 @@ import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-class AuthViewModel() : ViewModel(), InitializableViewModel {
-    lateinit var appDatabase: AppDatabase
-    lateinit var context: Context
+class AuthViewModel : ViewModel(), InitializableViewModel {
+
+    private lateinit var appDatabase: AppDatabase
+    private lateinit var context: Context
+    private var isInitialized = false
+
+    // DAO dichiarati senza lazy
+    private val relationshipDao: RelationshipDao
+        get() = appDatabase.relationshipDao()
+
+    private val testSetDao: TestSetDao
+        get() = appDatabase.testSetDao()
+
+    private val userDao: UserDao
+        get() = appDatabase.userDao()
+
+    private val workoutDao: WorkoutDao
+        get() = appDatabase.workoutDao()
+
+    private val chatDao: ChatDao
+        get() = appDatabase.chatDao()
+
+    private val exerciseDao: ExerciseDao
+        get() = appDatabase.exerciseDao()
+
+    private val collectionDao: CollectionDao
+        get() = appDatabase.collectionDao()
+
+    private val messageDao: MessageDao
+        get() = appDatabase.messageDao()
+
+    private val testDao: TestDao
+        get() = appDatabase.testDao()
+
+    // Repository dichiarati con lazy
+    private lateinit var authRepository: AuthRepository
 
     override fun initialize(appDatabase: AppDatabase, context: Context) {
-        this.appDatabase = appDatabase
-        this.context = context
-    }
+        if (!isInitialized) {
+            this.appDatabase = appDatabase
+            this.context = context
+            isInitialized = true
 
-    private val relationshipDao: RelationshipDao by lazy { appDatabase.relationshipDao() }
-    private val testSetDao: TestSetDao by lazy {appDatabase.testSetDao()}
-    private val userDao: UserDao by lazy { appDatabase.userDao() }
-    private val workoutDao: WorkoutDao by lazy { appDatabase.workoutDao() }
-    private val chatDao: ChatDao by lazy { appDatabase.chatDao() }
-    private val exerciseDao: ExerciseDao by lazy { appDatabase.exerciseDao()}
-    private val collectionDao: CollectionDao by lazy { appDatabase.collectionDao()}
-    private val messageDao: MessageDao by lazy { appDatabase.messageDao()}
-    private val testDao: TestDao by lazy { appDatabase.testDao()}
-    private val authRepository: AuthRepository by lazy {
-        AuthRepository(
-            relationshipDao = relationshipDao,
-            testSetDao = testSetDao,
-            userDao = userDao,
-            workoutDao = workoutDao,
-            chatDao = chatDao,
-            context = context,
-            exerciseDao = exerciseDao,
-            collectionDao = collectionDao,
-            testDao = testDao,
-            messageDao = messageDao
-        )
+
+            authRepository = AuthRepository(
+                relationshipDao = relationshipDao,
+                testSetDao = testSetDao,
+                userDao = userDao,
+                workoutDao = workoutDao,
+                chatDao = chatDao,
+                context = context,
+                exerciseDao = exerciseDao,
+                collectionDao = collectionDao,
+                testDao = testDao,
+                messageDao = messageDao
+            )
+        }
     }
 
     private val _authState = MutableStateFlow<AuthState>(AuthState.Idle)

@@ -91,8 +91,8 @@ fun NavGraphBuilder.athleteGraph(
         route = "athlete"
     ){
         composable("athlete_screen"){
-            val athleteViewModel = it.sharedViewModel<AthleteViewModel>(navController, appDatabase, context)
             val authViewModel = it.sharedViewModel<AuthViewModel>(navController, appDatabase, context)
+            val athleteViewModel = it.sharedViewModel<AthleteViewModel>(navController, appDatabase, context)
             val chatViewModel = it.sharedViewModel<ChatViewModel>(navController, appDatabase, context)
             Log.d("athlete graph", "prima di athlete screen")
             AthleteScreen(athleteViewModel, authViewModel, chatViewModel, navController)
@@ -292,7 +292,9 @@ inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
     if (viewModel is InitializableViewModel) {
         (viewModel as InitializableViewModel).initialize(appDatabase, context)
         Log.d("appNav context", context.toString())
+
     }
+
 
     return viewModel
 }

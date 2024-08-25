@@ -23,21 +23,39 @@ import com.amitranofinzi.vimata.ui.navigation.InitializableViewModel
 import kotlinx.coroutines.launch
 
 class AthleteViewModel : ViewModel(), InitializableViewModel {
+
     lateinit var appDatabase: AppDatabase
     lateinit var context: Context
+    private var isInitialized = false
+    private lateinit var athleteRepository: AthleteRepository
+
+    // DAO dichiarati come proprietà di tipo `get()`
+    private val relationshipDao: RelationshipDao
+        get() = appDatabase.relationshipDao()
+
+    private val userDao: UserDao
+        get() = appDatabase.userDao()
+
+    private val workoutDao: WorkoutDao
+        get() = appDatabase.workoutDao()
+
+    private val chatDao: ChatDao
+        get() = appDatabase.chatDao()
 
     override fun initialize(appDatabase: AppDatabase, context: Context) {
-        this.appDatabase = appDatabase
-        this.context = context
+        if (!isInitialized) {
+            this.appDatabase = appDatabase
+            this.context = context
+
+            // Inizializza il repository dopo che appDatabase e context sono impostati
+            initializeRepositories()
+
+            isInitialized = true
+        }
     }
 
-    private val relationshipDao: RelationshipDao by lazy { appDatabase.relationshipDao() }
-    private val userDao: UserDao by lazy { appDatabase.userDao() }
-    private val workoutDao: WorkoutDao by lazy { appDatabase.workoutDao() }
-    private val chatDao: ChatDao by lazy { appDatabase.chatDao() }
-
-    private val athleteRepository: AthleteRepository by lazy {
-        AthleteRepository(
+    private fun initializeRepositories() {
+        athleteRepository = AthleteRepository(
             relationshipDao = relationshipDao,
             userDao = userDao,
             workoutDao = workoutDao,
@@ -45,6 +63,8 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
             context = context
         )
     }
+
+
     private val _workouts = MutableLiveData<List<Workout>>()
     val workouts: LiveData<List<Workout>> = _workouts
 

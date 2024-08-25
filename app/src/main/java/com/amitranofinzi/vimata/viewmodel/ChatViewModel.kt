@@ -23,20 +23,47 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ChatViewModel: ViewModel(), InitializableViewModel {
-    lateinit var appDatabase: AppDatabase
-    lateinit var context: Context
 
-    override fun initialize(appDatabase: AppDatabase, context: Context) {
-        this.appDatabase = appDatabase
-        this.context = context
-    }
+        lateinit var appDatabase: AppDatabase
+        lateinit var context: Context
+        private var isInitialized = false
+        private lateinit var chatRepository: ChatRepository
 
-    private val relationshipDao: RelationshipDao by lazy { appDatabase.relationshipDao() }
-    private val userDao: UserDao by lazy { appDatabase.userDao() }
-    private val messageDao: MessageDao by lazy { appDatabase.messageDao() }
-    private val chatDao: ChatDao by lazy { appDatabase.chatDao() }
+        // DAO dichiarati come proprietà di tipo `get()`
+        private val relationshipDao: RelationshipDao
+            get() = appDatabase.relationshipDao()
 
-    private val chatRepository: ChatRepository = ChatRepository(chatDao, messageDao, relationshipDao, userDao, context)
+        private val userDao: UserDao
+            get() = appDatabase.userDao()
+
+        private val messageDao: MessageDao
+            get() = appDatabase.messageDao()
+
+        private val chatDao: ChatDao
+            get() = appDatabase.chatDao()
+
+        override fun initialize(appDatabase: AppDatabase, context: Context) {
+            if (!isInitialized) {
+                this.appDatabase = appDatabase
+                this.context = context
+
+                // Inizializza il repository dopo che appDatabase e context sono impostati
+                initializeRepositories()
+
+                isInitialized = true
+            }
+        }
+
+        private fun initializeRepositories() {
+            chatRepository = ChatRepository(
+                chatDao = chatDao,
+                messageDao = messageDao,
+                relationshipDao = relationshipDao,
+                userDao = userDao,
+                context = context
+            )
+        }
+
 
 
     //Create live data for relationship
