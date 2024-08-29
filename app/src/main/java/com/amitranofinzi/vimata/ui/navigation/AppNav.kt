@@ -39,6 +39,14 @@ import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 import com.example.yourapp.CameraScreen
 import java.net.URLDecoder
 
+/**
+ * Sets up the navigation graph for the application using Jetpack Compose's NavHost.
+ * This function creates the main navigation host and defines the navigation routes
+ * for the authentication, athlete, and trainer sections of the app.
+ *
+ * @param appDatabase The application database instance used for ViewModel initialization.
+ * @param context The application context used for ViewModel initialization.
+ */
 @Composable
 fun AppNav(
     appDatabase: AppDatabase,
@@ -60,6 +68,15 @@ fun AppNav(
     }
 
 }
+
+/**
+ * Defines the navigation graph for the authentication flow.
+ * This includes routes for login, sign up, and password recovery.
+ *
+ * @param navController The navigation controller used to manage navigation.
+ * @param appDatabase The application database instance used for ViewModel initialization.
+ * @param context The application context used for ViewModel initialization.
+ */
 fun NavGraphBuilder.authGraph(
     navController: NavHostController,
     appDatabase: AppDatabase,
@@ -81,6 +98,16 @@ fun NavGraphBuilder.authGraph(
         }
     }
 }
+
+/**
+ * Defines the navigation graph for the athlete flow.
+ * This includes routes for the athlete screen, test set details, chat details,
+ * camera screen, and video player.
+ *
+ * @param navController The navigation controller used to manage navigation.
+ * @param appDatabase The application database instance used for ViewModel initialization.
+ * @param context The application context used for ViewModel initialization.
+ */
 fun NavGraphBuilder.athleteGraph(
     navController: NavHostController,
     appDatabase: AppDatabase,
@@ -151,6 +178,15 @@ fun NavGraphBuilder.athleteGraph(
 
 }
 
+/**
+ * Defines the navigation graph for the trainer flow.
+ * This includes routes for the trainer screen, collection details, athlete handler,
+ * test set editor, exercise editor, workout editor, exercise selection, and video player.
+ *
+ * @param navController The navigation controller used to manage navigation.
+ * @param appDatabase The application database instance used for ViewModel initialization.
+ * @param context The application context used for ViewModel initialization.
+ */
 fun NavGraphBuilder.trainerGraph(
     navController: NavHostController,
     appDatabase: AppDatabase,
@@ -275,7 +311,17 @@ fun NavGraphBuilder.trainerGraph(
 
 }
 
-
+/**
+ * Provides a shared ViewModel instance for a given NavBackStackEntry.
+ * This function is used to retrieve a ViewModel that is shared across
+ * multiple destinations within the same navigation graph.
+ *
+ * @param T The type of ViewModel to retrieve.
+ * @param navController The navigation controller used to manage navigation.
+ * @param appDatabase The application database instance used for ViewModel initialization.
+ * @param context The application context used for ViewModel initialization.
+ * @return The ViewModel instance.
+ */
 @Composable
 inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
     navController: NavController,

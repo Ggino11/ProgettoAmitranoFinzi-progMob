@@ -22,15 +22,23 @@ import com.amitranofinzi.vimata.data.repository.TestRepository
 import com.amitranofinzi.vimata.ui.navigation.InitializableViewModel
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for managing data related to athletes, workouts, and tests.
+ * It interacts with repositories to fetch, update, and manage data, and provides
+ * it to the UI through LiveData.
+ */
 class AthleteViewModel : ViewModel(), InitializableViewModel {
 
+    // Application database and context
     lateinit var appDatabase: AppDatabase
     lateinit var context: Context
     private var isInitialized = false
+
+    // Repositories for data access
     private lateinit var athleteRepository: AthleteRepository
-    private lateinit var testRepository : TestRepository
+    private lateinit var testRepository: TestRepository
 
-
+    // DAOs for data access
     private val relationshipDao: RelationshipDao
         get() {
             return appDatabase.relationshipDao()
@@ -51,7 +59,13 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
             return appDatabase.chatDao()
         }
 
-
+    /**
+     * Initializes the ViewModel with the provided database and context.
+     * This should be called before using the ViewModel.
+     *
+     * @param appDatabase The application database instance.
+     * @param context The application context.
+     */
     override fun initialize(appDatabase: AppDatabase, context: Context) {
         Log.d("AthleteViewModel", "initialize() called")
         if (!isInitialized) {
@@ -97,6 +111,11 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
     private val _tests = MutableLiveData<List<Test>>()
     val tests: LiveData<List<Test>> get() = _tests
 
+    /**
+     * Fetches the list of workouts for a specific athlete.
+     *
+     * @param athleteID ID of the athlete.
+     */
     fun fetchWorkouts(athleteID: String){
         viewModelScope.launch {
             _workouts.value = athleteRepository.getAthletesWorkouts(athleteID)
@@ -105,7 +124,11 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
         }
     }
 
-    //gets coaches for athlete
+    /**
+     * Retrieves the list of trainers associated with a specific athlete.
+     *
+     * @param athleteId ID of the athlete.
+     */
     fun getTrainersForAthletes(athleteId: String) {
         viewModelScope.launch {
             try {
@@ -125,7 +148,11 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
         }
     }
 
-    //TEST functions
+    /**
+     * Fetches test sets associated with a specific athlete.
+     *
+     * @param athleteID ID of the athlete.
+     */
     fun fetchTestSets(athleteID: String) {
         Log.d("testViewModel","fetchTestSets" )
 
@@ -146,6 +173,11 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
         }
     }
 
+    /**
+     * Fetches tests associated with a specific test set.
+     *
+     * @param testSetId ID of the test set.
+     */
     fun fetchTests(testSetId: String?) {
         viewModelScope.launch {
             try {
@@ -162,6 +194,12 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
             }
         }
     }
+
+    /**
+     * Updates the result of a specific test in the repository.
+     *
+     * @param test The test with updated result.
+     */
     fun updateTestResult(test: Test) {
         viewModelScope.launch {
             try {
@@ -174,6 +212,11 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
         }
     }
 
+    /**
+     * Updates the status of a specific test in the repository.
+     *
+     * @param test The test with updated status.
+     */
     fun updateTestStatus(test: Test) {
         viewModelScope.launch {
             try {
@@ -186,7 +229,12 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
         }
     }
 
-    //add CHat and trainer
+    /**
+     * Starts a new chat and adds a trainer.
+     *
+     * @param email The email of the trainer to add.
+     * @param currentUserId The ID of the current user.
+     */
     fun addTrainerAndChat(email: String, currentUserId: String) {
         viewModelScope.launch {
             try {

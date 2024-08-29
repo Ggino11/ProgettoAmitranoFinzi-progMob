@@ -13,6 +13,17 @@ import com.amitranofinzi.vimata.viewmodel.AuthViewModel
 import com.amitranofinzi.vimata.viewmodel.ChatViewModel
 import com.amitranofinzi.vimata.viewmodel.TrainerViewModel
 
+/**
+ * Sets up the bottom navigation for the trainer section of the app using Jetpack Compose's NavHost.
+ * This function defines the navigation routes for the trainer-specific screens such as home,
+ * workbook, chat, and profile.
+ *
+ * @param trainerViewModel The ViewModel for managing trainer-specific data and state.
+ * @param authViewModel The ViewModel for managing authentication-related data and state.
+ * @param chatViewModel The ViewModel for managing chat-related data and state.
+ * @param navController The main navigation controller used to manage global navigation.
+ * @param bottomNavController The NavHostController used for managing the bottom navigation destinations.
+ */
 @Composable
 fun TrainerBottomNav(trainerViewModel: TrainerViewModel = TrainerViewModel(),
                      authViewModel: AuthViewModel = AuthViewModel(),
@@ -40,16 +51,4 @@ fun TrainerBottomNav(trainerViewModel: TrainerViewModel = TrainerViewModel(),
 
 }
 
-/*
-fun NavGraphBuilder.TrainerBottomNavGraph(navController: NavController) {
-
-        navigation(
-            startDestination = TrainerBNavItem.Home.path,
-            route = "Trainer"
-        ){
-
-        }
-
-}
-*/
 

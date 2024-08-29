@@ -33,6 +33,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+
+/**
+ * Repository for managing authentication-related data and user synchronization.
+ */
 class AuthRepository(
     private val relationshipDao: RelationshipDao,
     private val userDao: UserDao,
@@ -52,6 +56,10 @@ class AuthRepository(
 
     val currentUser: FirebaseUser? get() = firebaseAuth.currentUser
 
+    /**
+     * Checks if the network is available on the device.
+     * @return True if the network is available, false otherwise.
+     */
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -69,7 +77,11 @@ class AuthRepository(
         }
     }
 
-    //function to check if email already exists
+    /**
+     * Checks if an email is already registered in Firestore.
+     * @param email The email address to check.
+     * @return True if the email already exists, false otherwise.
+     */
     suspend fun checkEmailExists(email: String): Boolean {
         //check if email is already registered in firestore
         val usersCollection = firestore.collection("users")
@@ -79,6 +91,16 @@ class AuthRepository(
         return !usersCollection.isEmpty //if is not empty return true
 
   }
+
+    /**
+     * Registers a new user with email, password, and user details in Firestore.
+     * @param email The email address of the user.
+     * @param password The password of the user.
+     * @param userType The type of user (e.g., athlete, trainer).
+     * @param name The name of the user.
+     * @param surname The surname of the user.
+     * @return A Result object indicating success or failure.
+     */
     suspend fun register(email: String, password: String, userType: String, name: String, surname: String): Result<Unit> {
         return try {
             val authResult = Firebase.auth.createUserWithEmailAndPassword(email, password).await()
@@ -101,6 +123,12 @@ class AuthRepository(
         }
     }
 
+    /**
+     * Logs in a user with email and password, and synchronizes user data from Firestore.
+     * @param email The email address of the user.
+     * @param password The password of the user.
+     * @return A Result object indicating success or failure.
+     */
     suspend fun login(email: String, password: String): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
@@ -136,7 +164,10 @@ class AuthRepository(
         }
     }
 
-
+    /**
+     * Synchronizes user data from Firestore to the local Room database.
+     * @return A Result object indicating success or failure.
+     */
     private suspend fun syncUserData(): Result<Unit> {
         return withContext(Dispatchers.IO) {
             try {
@@ -256,13 +287,21 @@ class AuthRepository(
     }
 
 
-
+    /**
+     * Signs out the current user from Firebase.
+     */
     fun signOut() {
         firebaseAuth.signOut()
     }
 
 
     // --------------------- GET FUNCTIONS-------------------------//
+
+    /**
+     * Fetches a user by their user ID from Firestore.
+     * @param userId The ID of the user.
+     * @return A User object if found, or null otherwise.
+     */
     suspend fun getUser(userId: String): User? {
         return try {
             val snapshot = firestore.collection("users")
@@ -277,6 +316,11 @@ class AuthRepository(
         }
     }
 
+    /**
+     * Fetches the user type (e.g., athlete, trainer) from Firestore by user ID.
+     * @param userId The ID of the user.
+     * @return A Result object containing the user type, or an error if not found.
+     */
     suspend fun getUserType(userId: String): Result<String> {
         return try {
             val document = firestore.collection("users").document(userId).get().await()

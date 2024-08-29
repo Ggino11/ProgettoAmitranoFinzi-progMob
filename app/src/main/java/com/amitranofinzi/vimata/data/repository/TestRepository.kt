@@ -12,6 +12,10 @@ import com.amitranofinzi.vimata.data.model.TestSet
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
+/**
+ * Repository for handling test-related operations, including fetching test sets, creating tests,
+ * and updating test results or statuses. Integrates Firebase Firestore with local database.
+ */
 class TestRepository(
     private val testDao: TestDao,
     private val testSetDao: TestSetDao,
@@ -20,6 +24,11 @@ class TestRepository(
 
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
+    /**
+     * Checks if the network is available for online operations.
+     *
+     * @return True if the network is available, false otherwise.
+     */
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -37,6 +46,12 @@ class TestRepository(
         }
     }
 
+    /**
+     * Retrieves the list of test sets for a specific athlete.
+     *
+     * @param athleteID ID of the athlete.
+     * @return A list of test sets.
+     */
     suspend fun getTestSetsForAthlete(athleteID: String): List<TestSet> {
         Log.d("TestRepository", "getTestSetsForAthlete called with athleteIds: $athleteID")
 
@@ -85,6 +100,12 @@ class TestRepository(
         }
     }
 
+    /**
+     * Retrieves the list of tests within a specific test set.
+     *
+     * @param testSetId ID of the test set.
+     * @return A list of tests.
+     */
     suspend fun getTests(testSetId: String?): List<Test> {
         Log.d("getTests", "Called with testSetId: $testSetId")
 
@@ -129,6 +150,11 @@ class TestRepository(
         }
     }
 
+    /**
+     * Updates the result of a specific test.
+     *
+     * @param test The test object containing the updated result.
+     */
     suspend fun updateTestResult(test: Test) {
         try {
             if (isNetworkAvailable()) {
@@ -146,6 +172,11 @@ class TestRepository(
         }
     }
 
+    /**
+     * Updates the status of a specific test.
+     *
+     * @param test The test object containing the updated status.
+     */
     suspend fun updateTestStatus(test: Test) {
         try {
             if (isNetworkAvailable()) {
@@ -163,6 +194,12 @@ class TestRepository(
         }
     }
 
+    /**
+     * Creates a new test set and stores it in both Firestore and the local database.
+     *
+     * @param testSet The test set to be created.
+     * @return The ID of the newly created test set.
+     */
     suspend fun createTestSet(testSet: TestSet): String {
         try {
             val firestore = FirebaseFirestore.getInstance()
@@ -194,6 +231,11 @@ class TestRepository(
         }
     }
 
+    /**
+     * Creates a new test and stores it in both Firestore and the local database.
+     *
+     * @param test The test to be created.
+     */
     suspend fun createTest(test: Test) {
         try {
             val result = firestore.collection("tests")

@@ -19,7 +19,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
-
+/**
+ * Repository for handling chat-related operations, including sending messages, retrieving chats,
+ * and managing user relationships. Integrates Firebase Firestore with local database.
+ */
 class ChatRepository(
     private val chatDao: ChatDao,
     private val messageDao: MessageDao,
@@ -29,6 +32,11 @@ class ChatRepository(
 ) {
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
+    /**
+     * Checks if the network is available for online operations.
+     *
+     * @return True if the network is available, false otherwise.
+     */
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -46,7 +54,13 @@ class ChatRepository(
         }
     }
 
-
+    /**
+     * Retrieves the receiver's ID based on the chat ID and user type.
+     *
+     * @param chatId ID of the chat.
+     * @param userType Type of the user (either "trainer" or "athlete").
+     * @return The receiver's ID if found, otherwise null.
+     */
     suspend fun getReceiverId(chatId: String, userType: String): String? {
         return if (isNetworkAvailable()) {
             try {
@@ -79,6 +93,12 @@ class ChatRepository(
         }
     }
 
+    /**
+     * Retrieves the user based on their ID.
+     *
+     * @param userId ID of the user.
+     * @return The user object if found, otherwise null.
+     */
     suspend fun getReceiver(userId: String): User? {
         return if (isNetworkAvailable()) {
             try {
@@ -99,7 +119,13 @@ class ChatRepository(
         }
     }
 
-
+    /**
+     * Retrieves a list of relationships for the user based on their user type.
+     *
+     * @param userId ID of the user.
+     * @param userType Type of the user (either "athlete" or "trainer").
+     * @return A list of relationships.
+     */
     suspend fun getRelationships(userId: String, userType: String): List<Relationship> {
         return if (isNetworkAvailable()) {
             try {
@@ -127,7 +153,12 @@ class ChatRepository(
         }
     }
 
-    //get chats based on relationship id
+    /**
+     * Retrieves a list of chats based on the relationship IDs.
+     *
+     * @param relationshipIDs List of relationship IDs.
+     * @return A list of chats.
+     */
     suspend fun getChats(relationshipIDs: List<String>): List<Chat> {
         return if (isNetworkAvailable()) {
             try {
@@ -152,7 +183,12 @@ class ChatRepository(
         }
     }
 
-    //sends message to a specific chat
+    /**
+     * Sends a message to a specific chat and updates the last message in the chat.
+     *
+     * @param chatId ID of the chat.
+     * @param message The message to be sent.
+     */
     suspend fun sendMessage(chatId: String, message: Message) {
         if (isNetworkAvailable()) {
             try {
@@ -180,6 +216,12 @@ class ChatRepository(
         }
     }
 
+    /**
+     * Retrieves a chat by its ID.
+     *
+     * @param chatId ID of the chat.
+     * @return The chat object if found, otherwise null.
+     */
     suspend fun getChat(chatId: String): Chat? {
         return try {
             val documentSnapshot = firestore.collection("chats")
@@ -199,6 +241,12 @@ class ChatRepository(
         }
     }
 
+    /**
+     * Retrieves a relationship by its ID.
+     *
+     * @param relationshipId ID of the relationship.
+     * @return The relationship object if found, otherwise null.
+     */
     suspend fun getRelationship(relationshipId: String): Relationship? {
         return try {
             val documentSnapshot = firestore.collection("relationships")
@@ -218,9 +266,12 @@ class ChatRepository(
         }
     }
 
-
-
-    // creates a listner to obtain real time messages in the chat
+    /**
+     * Creates a listener to obtain real-time messages in the chat.
+     *
+     * @param chatId ID of the chat.
+     * @return A flow of messages from the chat.
+     */
     fun getMessagesFlow(chatId: String): Flow<List<Message>> = callbackFlow {
         Log.d("ChatRepository", "Starting getMessagesFlow for chatId: $chatId")
         // Register a Firestore snapshot listener to listen for changes in the "messages" collection
@@ -255,7 +306,13 @@ class ChatRepository(
         }
     }
 
-    //get users that are receiving the messages
+    /**
+     * Retrieves users who are receiving the messages.
+     *
+     * @param userID ID of the user.
+     * @param userType Type of the user (either "athlete" or "trainer").
+     * @return A list of users if found, otherwise null.
+     */
     suspend fun getReceivers(userID: String, userType: String): List<User>? {
         return if (isNetworkAvailable()) {
             try {

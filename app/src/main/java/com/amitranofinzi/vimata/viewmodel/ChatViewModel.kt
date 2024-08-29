@@ -22,47 +22,57 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+/**
+ * ViewModel for managing chat-related data and interactions.
+ * It handles fetching and updating chats, messages, relationships, and receivers.
+ */
 class ChatViewModel: ViewModel(), InitializableViewModel {
 
-        lateinit var appDatabase: AppDatabase
-        lateinit var context: Context
-        private var isInitialized = false
-        private lateinit var chatRepository: ChatRepository
+    lateinit var appDatabase: AppDatabase
+    lateinit var context: Context
+    private var isInitialized = false
+    private lateinit var chatRepository: ChatRepository
 
-        // DAO dichiarati come proprietà di tipo `get()`
-        private val relationshipDao: RelationshipDao
-            get() = appDatabase.relationshipDao()
+    private val relationshipDao: RelationshipDao
+        get() = appDatabase.relationshipDao()
 
-        private val userDao: UserDao
-            get() = appDatabase.userDao()
+    private val userDao: UserDao
+        get() = appDatabase.userDao()
 
-        private val messageDao: MessageDao
-            get() = appDatabase.messageDao()
+    private val messageDao: MessageDao
+        get() = appDatabase.messageDao()
 
-        private val chatDao: ChatDao
-            get() = appDatabase.chatDao()
+    private val chatDao: ChatDao
+        get() = appDatabase.chatDao()
 
-        override fun initialize(appDatabase: AppDatabase, context: Context) {
-            if (!isInitialized) {
-                this.appDatabase = appDatabase
-                this.context = context
+    /**
+     * Initializes the ViewModel with the provided database and context.
+     * This should be called before using the ViewModel.
+     *
+     * @param appDatabase The application database instance.
+     * @param context The application context.
+     */
+    override fun initialize(appDatabase: AppDatabase, context: Context) {
+        if (!isInitialized) {
+            this.appDatabase = appDatabase
+            this.context = context
 
-                // Inizializza il repository dopo che appDatabase e context sono impostati
-                initializeRepositories()
+            // Inizializza il repository dopo che appDatabase e context sono impostati
+            initializeRepositories()
 
-                isInitialized = true
-            }
+            isInitialized = true
         }
+    }
 
-        private fun initializeRepositories() {
-            chatRepository = ChatRepository(
-                chatDao = chatDao,
-                messageDao = messageDao,
-                relationshipDao = relationshipDao,
-                userDao = userDao,
-                context = context
-            )
-        }
+    private fun initializeRepositories() {
+        chatRepository = ChatRepository(
+            chatDao = chatDao,
+            messageDao = messageDao,
+            relationshipDao = relationshipDao,
+            userDao = userDao,
+            context = context
+        )
+    }
 
 
 
@@ -88,7 +98,12 @@ class ChatViewModel: ViewModel(), InitializableViewModel {
     private val _receiverId = MutableLiveData<String?>()
     val receiverId: MutableLiveData<String?> get() = _receiverId
 
-    //fetch single relationship
+    /**
+     * Fetches the receiver ID for a given chat ID and user type.
+     *
+     * @param chatId The ID of the chat.
+     * @param userType The type of the user.
+     */
     fun fetchReceiverId(chatId: String, userType: String) {
         viewModelScope.launch {
             Log.d("ChatViewModel fetch receiver", "sender is ${userType}")
@@ -98,6 +113,12 @@ class ChatViewModel: ViewModel(), InitializableViewModel {
         }
 
     }
+
+    /**
+     * Fetches user details by user ID.
+     *
+     * @param userID The ID of the user.
+     */
     fun fetchReceiverById(userID: String) {
         viewModelScope.launch {
             try {
@@ -112,6 +133,12 @@ class ChatViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
+    /**
+     * Fetches a list of receivers based on user ID and user type.
+     *
+     * @param userID The ID of the user.
+     * @param userType The type of the user.
+     */
     fun fetchReceivers(userID: String, userType: String){
         viewModelScope.launch {
             Log.d("ChatViewModel", "fetching receivers with ${userID} and ${userType}")
@@ -121,6 +148,12 @@ class ChatViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
+    /**
+     * Fetches relationships for a user based on user ID and user type.
+     *
+     * @param userID The ID of the user.
+     * @param userType The type of the user.
+     */
     fun fetchRelationships(userID: String, userType: String){
         viewModelScope.launch {
             Log.d("ChatViewModel", "fetching relationships with ${userID} and ${userType}")
@@ -130,7 +163,11 @@ class ChatViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
-    // Function to fetch relationships based on user ID and type
+    /**
+     * Fetches chats based on a list of relationship IDs.
+     *
+     * @param relationshipIDs The list of relationship IDs.
+     */
     fun fetchChats(relationshipIDs: List<String>) {
         Log.d("RelationshipId", relationshipIDs.isEmpty().toString())
         viewModelScope.launch {
@@ -140,7 +177,11 @@ class ChatViewModel: ViewModel(), InitializableViewModel {
 
     }
 
-    // Function to fetch messages based on chat ID
+    /**
+     * Listens for messages in a chat and updates the messages state flow.
+     *
+     * @param chatId The ID of the chat.
+     */
     fun listenForMessages(chatId: String) {
         viewModelScope.launch {
             Log.d("ChatViewModel", "Starting to listen for messages for chatId: $chatId")
@@ -155,7 +196,12 @@ class ChatViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
-    // Function to send a message to a specific chat
+    /**
+     * Sends a message to a specific chat.
+     *
+     * @param chatId The ID of the chat.
+     * @param message The message to be sent.
+     */
     fun sendMessage(chatId: String, message: Message) {
         Log.d("ChatViewModel", "Preparing to send message: ${message.text} to chatId: $chatId")
         viewModelScope.launch {
@@ -170,6 +216,9 @@ class ChatViewModel: ViewModel(), InitializableViewModel {
 
     private var chatListener: ListenerRegistration? = null
 
+    /**
+     * Removes the chat listener when the ViewModel is cleared.
+     */
     override fun onCleared() {
         super.onCleared()
         chatListener?.remove()}

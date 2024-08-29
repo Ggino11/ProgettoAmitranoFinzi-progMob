@@ -7,10 +7,20 @@ import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
+/**
+ * Repository for handling video uploads to Firebase Storage and updating Firestore with the video URL.
+ */
 class CameraRepository {
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
     private val storage: FirebaseStorage = FirebaseStorage.getInstance()
 
+    /**
+     * Uploads a video file to Firebase Storage and updates the corresponding test document with the video URL.
+     *
+     * @param context Context for displaying Toast messages.
+     * @param videoUri Uri of the video file to upload.
+     * @param testID ID of the test document to update with the video URL.
+     */
     suspend fun uploadVideoToFirebase(context: Context, videoUri: Uri, testID: String) {
         val storageRef = storage.reference
         val videoRef = storageRef.child("videos/${videoUri.lastPathSegment}")
@@ -35,6 +45,12 @@ class CameraRepository {
         }
     }
 
+    /**
+     * Updates the Firestore document associated with the given test ID with the video URL.
+     *
+     * @param testID ID of the test document to update.
+     * @param videoUrl The URL of the uploaded video to store in Firestore.
+     */
     private fun updateTestVideoUrl(testID: String, videoUrl: String) {
         val testRef = firestore.collection("tests").document(testID)
         testRef.update("videoUrl", videoUrl)

@@ -20,6 +20,9 @@ import kotlinx.coroutines.withContext
 import java.net.HttpURLConnection
 import java.net.URL
 
+/**
+ * Repository for managing athlete-related data, including access to data from Firestore and a local database.
+ */
 class AthleteRepository(
     private val relationshipDao: RelationshipDao,
     private val userDao: UserDao,
@@ -29,7 +32,10 @@ class AthleteRepository(
 ) {
 
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
-
+    /**
+     * Checks if the network is available on the device.
+     * @return True if the network is available, false otherwise.
+     */
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -47,7 +53,11 @@ class AthleteRepository(
         }
     }
 
-    // Fetch trainer IDs for a given athleteID
+    /**
+     * Fetches trainer IDs for a given athlete ID from Firestore or local database if the network is unavailable.
+     * @param athleteID The ID of the athlete.
+     * @return A list of trainer IDs associated with the athlete.
+     */
     suspend fun getTrainerIdsForAthlete(athleteID: String): List<String> {
         return   withContext(Dispatchers.IO) {
             if (isNetworkAvailable()) {
@@ -98,7 +108,12 @@ class AthleteRepository(
 
 
 
-    // Get trainers as a list of User
+    /**
+     * Retrieves trainers as a list of User objects based on the provided trainer IDs.
+     * Fetches from Firestore if the network is available, otherwise fetches from the local database.
+     * @param trainerIds The list of trainer IDs.
+     * @return A list of User objects representing trainers.
+     */
     suspend fun getTrainers(trainerIds: List<String>): List<User> {
         return  withContext(Dispatchers.IO) {
             if (isNetworkAvailable()) {
@@ -128,7 +143,11 @@ class AthleteRepository(
     }
 
 
-    // Fetch workouts for a given athleteID
+    /**
+     * Fetches workouts for a given athlete ID from Firestore or the local database if the network is unavailable.
+     * @param athleteID The ID of the athlete.
+     * @return A list of Workout objects associated with the athlete.
+     */
     suspend fun getAthletesWorkouts(athleteID: String): List<Workout> {
         return if (isNetworkAvailable()) {
             try {
@@ -158,7 +177,11 @@ class AthleteRepository(
         }
     }
 
-    // Fetch workout PDF
+    /**
+     * Fetches a workout PDF file based on the workout ID.
+     * @param workoutId The ID of the workout.
+     * @return A ByteArray containing the PDF data, or null if the file cannot be fetched.
+     */
     suspend fun getWorkoutPdf(workoutId: String): ByteArray? {
         val workout = workoutDao.getWorkoutById(workoutId)
         val pdfUrl = workout?.pdfUrl
@@ -186,7 +209,11 @@ class AthleteRepository(
         }
     }
 
-    // Get user by email
+    /**
+     * Fetches a user by their email address from Firestore or the local database if the network is unavailable.
+     * @param email The email address of the user.
+     * @return A User object if found, or null otherwise.
+     */
     suspend fun getUserByEmail(email: String): User? {
         return if (isNetworkAvailable()) {
             try {
@@ -220,7 +247,12 @@ class AthleteRepository(
         }
     }
 
-    // Add trainer relationship
+    /**
+     * Adds a trainer relationship for a given athlete and trainer ID to Firestore and the local database.
+     * @param trainerId The ID of the trainer.
+     * @param currentUserId The ID of the current user (athlete).
+     * @return The generated relationship ID, or null if the relationship could not be added.
+     */
     suspend fun addTrainerRelationship(trainerId: String?, currentUserId: String): String? {
         return if (isNetworkAvailable()) {
             Log.d("AddTrainer", "$trainerId $currentUserId")
@@ -261,7 +293,11 @@ class AthleteRepository(
         }
     }
 
-    // Start new chat
+    /**
+     * Starts a new chat between the current user (athlete) and a trainer.
+     * @param email The email address of the trainer.
+     * @param currentUserId The ID of the current user (athlete).
+     */
     suspend fun startNewChat(email: String, currentUserId: String) {
         if (!isNetworkAvailable()) {
             Log.e("AthleteRepository", "No network available to start new chat")

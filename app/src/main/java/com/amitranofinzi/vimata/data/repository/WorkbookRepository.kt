@@ -16,6 +16,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+/**
+ * Repository for managing collections, exercises, and workouts.
+ * It interacts with Firebase Firestore and the local Room database to synchronize data.
+ */
 class WorkbookRepository(
     private val collectionDao: CollectionDao,
     private val exerciseDao: ExerciseDao,
@@ -24,6 +28,12 @@ class WorkbookRepository(
 ) {
 
     private val firestore = FirebaseFirestore.getInstance()
+
+    /**
+     * Checks if the network is available for online operations.
+     *
+     * @return True if the network is available, false otherwise.
+     */
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -40,6 +50,13 @@ class WorkbookRepository(
             return networkInfo.isConnected
         }
     }
+
+    /**
+     * Retrieves a list of collections associated with a specific trainer.
+     *
+     * @param trainerID ID of the trainer.
+     * @return A list of collections.
+     */
     suspend fun getCollections(trainerID: String): List<Collection> {
         return withContext(Dispatchers.IO) {
             if (isNetworkAvailable()) {
@@ -67,6 +84,12 @@ class WorkbookRepository(
         }
     }
 
+    /**
+     * Retrieves a list of exercises associated with a specific collection.
+     *
+     * @param collectionID ID of the collection.
+     * @return A list of exercises.
+     */
     suspend fun getExercises(collectionID: String?): List<Exercise> {
         return if (collectionID != null) {
             withContext(Dispatchers.IO) {
@@ -99,6 +122,11 @@ class WorkbookRepository(
         }
     }
 
+    /**
+     * Adds a new collection to Firestore and the local database.
+     *
+     * @param collection The collection to add.
+     */
     suspend fun addCollection(collection: Collection) {
         withContext(Dispatchers.IO) {
             try {
@@ -117,6 +145,12 @@ class WorkbookRepository(
         }
     }
 
+    /**
+     * Retrieves a specific collection by its ID.
+     *
+     * @param collectionID ID of the collection.
+     * @return The collection object.
+     */
     suspend fun getCollectionByID(collectionID: String): Collection {
         return withContext(Dispatchers.IO) {
             (if (isNetworkAvailable()) {
@@ -146,6 +180,11 @@ class WorkbookRepository(
         }
     }
 
+    /**
+     * Uploads a new exercise to Firestore and caches it in the local database.
+     *
+     * @param exercise The exercise to upload.
+     */
     suspend fun uploadExercise(exercise: Exercise) {
         withContext(Dispatchers.IO) {
             try {
@@ -161,13 +200,11 @@ class WorkbookRepository(
                         .set(exerciseWithId)
                         .await()
 
-                    // Cache in Room
                     exerciseDao.insert(exerciseWithId)
 
                     Log.d("WorkbookRepository", "Exercise uploaded successfully with ID: ${result.id}")
                 } else {
                     Log.d("WorkbookRepository", "Network unavailable, skipping Firestore operation")
-                    // Cache in Room anyway
                     exerciseDao.insert(exercise)
                 }
             } catch (e: Exception) {
@@ -176,6 +213,12 @@ class WorkbookRepository(
         }
     }
 
+    /**
+     * Retrieves a list of exercises associated with a specific trainer.
+     *
+     * @param trainerID ID of the trainer.
+     * @return A list of exercises.
+     */
     suspend fun getExercisesByTrainerId(trainerID: String): List<Exercise> {
         return withContext(Dispatchers.IO) {
             if (isNetworkAvailable()) {
@@ -203,6 +246,11 @@ class WorkbookRepository(
         }
     }
 
+    /**
+     * Uploads a new workout to Firestore and caches it in the local database.
+     *
+     * @param workout The workout to upload.
+     */
     suspend fun uploadWorkout(workout: Workout) {
         withContext(Dispatchers.IO) {
             try {

@@ -27,7 +27,10 @@ import com.amitranofinzi.vimata.ui.navigation.InitializableViewModel
 import kotlinx.coroutines.launch
 
 
-
+/**
+ * ViewModel for managing trainer-related data, including athletes, workouts, tests, collections, and exercises.
+ * It interacts with various repositories to fetch and manipulate data.
+ */
 class TrainerViewModel: ViewModel(), InitializableViewModel {
     lateinit var appDatabase: AppDatabase
     lateinit var context: Context
@@ -53,6 +56,13 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
     private val testSetDao: TestSetDao
         get() = appDatabase.testSetDao()
 
+    /**
+     * Initializes the ViewModel with the provided database and context.
+     * This should be called before using the ViewModel.
+     *
+     * @param appDatabase The application database instance.
+     * @param context The application context.
+     */
     override fun initialize(appDatabase: AppDatabase, context: Context) {
         if (!isInitialized) {
             this.appDatabase = appDatabase
@@ -96,7 +106,11 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
     private val _selectedExercises = MutableLiveData<List<Exercise>>()
     val selectedExercises: LiveData<List<Exercise>> = _selectedExercises
 
-    // Athletes functions
+    /**
+     * Fetches athletes assigned to a specific coach.
+     *
+     * @param coachId The ID of the coach.
+     */
     fun getAthletesForCoach(coachId: String) {
         viewModelScope.launch {
             try {
@@ -116,14 +130,23 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
-    //WORKOUT functions
+    /**
+     * Fetches workouts for a specific athlete managed by a trainer.
+     *
+     * @param athleteID The ID of the athlete.
+     * @param trainerID The ID of the trainer.
+     */
     fun fetchWorkouts(athleteID: String, trainerID: String){
         viewModelScope.launch {
             _workouts.value = trainerRepository.getAthleteWorkoutsByTrainer(athleteID,trainerID)
         }
     }
 
-    //TEST functions
+    /**
+     * Fetches test sets for a specific athlete.
+     *
+     * @param athleteID The ID of the athlete.
+     */
     fun fetchTestSets(athleteID: String) {
         Log.d("testViewModel","fetchTestSets" )
 
@@ -144,6 +167,14 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
+    /**
+     * Creates a new test set and associated tests based on the selected exercises.
+     *
+     * @param testSetTitle The title of the test set.
+     * @param trainerID The ID of the trainer.
+     * @param athleteID The ID of the athlete.
+     * @param selectedExercises The list of exercises to include in the test set.
+     */
     fun createTestSetAndTests(testSetTitle: String, trainerID: String, athleteID: String, selectedExercises: List<Exercise>) {
         viewModelScope.launch {
             try {
@@ -176,7 +207,11 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
-
+    /**
+     * Fetches tests belonging to a specific test set.
+     *
+     * @param testSetId The ID of the test set.
+     */
     fun fetchTests(testSetId: String?) {
         viewModelScope.launch {
             try {
@@ -195,7 +230,11 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
     }
 
 
-    //Collection functions
+    /**
+     * Fetches collections for a specific trainer.
+     *
+     * @param trainerID The ID of the trainer.
+     */
     fun fetchCollections(trainerID: String) {
         viewModelScope.launch {
             try {
@@ -210,12 +249,23 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
+    /**
+     * Fetches a specific collection by its ID.
+     *
+     * @param collectionID The ID of the collection.
+     */
     fun fetchCollection(collectionID: String){
         viewModelScope.launch {
             val fetchedCollection = workbookRepository.getCollectionByID(collectionID)
             _collection.value = fetchedCollection
         }
     }
+
+    /**
+     * Fetches exercises for a specific collection.
+     *
+     * @param collectionID The ID of the collection.
+     */
     fun fetchExercises(collectionID: String?) {
         viewModelScope.launch {
             try {
@@ -230,6 +280,12 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
+    /**
+     * Adds a new collection to the repository and refreshes the list of collections.
+     *
+     * @param collection The collection to add.
+     * @param trainerID The ID of the trainer.
+     */
     fun addCollection(collection: Collection, trainerID: String) {
         viewModelScope.launch {
             workbookRepository.addCollection(collection.copy(trainerID = trainerID))
@@ -237,13 +293,22 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
+    /**
+     * Adds a new exercise to the repository.
+     *
+     * @param exercise The exercise to add.
+     */
     fun addExerciseToCollection(exercise: Exercise) {
         viewModelScope.launch {
             workbookRepository.uploadExercise( exercise.copy())
         }
     }
 
-    //Exercise functions
+    /**
+     * Fetches exercises for a specific trainer.
+     *
+     * @param trainerID The ID of the trainer.
+     */
     fun fetchExercisesByTrainerId(trainerID: String) {
         viewModelScope.launch {
             try {
@@ -257,6 +322,12 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
             }
         }
     }
+
+    /**
+     * Adds an exercise to the list of selected exercises.
+     *
+     * @param exercise The exercise to add.
+     */
     fun addSelectedExercise(exercise: Exercise) {
         val currentList = _selectedExercises.value ?: emptyList()
         if (!currentList.contains(exercise)) {
@@ -264,20 +335,36 @@ class TrainerViewModel: ViewModel(), InitializableViewModel {
         }
     }
 
+    /**
+     * Removes an exercise from the list of selected exercises.
+     *
+     * @param exercise The exercise to remove.
+     */
     fun removeSelectedExercise(exercise: Exercise) {
         val currentList = _selectedExercises.value ?: emptyList()
         _selectedExercises.value = currentList - exercise
     }
 
+    /**
+     * Sets the list of selected exercises.
+     *
+     * @param exercises The list of exercises to set.
+     */
     fun setSelectedExercises(exercises: List<Exercise>) {
         _selectedExercises.value = exercises
     }
 
+    /**
+     * Adds a new workout to the repository.
+     *
+     * @param workout The workout to add.
+     */
     fun addWorkout(workout: Workout) {
         viewModelScope.launch {
             workbookRepository.uploadWorkout( workout.copy())
         }
     }
+
 
 }
 

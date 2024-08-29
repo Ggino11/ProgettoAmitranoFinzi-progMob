@@ -16,6 +16,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
+/**
+ * Repository for managing trainer-related data, including athlete information and workouts.
+ * It interacts with Firebase Firestore and the local Room database to synchronize data.
+ */
 class TrainerRepository(
     private val relationshipDao: RelationshipDao,
     private val userDao: UserDao,
@@ -25,6 +29,12 @@ class TrainerRepository(
 
     private val firestore: FirebaseFirestore = FirebaseFirestore.getInstance()
 
+
+    /**
+     * Checks if the network is available for online operations.
+     *
+     * @return True if the network is available, false otherwise.
+     */
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -42,6 +52,12 @@ class TrainerRepository(
         }
     }
 
+    /**
+     * Retrieves the list of athlete IDs associated with a specific trainer.
+     *
+     * @param trainerID ID of the trainer.
+     * @return A list of athlete IDs.
+     */
     suspend fun getAthleteIdsForCoach(trainerID: String): List<String> {
         return withContext(Dispatchers.IO) {
             if (isNetworkAvailable()) {
@@ -67,6 +83,12 @@ class TrainerRepository(
         }
     }
 
+    /**
+     * Retrieves the list of athletes based on their IDs.
+     *
+     * @param athleteIds List of athlete IDs.
+     * @return A list of athlete User objects.
+     */
     suspend fun getAthletes(athleteIds: List<String>): List<User> {
         return withContext(Dispatchers.IO) {
             if (isNetworkAvailable()) {
@@ -93,6 +115,13 @@ class TrainerRepository(
         }
     }
 
+    /**
+     * Retrieves the list of workouts assigned to a specific athlete by a specific trainer.
+     *
+     * @param athleteID ID of the athlete.
+     * @param trainerID ID of the trainer.
+     * @return A list of workouts.
+     */
     suspend fun getAthleteWorkoutsByTrainer(athleteID: String, trainerID: String): List<Workout> {
         return withContext(Dispatchers.IO) {
             if (isNetworkAvailable()) {
