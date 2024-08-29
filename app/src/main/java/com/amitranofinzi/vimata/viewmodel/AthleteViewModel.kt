@@ -28,40 +28,53 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
     lateinit var context: Context
     private var isInitialized = false
     private lateinit var athleteRepository: AthleteRepository
+    private lateinit var testRepository : TestRepository
 
-    // DAO dichiarati come proprietà di tipo `get()`
+
     private val relationshipDao: RelationshipDao
-        get() = appDatabase.relationshipDao()
+        get() {
+            return appDatabase.relationshipDao()
+        }
 
     private val userDao: UserDao
-        get() = appDatabase.userDao()
+        get() {
+            return appDatabase.userDao()
+        }
 
     private val workoutDao: WorkoutDao
-        get() = appDatabase.workoutDao()
+        get() {
+            return appDatabase.workoutDao()
+        }
 
     private val chatDao: ChatDao
-        get() = appDatabase.chatDao()
+        get() {
+            return appDatabase.chatDao()
+        }
+
 
     override fun initialize(appDatabase: AppDatabase, context: Context) {
+        Log.d("AthleteViewModel", "initialize() called")
         if (!isInitialized) {
             this.appDatabase = appDatabase
             this.context = context
+            Log.d("AthleteViewModel", "AppDatabase and Context initialized.")
 
-            // Inizializza il repository dopo che appDatabase e context sono impostati
-            initializeRepositories()
+            try {
+                initializeRepositories()
+                Log.d("AthleteViewModel", "Repositories initialized.")
+            } catch (e: Exception) {
+                Log.e("AthleteViewModel", "Error initializing repositories", e)
+            }
 
             isInitialized = true
+        } else {
+            Log.d("AthleteViewModel", "Already initialized.")
         }
     }
 
     private fun initializeRepositories() {
-        athleteRepository = AthleteRepository(
-            relationshipDao = relationshipDao,
-            userDao = userDao,
-            workoutDao = workoutDao,
-            chatDao = chatDao,
-            context = context
-        )
+        athleteRepository = AthleteRepository(relationshipDao, userDao, workoutDao, chatDao, context)
+        testRepository = TestRepository(testDao, testSetDao, context)
     }
 
 
@@ -76,7 +89,6 @@ class AthleteViewModel : ViewModel(), InitializableViewModel {
     private val testDao: TestDao by lazy { appDatabase.testDao() }
     private val testSetDao: TestSetDao by lazy { appDatabase.testSetDao() }
 
-    private val testRepository : TestRepository = TestRepository(testDao, testSetDao, context)
 
     private val _testSets = MutableLiveData<List<TestSet>>()
     val testSets: LiveData<List<TestSet>>  get() = _testSets
